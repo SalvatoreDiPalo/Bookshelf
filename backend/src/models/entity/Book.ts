@@ -6,6 +6,8 @@ import {
   JoinTable,
   OneToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Author } from "./Author";
 import { Publisher } from "./Publisher";
@@ -13,15 +15,18 @@ import { Publisher } from "./Publisher";
 @Entity()
 export class Book {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
-  @Column()
+  @Column({ unique: true })
+  bookId: string;
+
+  @Column({ unique: true })
   isbn: string;
 
   @Column()
   title: string;
 
-  @Column()
+  @Column({ nullable: true })
   subTitle: string;
 
   @Column()
@@ -30,8 +35,17 @@ export class Book {
   @Column()
   publishedDate: string;
 
+  @Column({ nullable: true })
+  bookCoverId?: number;
+
   @Column()
   pageCount: number;
+
+  @CreateDateColumn()
+  createdDate?: Date;
+
+  @UpdateDateColumn()
+  updatedDate?: Date;
 
   @OneToOne(() => Publisher)
   @JoinColumn()

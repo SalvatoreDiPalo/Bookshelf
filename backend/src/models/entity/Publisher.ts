@@ -3,8 +3,8 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 @Entity()
 export class Publisher {
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
-  @Column()
+  @Column({unique: true})
   name: string;
 }
