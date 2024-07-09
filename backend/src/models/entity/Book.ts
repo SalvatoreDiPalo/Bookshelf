@@ -8,9 +8,12 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm";
 import { Author } from "./Author";
 import { Publisher } from "./Publisher";
+import { User } from "./User";
+import { UserBookStates } from "./UserBookStates";
 
 @Entity()
 export class Book {
@@ -27,10 +30,10 @@ export class Book {
   title: string;
 
   @Column({ nullable: true })
-  subTitle: string;
+  subTitle?: string;
 
-  @Column()
-  description: string;
+  @Column({ nullable: true })
+  description?: string;
 
   @Column()
   publishedDate: string;
@@ -38,8 +41,8 @@ export class Book {
   @Column({ nullable: true })
   bookCoverId?: number;
 
-  @Column()
-  pageCount: number;
+  @Column({ nullable: true })
+  pageCount?: number;
 
   @CreateDateColumn()
   createdDate?: Date;
@@ -47,11 +50,18 @@ export class Book {
   @UpdateDateColumn()
   updatedDate?: Date;
 
-  @OneToOne(() => Publisher)
+  @OneToOne(() => Publisher, { nullable: true })
   @JoinColumn()
-  publisher: Publisher;
+  publisher?: Publisher;
 
   @ManyToMany(() => Author)
   @JoinTable()
   authors: Author[];
+
+  @ManyToMany(() => User, { nullable: true })
+  @JoinTable()
+  users?: User[];
+
+  @OneToMany(() => UserBookStates, (userBookStates) => userBookStates.book)
+  userBookStates?: UserBookStates[];
 }

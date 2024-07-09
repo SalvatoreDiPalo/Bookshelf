@@ -9,8 +9,8 @@ export interface BookDTO {
   description: string;
   pageCount: number;
   language?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
   publisher: PublisherDTO;
   bookCoverUrl?: number;
   authors: AuthorDTO[];

@@ -1,18 +1,37 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from "typeorm";
+import { State } from "./State";
+import { UserBookStates } from "./UserBookStates";
 
 @Entity()
 export class User {
+  @PrimaryGeneratedColumn()
+  id?: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column({ unique: true })
+  userId: string;
 
-    @Column()
-    firstName: string
+  @Column({ unique: true })
+  username: string;
 
-    @Column()
-    lastName: string
+  @Column({ default: true })
+  isVisibile: boolean;
 
-    @Column()
-    age: number
+  @CreateDateColumn()
+  createdDate?: Date;
 
+  @UpdateDateColumn()
+  updatedDate?: Date;
+
+  @OneToMany(() => State, (state) => state.user)
+  states?: State[];
+
+  @OneToMany(() => UserBookStates, (userBookStates) => userBookStates.user)
+  userBookStates?: UserBookStates[];
 }
