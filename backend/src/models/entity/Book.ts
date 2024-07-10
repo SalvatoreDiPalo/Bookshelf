@@ -9,6 +9,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from "typeorm";
 import { Author } from "./Author";
 import { Publisher } from "./Publisher";
@@ -50,11 +51,11 @@ export class Book {
   @UpdateDateColumn()
   updatedDate?: Date;
 
-  @OneToOne(() => Publisher, { nullable: true })
+  @ManyToOne(() => Publisher, { nullable: true, cascade: false })
   @JoinColumn()
   publisher?: Publisher;
 
-  @ManyToMany(() => Author)
+  @ManyToMany(() => Author, { cascade: false })
   @JoinTable()
   authors: Author[];
 

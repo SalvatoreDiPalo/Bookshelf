@@ -23,6 +23,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import AddIcon from "@mui/icons-material/Add";
 import { useLogto } from "@logto/react";
 import { baseUrl, redirectUrl } from "./utils/const";
 
@@ -82,7 +83,7 @@ export default function App() {
   const { isAuthenticated, signIn, signOut } = useLogto();
 
   const theme = useTheme();
-  const [open, setOpen] = useState<boolean>(true);
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -147,6 +148,19 @@ export default function App() {
               </ListItem>
             ))}
           </List>
+          <Divider />
+          <ListItem disablePadding>
+            <ListItemButton
+              onClick={() => {
+                //TODO add service to add a book
+              }}
+            >
+              <ListItemIcon>
+                <AddIcon />
+              </ListItemIcon>
+              <ListItemText primary="Add a Book" />
+            </ListItemButton>
+          </ListItem>
           <Divider />
           <List>
             {!isAuthenticated ? (

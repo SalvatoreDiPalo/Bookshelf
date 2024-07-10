@@ -1,9 +1,13 @@
-import { useHandleSignInCallback } from "@logto/react";
+import { useHandleSignInCallback, useLogto } from "@logto/react";
 import { useNavigate } from "react-router-dom";
 
 const Callback = () => {
+  const { getAccessToken } = useLogto();
   const navigate = useNavigate();
-  const { isLoading } = useHandleSignInCallback(() => {
+  const { isLoading, isAuthenticated } = useHandleSignInCallback(() => {
+    console.log("IsAuthenticated", isAuthenticated);
+
+    getAccessToken("http://localhost:3001").then((token?: string) => console.log("token callback", token));
     navigate("/");
   });
 

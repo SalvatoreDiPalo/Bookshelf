@@ -3,6 +3,7 @@ import { verifyAuthFromRequest } from "../middlewares/auth_middleware";
 import Container from "typedi";
 import BookService from "../../services/book-service";
 import { Logger } from "winston";
+import { Joi, celebrate } from "celebrate";
 
 const route = Router();
 
@@ -37,11 +38,11 @@ export default (app: Router) => {
       );
       try {
         const bookServiceInstance = Container.get(BookService);
-        await bookServiceInstance.addBookToShelf(
+        const book = await bookServiceInstance.addBookToShelf(
           req.currentUser,
           req.params.isbn
         );
-        return res.status(201).json();
+        return res.status(201).json(book);
       } catch (e) {
         logger.error("🔥 error: %o", e);
         return next(e);
@@ -51,6 +52,13 @@ export default (app: Router) => {
 
   route.get(
     "/",
+    celebrate({
+      query: {
+        page: Joi.number().positive().default(1),
+        pageSize: Joi.number().positive().default(20),
+        sortBy: Joi.string().default("title"),
+      },
+    }),
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
@@ -58,7 +66,9 @@ export default (app: Router) => {
       try {
         const bookServiceInstance = Container.get(BookService);
         const bookDto = await bookServiceInstance.getPersonalShelf(
-          req.currentUser
+          req.currentUser,
+          { page: Number(req.query.page), pageSize: Number(req.query.pageSize) },
+          String(req.query.sortBy)
         );
         return res.status(200).json(bookDto);
       } catch (e) {
