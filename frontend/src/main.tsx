@@ -7,6 +7,8 @@ import "@/global";
 import { LogtoConfig, LogtoProvider } from "@logto/react";
 import { appId, endpoint } from "./utils/const";
 import MenuAppBar from "./components/AppBar";
+import { createTheme, ThemeProvider } from "@mui/material";
+import { indigo } from "@mui/material/colors";
 
 const container = document.getElementById("root") as HTMLElement;
 
@@ -26,11 +28,24 @@ const config: LogtoConfig = {
   appId: appId,
 };
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: indigo.A200,
+    },
+  },
+});
+
 root.render(
   <StrictMode>
     <LogtoProvider config={config}>
-      <MenuAppBar />
-      <RouterProvider router={router} fallbackElement={<div>loading...</div>} />
+      <ThemeProvider theme={theme}>
+        <MenuAppBar />
+        <RouterProvider
+          router={router}
+          fallbackElement={<div>loading...</div>}
+        />
+      </ThemeProvider>
     </LogtoProvider>
   </StrictMode>,
 );

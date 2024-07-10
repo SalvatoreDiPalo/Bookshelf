@@ -1,28 +1,18 @@
-import { UserInfoResponse, useLogto } from "@logto/react";
-import { useEffect, useState } from "react";
-import {
-  Box,
-  Pagination,
-  Paper,
-  SelectChangeEvent,
-  Tab,
-  Tabs,
-  TabsProps,
-  styled,
-} from "@mui/material";
+import { useState } from "react";
+import { Box, Pagination, Tab, Tabs, TabsProps, styled } from "@mui/material";
 import AlignmentButtons from "./components/alignment-buttons";
 import SelectSort from "./components/select-sort";
 import BookItem from "./components/book-item";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
-import axios from "axios";
 import { itemsPerPage } from "@/utils/const";
+import { useRequest } from "@/utils/axios";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",
   display: "flex",
-  backgroundColor: "grey", // TODO change this one rgb(238, 238, 238);
+  backgroundColor: "#F4F5F9", // TODO change this one rgb(238, 238, 238);
   borderRadius: 10,
   minHeight: 44,
   maxWidth: "60%",
@@ -39,26 +29,20 @@ const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
 }));
 
 export default function Home() {
-  const { isAuthenticated, fetchUserInfo, getAccessToken } = useLogto();
-  const [user, setUser] = useState<UserInfoResponse>();
-  const [accessToken, setAccessToken] = useState("ciao");
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [alignment, setAlignment] = useState<number>(0);
-  const [books, setBooks] = useState<ResultDTO<BookDTO>>();
-  const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    (async () => {
-      if (isAuthenticated) {
-        const userInfo = await fetchUserInfo();
-        const token = await getAccessToken("http://localhost:3001");
-        await setAccessToken(token ?? "");
-        console.log("Token", token);
-        setUser(userInfo);
-        await requestApi(page, itemsPerPage);
-      }
-    })();
-  }, [fetchUserInfo, getAccessToken, isAuthenticated]);
+  const [page, setPage] = useState<number>(1);
+  const [sortBy, setSortBy] = useState<string>("title");
+  const { data, error, isLoading, setRefetch } = useRequest<ResultDTO<BookDTO>>(
+    {
+      url: "/books",
+      params: {
+        page: page,
+        pageSize: itemsPerPage,
+        sortBy: sortBy,
+      },
+    },
+  );
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
@@ -66,7 +50,9 @@ export default function Home() {
 
   const handleSortChange = (sortBy: string) => {
     console.log("Sortby", sortBy);
-    requestApi(page, itemsPerPage, sortBy);
+    setSortBy(sortBy);
+    setPage(1);
+    requestApi(1, sortBy);
   };
 
   const handlePageChange = (
@@ -74,28 +60,19 @@ export default function Home() {
     value: number,
   ) => {
     setPage(value);
-    requestApi(page, itemsPerPage);
+    requestApi(value, sortBy);
   };
 
-  const requestApi = async (
-    page: number = 1,
-    pageSize: number = 20,
-    sortBy: string = "title",
-  ) => {
-    const response = await axios.get<ResultDTO<BookDTO>>(
-      "http://localhost:3001/api/books",
-      {
-        params: {
-          page: page,
-          pageSize: pageSize,
-          sortBy: sortBy,
-        },
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+  const requestApi = async (page: number = 1, sortBy: string = "title") => {
+    console.log("RequestApi", page, sortBy);
+    setRefetch({
+      url: "/books",
+      params: {
+        page: page,
+        pageSize: itemsPerPage,
+        sortBy: sortBy,
       },
-    );
-    setBooks(response.data);
+    });
   };
 
   return (
@@ -132,19 +109,20 @@ export default function Home() {
           <Tab disableRipple label="Item Seven" />
         </StyledTabs>
         <Box>
-          <SelectSort updateSort={handleSortChange} />
+          <SelectSort sortBy={sortBy} updateSort={handleSortChange} />
           <AlignmentButtons alignment={alignment} setAlignment={setAlignment} />
         </Box>
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1}>
-        {books &&
-          books.items &&
-          books.items.map((book) => (
+        {data &&
+          data.items &&
+          data.items.map((book) => (
             <Grid
               key={book.isbn}
               xs={12}
               sm={4}
-              md={2}
+              md={3}
+              xl={2}
               display="flex"
               justifyContent="center"
               alignItems="center"
@@ -154,7 +132,7 @@ export default function Home() {
           ))}
         <Grid xs={12} justifyContent="center" display="flex">
           <Pagination
-            count={books?.totalItems ?? 1 / page}
+            count={Math.ceil((data?.totalItems ?? 1) / itemsPerPage)}
             page={page}
             onChange={handlePageChange}
           />

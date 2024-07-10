@@ -5,16 +5,14 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
-import { useState } from "react";
 
 interface SelectSortProps {
+  sortBy: string;
   updateSort: (value: string) => void;
 }
 
-export default function SelectSort({ updateSort }: SelectSortProps) {
-  const [sortBy, setSortBy] = useState<string>("title");
+export default function SelectSort({ sortBy, updateSort }: SelectSortProps) {
   const handleSortChange = (event: SelectChangeEvent) => {
-    setSortBy(event.target.value as string);
     updateSort(event.target.value as string);
   };
   return (
