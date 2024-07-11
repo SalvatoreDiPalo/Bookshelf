@@ -40,7 +40,6 @@ root.render(
   <StrictMode>
     <LogtoProvider config={config}>
       <ThemeProvider theme={theme}>
-        <MenuAppBar />
         <RouterProvider
           router={router}
           fallbackElement={<div>loading...</div>}

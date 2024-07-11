@@ -14,7 +14,7 @@ export default (app: Router) => {
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
-      logger.debug("Calling GetUser endpoint with param: %o", req.params.isbn);
+      logger.debug("Calling GetUser endpoint");
       try {
         const userServiceInstance = Container.get(UserService);
         const userDto = await userServiceInstance.getUser(req.currentUser);

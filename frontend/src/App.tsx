@@ -1,30 +1,9 @@
-import {
-  Box,
-  CssBaseline,
-  Divider,
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Toolbar,
-  Typography,
-  styled,
-  useTheme,
-} from "@mui/material";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
+import { Box, CssBaseline, styled } from "@mui/material";
 import { Fragment, useState } from "react";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 import useDebugRender from "tilg";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import AddIcon from "@mui/icons-material/Add";
-import { useLogto } from "@logto/react";
-import { baseUrl, redirectUrl } from "./utils/const";
+import MenuAppBar from "./components/AppBar";
+import MenuDrawer from "./components/Drawer";
 
 const drawerWidth = 240;
 
@@ -37,6 +16,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  marginTop: 64,
   marginLeft: `-${drawerWidth}px`,
   ...(open && {
     transition: theme.transitions.create("margin", {
@@ -47,27 +27,8 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   }),
 }));
 
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
-
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== "open",
-})<AppBarProps>(({ theme, open }) => ({
-  transition: theme.transitions.create(["margin", "width"], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  backgroundColor: "white",
-  boxShadow: "none",
-  color: theme.palette.primary.main,
-}));
-
 export default function App() {
   useDebugRender();
-  const { isAuthenticated, signIn, signOut } = useLogto();
-
-  const theme = useTheme();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleDrawer = () => {
@@ -78,101 +39,8 @@ export default function App() {
     <Fragment>
       <Box sx={{ display: "flex" }}>
         <CssBaseline />
-        <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawer}
-              edge="start"
-            >
-              {open ? <ChevronLeftIcon /> : <MenuIcon />}
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              Persistent drawer
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          sx={{
-            width: drawerWidth,
-            flexShrink: 0,
-            "& .MuiDrawer-paper": {
-              width: drawerWidth,
-              boxSizing: "border-box",
-              top: 72,
-              borderRadius: 2,
-              backgroundColor: "#F4F5F9",
-            },
-          }}
-          variant="persistent"
-          anchor="left"
-          open={open}
-        >
-          <List>
-            {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-              <ListItem key={text} disablePadding>
-                <ListItemButton>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItemButton>
-              </ListItem>
-            ))}
-          </List>
-          <Divider />
-          <ListItem disablePadding>
-            <ListItemButton
-              onClick={() => {
-                //TODO add service to add a book
-              }}
-            >
-              <ListItemIcon>
-                <AddIcon />
-              </ListItemIcon>
-              <ListItemText primary="Add a Book" />
-            </ListItemButton>
-          </ListItem>
-          <Divider />
-          <List>
-            {!isAuthenticated ? (
-              <>
-                <ListItem disablePadding>
-                  <ListItemButton
-                    onClick={() => {
-                      void signIn(redirectUrl);
-                    }}
-                  >
-                    <ListItemText primary="Log in" />
-                  </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                  <ListItemButton
-                    onClick={() => {
-                      void signIn({
-                        redirectUri: redirectUrl,
-                        interactionMode: "signUp",
-                      });
-                    }}
-                  >
-                    <ListItemText primary="Sign in" />
-                  </ListItemButton>
-                </ListItem>
-              </>
-            ) : (
-              <ListItem disablePadding>
-                <ListItemButton
-                  onClick={() => {
-                    void signOut(baseUrl);
-                  }}
-                >
-                  <ListItemText primary="Log out" />
-                </ListItemButton>
-              </ListItem>
-            )}
-          </List>
-        </Drawer>
+        <MenuAppBar open={open} handleDrawer={handleDrawer} />
+        <MenuDrawer open={open} />
         <Main open={open}>
           <Outlet />
           <ScrollRestoration />

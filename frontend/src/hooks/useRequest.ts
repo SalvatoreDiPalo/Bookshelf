@@ -6,7 +6,10 @@ const client = axios.create({
   baseURL: "http://localhost:3001/api",
 });
 
-export const useRequest = <T>(initialOptions: AxiosRequestConfig) => {
+export const useRequest = <T>(
+  initialOptions: AxiosRequestConfig,
+  shouldFetchOnMount: boolean = true,
+) => {
   const { getAccessToken } = useLogto();
   const [data, setData] = useState<T>();
   const [error, setError] = useState();
@@ -34,8 +37,10 @@ export const useRequest = <T>(initialOptions: AxiosRequestConfig) => {
   }, [refetch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (shouldFetchOnMount) {
+      fetchData();
+    }
+  }, [fetchData, shouldFetchOnMount]);
 
-  return { data, error, isLoading, setRefetch };
+  return { data, error, isLoading, setRefetch, fetchData };
 };

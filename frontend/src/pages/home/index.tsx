@@ -7,7 +7,7 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
 import { itemsPerPage } from "@/utils/const";
-import { useRequest } from "@/utils/axios";
+import { useRequest } from "@/hooks/useRequest";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",

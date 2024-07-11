@@ -1,15 +1,30 @@
-import { useHandleSignInCallback, useLogto } from "@logto/react";
+import { useRequest } from "@/hooks/useRequest";
+import { UserDTO } from "@/models/UserDTO";
+import { useHandleSignInCallback } from "@logto/react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Callback = () => {
-  const { getAccessToken } = useLogto();
   const navigate = useNavigate();
+
+  const { data, fetchData } = useRequest<UserDTO>(
+    {
+      url: "/users/profile",
+    },
+    false,
+  );
+
   const { isLoading, isAuthenticated } = useHandleSignInCallback(() => {
     console.log("IsAuthenticated", isAuthenticated);
-
-    getAccessToken("http://localhost:3001").then((token?: string) => console.log("token callback", token));
-    navigate("/");
+    fetchData();
   });
+
+  useEffect(() => {
+    if (data) {
+      console.log("Data", data);
+      navigate("/");
+    }
+  }, [data, navigate]);
 
   return isLoading ? <p>Redirecting...</p> : null;
 };
