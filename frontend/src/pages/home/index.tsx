@@ -16,6 +16,7 @@ import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
 import { itemsPerPage } from "@/utils/const";
 import { useRequest } from "@/hooks/useRequest";
+import { StateDTO } from "@/models/StateDTO";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",
@@ -51,6 +52,10 @@ export default function Home() {
       },
     },
   );
+
+  const { data: states, isLoading: areStatesLoading } = useRequest<StateDTO[]>({
+    url: "/states",
+  });
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
@@ -140,8 +145,9 @@ export default function Home() {
                 <BookItem item={book} />
               </Grid>
             ))
-          : Array.from({ length: itemsPerPage }).map((_) => (
+          : Array.from({ length: itemsPerPage }).map((_, index) => (
               <Skeleton
+                key={index}
                 variant="rectangular"
                 width={210}
                 height={280}

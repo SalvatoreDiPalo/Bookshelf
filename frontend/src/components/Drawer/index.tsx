@@ -7,11 +7,12 @@ import {
   ListItemText,
   Drawer,
 } from "@mui/material";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import AddIcon from "@mui/icons-material/Add";
+import BookIcon from "@mui/icons-material/Book";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useLogto } from "@logto/react";
 import { baseUrl } from "@/utils/const";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -19,8 +20,28 @@ interface MenuDrawerProps {
   open: boolean;
 }
 
+interface DrawerRoute {
+  label: string;
+  url: string;
+  Icon: JSX.Element;
+}
+
+const drawerRoutes: DrawerRoute[] = [
+  {
+    label: "My Books",
+    url: "/home",
+    Icon: <BookIcon />,
+  },
+  {
+    label: "Profile",
+    url: "/profile",
+    Icon: <AccountCircleIcon />,
+  },
+];
+
 export default function MenuDrawer({ open }: MenuDrawerProps) {
   const { signOut } = useLogto();
+  const navigate = useNavigate();
   return (
     <Drawer
       sx={{
@@ -39,13 +60,11 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
       open={open}
     >
       <List>
-        {["Inbox", "Starred", "Send email", "Drafts"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+        {drawerRoutes.map((route) => (
+          <ListItem key={route.label} disablePadding>
+            <ListItemButton onClick={() => navigate(route.url)}>
+              <ListItemIcon>{route.Icon}</ListItemIcon>
+              <ListItemText primary={route.label} />
             </ListItemButton>
           </ListItem>
         ))}

@@ -23,7 +23,7 @@ export default (app: Router) => {
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
-      logger.debug("Calling AddState endpoint with body: %o", req.query.name);
+      logger.debug("Calling AddState endpoint with query: %o", req.query.name);
       try {
         const userServiceInstance = Container.get(UserService);
         const user: User = await userServiceInstance.findUser(
@@ -48,7 +48,7 @@ export default (app: Router) => {
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
-      logger.debug("Calling GetStates endpoint with body: %o", req.query.name);
+      logger.debug("Calling GetStates endpoint");
       try {
         const userServiceInstance = Container.get(UserService);
         const user: User = await userServiceInstance.findUser(
@@ -75,7 +75,7 @@ export default (app: Router) => {
     }),
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
-      logger.debug("Calling GetStates endpoint with body: %o", req.params.id);
+      logger.debug("Calling GetStates endpoint with id: %o", req.params.id);
       try {
         const userServiceInstance = Container.get(UserService);
         const user: User = await userServiceInstance.findUser(

@@ -12,6 +12,7 @@ export enum AuthStatus {
 export interface IAuth {
   authStatus?: AuthStatus;
   user?: UserDTO;
+  token?: string;
   signIn?: () => void;
   signOut?: () => void;
 }
@@ -30,11 +31,13 @@ const AuthProvider = ({ children }: Props) => {
   const { isAuthenticated, getAccessToken } = useLogto();
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [user, setUser] = useState<UserDTO>();
+  const [token, setToken] = useState<string>();
 
   useEffect(() => {
     const getWhoAmI = async () => {
       try {
         let token = await getAccessToken("http://localhost:3001");
+        setToken(token ?? "");
         const response = await axios<UserDTO>(
           "http://localhost:3001/api/users/profile",
           {
@@ -76,6 +79,7 @@ const AuthProvider = ({ children }: Props) => {
   const state: IAuth = {
     authStatus,
     user,
+    token,
     signIn,
     signOut,
   };
