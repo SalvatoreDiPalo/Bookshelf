@@ -1,13 +1,18 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useLogto } from "@logto/react";
 import { useCallback, useEffect, useState } from "react";
+import { useAuth } from "@/context/AuthProvider";
 
 const client = axios.create({
   baseURL: "http://localhost:3001/api",
 });
 
-export const useRequest = <T>(initialOptions: AxiosRequestConfig) => {
+export const useRequest = <T>(
+  initialOptions: AxiosRequestConfig,
+  shouldFetchOnMount: boolean = true,
+) => {
   const { getAccessToken } = useLogto();
+  const { token } = useAuth();
   const [data, setData] = useState<T>();
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -17,11 +22,18 @@ export const useRequest = <T>(initialOptions: AxiosRequestConfig) => {
     setIsLoading(true);
     console.log("fetchData");
     try {
-      let token = await getAccessToken("http://localhost:3001");
-      console.log("Token", token);
+      let headerToken = "Bearer ";
+      if (!token || token === "") {
+        console.log("Fetching token inside useRequest");
+        const apiToken = await getAccessToken("http://localhost:3001");
+        headerToken += apiToken;
+      } else {
+        headerToken += token;
+      }
+      console.log("Token", headerToken);
       // Set the authorization header
-      token !== "" &&
-        (client.defaults.headers.common.Authorization = `Bearer ${token}`);
+      headerToken !== "" &&
+        (client.defaults.headers.common.Authorization = headerToken);
       const response: AxiosResponse = await client(refetch);
       console.log("Response", refetch, response);
       setData(response?.data);
@@ -34,8 +46,10 @@ export const useRequest = <T>(initialOptions: AxiosRequestConfig) => {
   }, [refetch]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (shouldFetchOnMount) {
+      fetchData();
+    }
+  }, [fetchData, shouldFetchOnMount]);
 
-  return { data, error, isLoading, setRefetch };
+  return { data, error, isLoading, setRefetch, fetchData };
 };

@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { Box, Pagination, Tab, Tabs, TabsProps, styled } from "@mui/material";
+import {
+  Box,
+  Pagination,
+  Skeleton,
+  Tab,
+  Tabs,
+  TabsProps,
+  styled,
+} from "@mui/material";
 import AlignmentButtons from "./components/alignment-buttons";
 import SelectSort from "./components/select-sort";
 import BookItem from "./components/book-item";
@@ -7,7 +15,8 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
 import { itemsPerPage } from "@/utils/const";
-import { useRequest } from "@/utils/axios";
+import { useRequest } from "@/hooks/useRequest";
+import { StateDTO } from "@/models/StateDTO";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",
@@ -44,6 +53,10 @@ export default function Home() {
     },
   );
 
+  const { data: states, isLoading: areStatesLoading } = useRequest<StateDTO[]>({
+    url: "/states",
+  });
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
@@ -59,6 +72,9 @@ export default function Home() {
     event: React.ChangeEvent<unknown>,
     value: number,
   ) => {
+    if (page == value) {
+      return;
+    }
     setPage(value);
     requestApi(value, sortBy);
   };
@@ -114,22 +130,30 @@ export default function Home() {
         </Box>
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1}>
-        {data &&
-          data.items &&
-          data.items.map((book) => (
-            <Grid
-              key={book.isbn}
-              xs={12}
-              sm={4}
-              md={3}
-              xl={2}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <BookItem item={book} />
-            </Grid>
-          ))}
+        {!isLoading && data && data.items
+          ? data.items.map((book) => (
+              <Grid
+                key={book.isbn}
+                xs={12}
+                sm={4}
+                md={3}
+                xl={2}
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <BookItem item={book} />
+              </Grid>
+            ))
+          : Array.from({ length: itemsPerPage }).map((_, index) => (
+              <Skeleton
+                key={index}
+                variant="rectangular"
+                width={210}
+                height={280}
+                sx={{ margin: 2 }}
+              />
+            ))}
         <Grid xs={12} justifyContent="center" display="flex">
           <Pagination
             count={Math.ceil((data?.totalItems ?? 1) / itemsPerPage)}
