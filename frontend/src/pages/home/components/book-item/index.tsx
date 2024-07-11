@@ -17,6 +17,7 @@ export default function BookItem({ item }: BookProps) {
         loading="lazy"
         width={200}
         height={240}
+        className="book-item-img"
         style={{ borderRadius: 8 }}
       />
       <Tooltip title={item.title}>
@@ -35,7 +36,7 @@ export default function BookItem({ item }: BookProps) {
 
 const StyledBox = styled(Box)(({ theme }) => ({
   ":hover": {
-    ".MuiPaper-root": {
+    ".book-item-img": {
       transform: "scale(1.02)",
     },
   },

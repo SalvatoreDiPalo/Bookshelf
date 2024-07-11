@@ -11,7 +11,7 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import AddIcon from "@mui/icons-material/Add";
 import { useLogto } from "@logto/react";
-import { baseUrl, redirectUrl } from "@/utils/const";
+import { baseUrl } from "@/utils/const";
 
 const drawerWidth = 240;
 
@@ -20,7 +20,7 @@ interface MenuDrawerProps {
 }
 
 export default function MenuDrawer({ open }: MenuDrawerProps) {
-  const { isAuthenticated, signIn, signOut } = useLogto();
+  const { signOut } = useLogto();
   return (
     <Drawer
       sx={{
@@ -65,41 +65,15 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
       </ListItem>
       <Divider />
       <List>
-        {!isAuthenticated ? (
-          <>
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  void signIn(redirectUrl);
-                }}
-              >
-                <ListItemText primary="Log in" />
-              </ListItemButton>
-            </ListItem>
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  void signIn({
-                    redirectUri: redirectUrl,
-                    interactionMode: "signUp",
-                  });
-                }}
-              >
-                <ListItemText primary="Sign in" />
-              </ListItemButton>
-            </ListItem>
-          </>
-        ) : (
-          <ListItem disablePadding>
-            <ListItemButton
-              onClick={() => {
-                void signOut(baseUrl);
-              }}
-            >
-              <ListItemText primary="Log out" />
-            </ListItemButton>
-          </ListItem>
-        )}
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => {
+              void signOut(baseUrl);
+            }}
+          >
+            <ListItemText primary="Log out" />
+          </ListItemButton>
+        </ListItem>
       </List>
     </Drawer>
   );
