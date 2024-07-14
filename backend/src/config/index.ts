@@ -53,4 +53,9 @@ export const config = {
   api: {
     prefix: "/api",
   },
+
+  defaultStates: {
+    inProgress: process.env.STATE_NAME_IN_PROGRESS || "In Progress",
+    finished: process.env.STATE_NAME_FINISHED || "Finished",
+  },
 };

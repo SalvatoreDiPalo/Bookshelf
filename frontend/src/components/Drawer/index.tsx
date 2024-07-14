@@ -7,12 +7,13 @@ import {
   ListItemText,
   Drawer,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import BookIcon from "@mui/icons-material/Book";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useLogto } from "@logto/react";
 import { baseUrl } from "@/utils/const";
 import { useNavigate } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add";
+import BookIcon from "@mui/icons-material/Book";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 const drawerWidth = 240;
 
@@ -34,8 +35,13 @@ const drawerRoutes: DrawerRoute[] = [
   },
   {
     label: "Profile",
-    url: "/profile",
+    url: "/home/profile",
     Icon: <AccountCircleIcon />,
+  },
+  {
+    label: "Settings",
+    url: "/home/Settings",
+    Icon: <SettingsIcon />,
   },
 ];
 

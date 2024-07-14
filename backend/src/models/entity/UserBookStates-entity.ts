@@ -5,9 +5,9 @@ import {
   JoinTable,
   ManyToOne,
 } from "typeorm";
-import { User } from "./User";
-import { State } from "./State";
-import { Book } from "./Book";
+import { State } from "./State-entity";
+import { User } from "./User-entity";
+import { Book } from "./Book-entity";
 
 @Entity()
 export class UserBookStates {

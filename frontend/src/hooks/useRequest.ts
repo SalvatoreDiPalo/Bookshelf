@@ -2,9 +2,10 @@ import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useLogto } from "@logto/react";
 import { useCallback, useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthProvider";
+import { BASE_URL } from "@/utils/const";
 
 const client = axios.create({
-  baseURL: "http://localhost:3001/api",
+  baseURL: `${BASE_URL}/API`,
 });
 
 export const useRequest = <T>(
@@ -25,7 +26,7 @@ export const useRequest = <T>(
       let headerToken = "Bearer ";
       if (!token || token === "") {
         console.log("Fetching token inside useRequest");
-        const apiToken = await getAccessToken("http://localhost:3001");
+        const apiToken = await getAccessToken(BASE_URL);
         headerToken += apiToken;
       } else {
         headerToken += token;

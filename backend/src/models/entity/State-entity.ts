@@ -6,8 +6,8 @@ import {
   OneToMany,
   Index,
 } from "typeorm";
-import { User } from "./User";
-import { UserBookStates } from "./UserBookStates";
+import { UserBookStates } from "./UserBookStates-entity";
+import { User } from "./User-entity";
 
 @Entity()
 @Index(["name", "user"], { unique: true })
@@ -18,8 +18,14 @@ export class State {
   @Column()
   name: string;
 
-  @ManyToOne(() => User, (user) => user.states)
-  user: User;
+  @Column({ update: false, default: true })
+  editable: boolean;
+
+  @Column()
+  order?: number;
+
+  @ManyToOne(() => User, (user) => user.states, { nullable: false })
+  user?: User;
 
   @OneToMany(() => UserBookStates, (userBookStates) => userBookStates.state)
   userBookStates?: UserBookStates[];

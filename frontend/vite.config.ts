@@ -26,6 +26,6 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["react/jsx-runtime"],
+    include: ["@mui/material/Unstable_Grid2", "react/jsx-runtime"],
   },
 });

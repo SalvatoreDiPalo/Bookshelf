@@ -6,8 +6,8 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { State } from "./State";
-import { UserBookStates } from "./UserBookStates";
+import { UserBookStates } from "./UserBookStates-entity";
+import { State } from "./State-entity";
 
 @Entity()
 export class User {

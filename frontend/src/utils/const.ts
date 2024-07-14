@@ -1,8 +1,10 @@
 export const baseUrl = window.location.origin;
 export const redirectUrl = `${baseUrl}/callback`;
 
-// TODO add .env
-export const appId = 'qq6i6quqgh841r7spiz14'; // Register the sample app in Logto dashboard
-export const endpoint = 'https://46fogy.logto.app/'; // Replace with your own Logto endpoint
+export const LOGTO_APPID = import.meta.env.VITE_LOGTO_APPID || ""; // Register the sample app in Logto dashboard
+export const LOGTO_ENDPOINT = import.meta.env.VITE_LOGTO_ENDPOINT || ""; // Replace with your own Logto endpoint
+export const BASE_URL = import.meta.env.VITE_API_URL || ""; // Replace with your own Logto endpoint
 
-export const itemsPerPage = 12;
+export const ITEMS_PER_PAGE: number = import.meta.env.VITE_BOOKS_ITEMS_PER_PAGE;
+
+export const TOKEN_KEY = "token";

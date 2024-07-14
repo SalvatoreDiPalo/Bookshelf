@@ -14,9 +14,9 @@ import BookItem from "./components/book-item";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
-import { itemsPerPage } from "@/utils/const";
 import { useRequest } from "@/hooks/useRequest";
 import { StateDTO } from "@/models/StateDTO";
+import { ITEMS_PER_PAGE } from "@/utils/const";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",
@@ -47,7 +47,7 @@ export default function Home() {
       url: "/books",
       params: {
         page: page,
-        pageSize: itemsPerPage,
+        pageSize: ITEMS_PER_PAGE,
         sortBy: sortBy,
       },
     },
@@ -62,10 +62,9 @@ export default function Home() {
   };
 
   const handleSortChange = (sortBy: string) => {
-    console.log("Sortby", sortBy);
     setSortBy(sortBy);
     setPage(1);
-    requestApi(1, sortBy);
+    getBooks(1, sortBy);
   };
 
   const handlePageChange = (
@@ -76,16 +75,16 @@ export default function Home() {
       return;
     }
     setPage(value);
-    requestApi(value, sortBy);
+    getBooks(value, sortBy);
   };
 
-  const requestApi = async (page: number = 1, sortBy: string = "title") => {
+  const getBooks = async (page: number = 1, sortBy: string = "title") => {
     console.log("RequestApi", page, sortBy);
     setRefetch({
       url: "/books",
       params: {
         page: page,
-        pageSize: itemsPerPage,
+        pageSize: ITEMS_PER_PAGE,
         sortBy: sortBy,
       },
     });
@@ -118,13 +117,17 @@ export default function Home() {
         >
           <Tab disableRipple label="All" />
           <Tab disableRipple label="Favorities" />
-          <Tab disableRipple label="In Progress" />
+          {states &&
+            states.map((state: StateDTO) => (
+              <Tab key={state.id} label={state.name} disableRipple />
+            ))}
+          {/* <Tab disableRipple label="In Progress" />
           <Tab disableRipple label="Finished" />
           <Tab disableRipple label="Item Five" />
           <Tab disableRipple label="Item Six" />
-          <Tab disableRipple label="Item Seven" />
+          <Tab disableRipple label="Item Seven" /> */}
         </StyledTabs>
-        <Box>
+        <Box sx={{ display: "flex", flexFlow: "row nowrap" }}>
           <SelectSort sortBy={sortBy} updateSort={handleSortChange} />
           <AlignmentButtons alignment={alignment} setAlignment={setAlignment} />
         </Box>
@@ -145,7 +148,7 @@ export default function Home() {
                 <BookItem item={book} />
               </Grid>
             ))
-          : Array.from({ length: itemsPerPage }).map((_, index) => (
+          : Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
               <Skeleton
                 key={index}
                 variant="rectangular"
@@ -156,7 +159,7 @@ export default function Home() {
             ))}
         <Grid xs={12} justifyContent="center" display="flex">
           <Pagination
-            count={Math.ceil((data?.totalItems ?? 1) / itemsPerPage)}
+            count={Math.ceil((data?.totalItems ?? 1) / ITEMS_PER_PAGE)}
             page={page}
             onChange={handlePageChange}
           />

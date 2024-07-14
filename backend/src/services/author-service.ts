@@ -1,5 +1,5 @@
 import { Inject, Service } from "typedi";
-import { Author } from "../models/entity/Author";
+import { Author } from "../models/entity/Author-entity";
 import { In, Repository } from "typeorm";
 import { ResultDTO } from "../models/dto/result-dto";
 import { AuthorDTO } from "../models/dto/author-dto";

@@ -1,11 +1,11 @@
 import { DataSource } from "typeorm";
 import Container from "typedi";
 import LoggerInstance from "./logger";
-import { Book } from "../models/entity/Book";
-import { Author } from "../models/entity/Author";
-import { Publisher } from "../models/entity/Publisher";
-import { User } from "../models/entity/User";
-import { State } from "../models/entity/State";
+import { Author } from "../models/entity/Author-entity";
+import { Publisher } from "../models/entity/Publisher-entity";
+import { User } from "../models/entity/User-entity";
+import { State } from "../models/entity/State-entity";
+import { Book } from "../models/entity/Book-entity";
 
 export const dependencyInjectorLoader = (dataSource: DataSource) => {
   try {

@@ -25,9 +25,8 @@ const extractBearerTokenFromHeaders = (authorization: string) => {
 export const verifyAuthFromRequest = async (req, res, next: NextFunction) => {
   const Logger: Logger = Container.get("logger");
   // Extract the token
-  const token = extractBearerTokenFromHeaders(req.get("Authorization") ?? "");
-
   try {
+    const token = extractBearerTokenFromHeaders(req.get("Authorization") ?? "");
     //Payload contiene il jt decodificato
     const { payload } = await jwtVerify(
       token, // The raw Bearer Token extracted from the request header

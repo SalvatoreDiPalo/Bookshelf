@@ -1,16 +1,16 @@
 import { Inject, Service } from "typedi";
 import { BookDTO } from "../models/dto/book-dto";
-import { Author } from "../models/entity/Author";
-import { Book } from "../models/entity/Book";
-import { Publisher } from "../models/entity/Publisher";
+import { Author } from "../models/entity/Author-entity";
+import { Publisher } from "../models/entity/Publisher-entity";
 import { In, Repository } from "typeorm";
-import { User } from "../models/entity/User";
 import { CurrentUser } from "../models/current-user";
 import GoogleService from "./google";
 import { ResultDTO } from "../models/dto/result-dto";
 import { HttpException } from "../models/exceptions/http-exception";
 import { PaginateDTO } from "../models/dto/paginate-dto";
 import { Volume } from "../models/google-volumes";
+import { User } from "../models/entity/User-entity";
+import { Book } from "../models/entity/Book-entity";
 
 @Service()
 export default class BookService {

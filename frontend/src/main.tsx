@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import privateRoutes from "@/routes";
 import "@/global";
 import { LogtoConfig, LogtoProvider } from "@logto/react";
-import { appId, endpoint } from "./utils/const";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import AuthProvider from "./context/AuthProvider";
@@ -12,6 +11,8 @@ import { PrivateRoutes } from "./components/PrivateRoutes";
 import Notfound from "./pages/404";
 import Landing from "./pages/Landing";
 import Callback from "./pages/callback";
+import { LOGTO_APPID, LOGTO_ENDPOINT } from "./utils/const";
+import { StyledEngineProvider } from "@mui/material/styles";
 
 const container = document.getElementById("root") as HTMLElement;
 
@@ -41,9 +42,10 @@ const routes = [
 const router = createBrowserRouter(routes);
 
 const config: LogtoConfig = {
-  endpoint: endpoint, // E.g. http://localhost:3001
-  appId: appId,
+  endpoint: LOGTO_ENDPOINT,
+  appId: LOGTO_APPID,
 };
+console.log("config", config);
 
 const theme = createTheme({
   palette: {
@@ -58,10 +60,12 @@ root.render(
     <LogtoProvider config={config}>
       <ThemeProvider theme={theme}>
         <AuthProvider>
-          <RouterProvider
-            router={router}
-            fallbackElement={<div>loading...</div>}
-          />
+          <StyledEngineProvider injectFirst>
+            <RouterProvider
+              router={router}
+              fallbackElement={<div>loading...</div>}
+            />
+          </StyledEngineProvider>
         </AuthProvider>
       </ThemeProvider>
     </LogtoProvider>

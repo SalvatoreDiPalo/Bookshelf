@@ -11,10 +11,10 @@ import {
   OneToMany,
   ManyToOne,
 } from "typeorm";
-import { Author } from "./Author";
-import { Publisher } from "./Publisher";
-import { User } from "./User";
-import { UserBookStates } from "./UserBookStates";
+import { Author } from "./Author-entity";
+import { UserBookStates } from "./UserBookStates-entity";
+import { Publisher } from "./Publisher-entity";
+import { User } from "./User-entity";
 
 @Entity()
 export class Book {

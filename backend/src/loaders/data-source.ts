@@ -1,10 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Author } from "../models/entity/Author";
-import { Publisher } from "../models/entity/Publisher";
-import { Book } from "../models/entity/Book";
 import { config } from "../config";
-import { User } from "../models/entity/User";
 
 export const AppDataSource = new DataSource({
   type: "postgres",

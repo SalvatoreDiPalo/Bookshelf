@@ -1,7 +1,7 @@
 import { Inject, Service } from "typedi";
 import { In, Repository } from "typeorm";
 import { ResultDTO } from "../models/dto/result-dto";
-import { Publisher } from "../models/entity/Publisher";
+import { Publisher } from "../models/entity/Publisher-entity";
 import { PublisherDTO } from "../models/dto/publisher-dto";
 
 @Service()

@@ -1,4 +1,5 @@
 import { UserDTO } from "@/models/UserDTO";
+import { BASE_URL } from "@/utils/const";
 import { useLogto } from "@logto/react";
 import axios from "axios";
 import { useContext, createContext, useState, useEffect } from "react";
@@ -31,21 +32,15 @@ const AuthProvider = ({ children }: Props) => {
   const { isAuthenticated, getAccessToken } = useLogto();
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [user, setUser] = useState<UserDTO>();
-  const [token, setToken] = useState<string>();
-
   useEffect(() => {
     const getWhoAmI = async () => {
       try {
-        let token = await getAccessToken("http://localhost:3001");
-        setToken(token ?? "");
-        const response = await axios<UserDTO>(
-          "http://localhost:3001/api/users/profile",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        let token = await getAccessToken(BASE_URL);
+        const response = await axios<UserDTO>(`${BASE_URL}/api/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         console.log("User", response.data);
         setUser(response.data);
         setAuthStatus(AuthStatus.SignedIn);
@@ -79,7 +74,6 @@ const AuthProvider = ({ children }: Props) => {
   const state: IAuth = {
     authStatus,
     user,
-    token,
     signIn,
     signOut,
   };
