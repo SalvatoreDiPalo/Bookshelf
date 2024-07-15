@@ -1,6 +1,7 @@
 import { BookDTO } from "@/models/BookDTO";
 import {
   Box,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -8,15 +9,16 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import StarsIcon from "@mui/icons-material/Stars";
-import MenuIcon from "@mui/icons-material/Menu";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
+import { StateDTO } from "@/models/StateDTO";
 
 interface BookProps {
   item: BookDTO;
+  states: StateDTO[];
 }
 
-export default function BookItem({ item }: BookProps) {
+export default function BookItem({ item, states }: BookProps) {
   const authors = item.authors.map((author) => author.name).join(" & ");
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -29,8 +31,8 @@ export default function BookItem({ item }: BookProps) {
   };
 
   return (
-    <StyledBox sx={{ padding: 2, maxHeight: 340, cursor: "pointer" }}>
-      <Box sx={{ width: 200, height: 240, position: "relative" }}>
+    <StyledBox className="m-h-[340px] cursor-pointer p-4">
+      <Box className="relative h-[240px] w-[200px]">
         <img
           srcSet={`https://loremflickr.com/240/280/book`}
           src={`https://loremflickr.com/240/280/book`}
@@ -41,26 +43,25 @@ export default function BookItem({ item }: BookProps) {
           className="book-item-img"
           style={{ borderRadius: 8 }}
         />
+      </Box>
+
+      <Box className="flex w-[200px] flex-row flex-nowrap items-center">
+        <Tooltip title={item.title}>
+          <Typography variant="h6" gutterBottom noWrap width={210}>
+            {item.title}
+          </Typography>
+        </Tooltip>
 
         <IconButton
           aria-controls={open ? "basic-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
-          sx={{ position: "absolute", top: 8, right: 0 }}
         >
-          <MenuIcon />
+          <MoreHorizIcon />
         </IconButton>
-
-        <Tooltip title="Add to favorities">
-          <IconButton
-            aria-label="Add to favorities"
-            sx={{ position: "absolute", bottom: 8, left: 0 }}
-          >
-            <StarsIcon />
-          </IconButton>
-        </Tooltip>
       </Box>
+
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
@@ -69,16 +70,46 @@ export default function BookItem({ item }: BookProps) {
         MenuListProps={{
           "aria-labelledby": "basic-button",
         }}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&::before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                left: 14,
+                width: 10,
+                height: 10,
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          },
+        }}
       >
-        <MenuItem onClick={handleClose}>Profile</MenuItem>
-        <MenuItem onClick={handleClose}>My account</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
+        <MenuItem onClick={handleClose}>Add to Favorities</MenuItem>
+        <Divider sx={{ my: 0.5 }} />
+        {states &&
+          states.map((state) => (
+            <MenuItem key={state.id} onClick={handleClose}>
+              Add to "{state.name}"
+            </MenuItem>
+          ))}
+        <Divider sx={{ my: 0.5 }} />
+        <MenuItem onClick={handleClose}>Delete</MenuItem>
       </Menu>
-      <Tooltip title={item.title}>
-        <Typography variant="h6" gutterBottom noWrap width={210}>
-          {item.title}
-        </Typography>
-      </Tooltip>
+
       <Tooltip title={authors}>
         <Typography variant="subtitle1" gutterBottom noWrap width={210}>
           {authors}

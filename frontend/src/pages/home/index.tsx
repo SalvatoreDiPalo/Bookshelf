@@ -33,7 +33,10 @@ const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
     paddingHorizontal: 3,
   },
   "& .MuiTabs-scrollableX": {
-    margin: "0 3px",
+    margin: "0 0",
+  },
+  ".MuiTabs-scrollButtons.Mui-disabled": {
+    opacity: 0.3,
   },
 }));
 
@@ -103,7 +106,8 @@ export default function Home() {
           value={selectedTab}
           onChange={handleTabChange}
           variant="scrollable"
-          scrollButtons={false}
+          scrollButtons={true}
+          allowScrollButtonsMobile
           TabIndicatorProps={{
             sx: {
               top: 3,
@@ -121,11 +125,6 @@ export default function Home() {
             states.map((state: StateDTO) => (
               <Tab key={state.id} label={state.name} disableRipple />
             ))}
-          {/* <Tab disableRipple label="In Progress" />
-          <Tab disableRipple label="Finished" />
-          <Tab disableRipple label="Item Five" />
-          <Tab disableRipple label="Item Six" />
-          <Tab disableRipple label="Item Seven" /> */}
         </StyledTabs>
         <Box sx={{ display: "flex", flexFlow: "row nowrap" }}>
           <SelectSort sortBy={sortBy} updateSort={handleSortChange} />
@@ -133,7 +132,7 @@ export default function Home() {
         </Box>
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1}>
-        {!isLoading && data && data.items
+        {!isLoading && data && states && data.items
           ? data.items.map((book) => (
               <Grid
                 key={book.isbn}
@@ -145,7 +144,7 @@ export default function Home() {
                 justifyContent="center"
                 alignItems="center"
               >
-                <BookItem item={book} />
+                <BookItem item={book} states={states} />
               </Grid>
             ))
           : Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
