@@ -61,6 +61,7 @@ export default function AddBookDialog({
   const [existsBook, setExistsBook] = useState<boolean>(true);
 
   const fetchBook = async () => {
+    setExistsBook(true);
     setIsLoading(true);
     const response = await axiosInstance<BookDTO>(
       `${BASE_URL}/api/books/${isbn}`,
