@@ -116,4 +116,62 @@ export default (app: Router) => {
       }
     }
   );
+
+  route.post(
+    "/:isbn/favorite",
+    celebrate({
+      params: {
+        isbn: Joi.string().required(),
+      },
+    }),
+    verifyAuthFromRequest,
+    async (req: Request, res: Response, next: NextFunction) => {
+      const logger: Logger = Container.get("logger");
+      logger.debug(
+        "Calling AddBookToShelf endpoint with param: %o",
+        req.params.isbn
+      );
+      try {
+        const bookServiceInstance = Container.get(BookService);
+        const book = await bookServiceInstance.updateFavoriteBookFlag(
+          req.currentUser,
+          req.params.isbn,
+          true
+        );
+        return res.status(201).json(book);
+      } catch (e) {
+        logger.error("🔥 error: %o", e);
+        return next(e);
+      }
+    }
+  );
+
+  route.delete(
+    "/:isbn/favorite",
+    celebrate({
+      params: {
+        isbn: Joi.string().required(),
+      },
+    }),
+    verifyAuthFromRequest,
+    async (req: Request, res: Response, next: NextFunction) => {
+      const logger: Logger = Container.get("logger");
+      logger.debug(
+        "Calling AddBookToShelf endpoint with param: %o",
+        req.params.isbn
+      );
+      try {
+        const bookServiceInstance = Container.get(BookService);
+        await bookServiceInstance.updateFavoriteBookFlag(
+          req.currentUser,
+          req.params.isbn,
+          false
+        );
+        return res.status(204).json();
+      } catch (e) {
+        logger.error("🔥 error: %o", e);
+        return next(e);
+      }
+    }
+  );
 };

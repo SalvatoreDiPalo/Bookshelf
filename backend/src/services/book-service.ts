@@ -46,6 +46,7 @@ export default class BookService {
       relations: {
         authors: true,
         publisher: true,
+        userBookStates: true,
       },
       take: paginate.pageSize,
       skip,
@@ -87,6 +88,51 @@ export default class BookService {
     );
 
     return exists;
+  }
+
+  public async updateFavoriteBookFlag(
+    user: CurrentUser,
+    isbn: string,
+    isFavorite: boolean
+  ): Promise<BookDTO> {
+    let book = await this.findBookByIsbn(isbn);
+    if (book === null) {
+      throw new HttpException(404, "The book could not be found.");
+    }
+    this.logger.debug("Book founded: %s", book.title);
+    const dbUser: User = await this.userRepository.findOneBy({
+      userId: user.sub,
+    });
+    if (!dbUser) {
+      this.logger.error("Could not found the user");
+      throw new HttpException(404, "The user could not be found.");
+    }
+    this.logger.debug("User founded: %o", dbUser.username);
+
+    this.logger.debug(
+      "Current users associated to this book: %s",
+      book.userBookStates ?? [].length
+    );
+
+    const userBookState = await this.userBookStateRepository.findOne({
+      where: {
+        userId: dbUser.id,
+        bookId: book.id,
+      },
+    });
+
+    if (!userBookState) {
+      this.logger.error("Book not exists in shelf");
+      throw new HttpException(400, "Book not exists in shelf");
+    }
+    userBookState.isFavorite = isFavorite;
+    await this.userBookStateRepository.save(userBookState);
+    this.logger.debug(
+      "Set favorite=%o book %s to favorities",
+      isFavorite,
+      book.isbn
+    );
+    return this.mapBook(book);
   }
 
   public async addBookToShelf(
@@ -231,6 +277,10 @@ export default class BookService {
           name: author.name,
         };
       }),
+      isFavorite:
+        book.userBookStates && book.userBookStates.length
+          ? book.userBookStates[0].isFavorite
+          : false,
     } as BookDTO;
   }
 

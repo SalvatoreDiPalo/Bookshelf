@@ -12,6 +12,9 @@ import {
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
 import { StateDTO } from "@/models/StateDTO";
+import { axiosInstance } from "@/utils/axios";
+import { BASE_URL } from "@/utils/const";
+import { useAppContext } from "@/context/AppProvider";
 
 interface BookProps {
   item: BookDTO;
@@ -21,13 +24,37 @@ interface BookProps {
 export default function BookItem({ item, states }: BookProps) {
   const authors = item.authors.map((author) => author.name).join(" & ");
 
+  const { updateLoading } = useAppContext();
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const addToFavorities = async () => {
+    updateLoading!();
+    const response = await axiosInstance<BookDTO>(
+      `${BASE_URL}/api/books/${item.isbn}/favorite`,
+      { method: "POST" },
+    );
+    // TODO update parent list or item
+    updateLoading!();
+  };
+
+  const removeFromFavorities = async () => {
+    updateLoading!();
+    const response = await axiosInstance<BookDTO>(
+      `${BASE_URL}/api/books/${item.isbn}/favorite`,
+      { method: "DELETE" },
+    );
+    // TODO update parent list or item
+    updateLoading!();
   };
 
   return (
@@ -98,7 +125,13 @@ export default function BookItem({ item, states }: BookProps) {
           },
         }}
       >
-        <MenuItem onClick={handleClose}>Add to Favorities</MenuItem>
+        {item.isFavorite ? (
+          <MenuItem onClick={removeFromFavorities}>
+            Remove from Favorities
+          </MenuItem>
+        ) : (
+          <MenuItem onClick={addToFavorities}>Add to Favorities</MenuItem>
+        )}
         <Divider sx={{ my: 0.5 }} />
         {states &&
           states.map((state) => (
