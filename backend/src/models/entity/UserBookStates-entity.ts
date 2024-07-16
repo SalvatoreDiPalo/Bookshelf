@@ -2,14 +2,15 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  JoinTable,
   ManyToOne,
+  Index,
 } from "typeorm";
 import { State } from "./State-entity";
 import { User } from "./User-entity";
 import { Book } from "./Book-entity";
 
 @Entity()
+@Index(["userId", "stateId", "bookId"], { unique: true })
 export class UserBookStates {
   @PrimaryGeneratedColumn()
   id?: number;
@@ -17,14 +18,17 @@ export class UserBookStates {
   @Column()
   userId: number;
 
-  @Column()
-  stateId: number;
+  @Column({ nullable: true })
+  stateId?: number;
 
   @Column()
-  bookId: number;
+  bookId?: number;
 
-  @ManyToOne(() => State, (state) => state.userBookStates)
-  state: State;
+  @Column({ default: false })
+  isFavorite: boolean;
+
+  @ManyToOne(() => State, (state) => state.userBookStates, { nullable: true })
+  state?: State;
 
   @ManyToOne(() => User, (user) => user.userBookStates)
   user: User;

@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useLogto } from "@logto/react";
 import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "@/context/AuthProvider";
+import { useAppContext } from "@/context/AppProvider";
 import { BASE_URL } from "@/utils/const";
 
 const client = axios.create({
@@ -13,7 +13,7 @@ export const useRequest = <T>(
   shouldFetchOnMount: boolean = true,
 ) => {
   const { getAccessToken } = useLogto();
-  const { token } = useAuth();
+  const { token } = useAppContext();
   const [data, setData] = useState<T>();
   const [error, setError] = useState();
   const [isLoading, setIsLoading] = useState(true);

@@ -11,6 +11,7 @@ import { PaginateDTO } from "../models/dto/paginate-dto";
 import { Volume } from "../models/google-volumes";
 import { User } from "../models/entity/User-entity";
 import { Book } from "../models/entity/Book-entity";
+import { UserBookStates } from "../models/entity/UserBookStates-entity";
 
 @Service()
 export default class BookService {
@@ -34,8 +35,10 @@ export default class BookService {
     const skip = (paginate.page - 1) * paginate.pageSize;
     let books: [Book[], number] = await this.bookRepository.findAndCount({
       where: {
-        users: {
-          userId: user.sub,
+        userBookStates: {
+          user: {
+            userId: user.sub,
+          },
         },
       },
       relations: {
@@ -78,13 +81,18 @@ export default class BookService {
       throw new HttpException(404, "The user could not be found.");
     }
     this.logger.debug("User founded: %o", dbUser.username);
-    const bookUsers: User[] = book.users || [];
+    const userBookStates: UserBookStates[] = book.userBookStates || [];
     this.logger.debug(
       "Current users associated to this book: %s",
-      bookUsers.length
+      userBookStates.length
     );
-    bookUsers.push(dbUser);
-    book.users = bookUsers;
+    userBookStates.push({
+      book: book,
+      isFavorite: false,
+      user: dbUser,
+      userId: dbUser.id,
+    });
+    book.userBookStates = userBookStates;
     await this.bookRepository.save(book);
     this.logger.debug("User x Book done");
     return this.mapBook(book);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Pagination,
@@ -10,18 +10,17 @@ import {
 } from "@mui/material";
 import AlignmentButtons from "./components/alignment-buttons";
 import SelectSort from "./components/select-sort";
-import BookItem from "./components/book-item";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
-import { useRequest } from "@/hooks/useRequest";
 import { StateDTO } from "@/models/StateDTO";
-import { ITEMS_PER_PAGE } from "@/utils/const";
+import { BASE_URL, ITEMS_PER_PAGE } from "@/utils/const";
+import { axiosInstance } from "@/utils/axios";
+import BookList from "./components/book-list";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",
   display: "flex",
-  backgroundColor: "#F4F5F9", // TODO change this one rgb(238, 238, 238);
   borderRadius: 10,
   minHeight: 44,
   maxWidth: "60%",
@@ -45,20 +44,35 @@ export default function Home() {
   const [alignment, setAlignment] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [sortBy, setSortBy] = useState<string>("title");
-  const { data, error, isLoading, setRefetch } = useRequest<ResultDTO<BookDTO>>(
-    {
-      url: "/books",
-      params: {
-        page: page,
-        pageSize: ITEMS_PER_PAGE,
-        sortBy: sortBy,
-      },
-    },
-  );
+  const [data, setData] = useState<ResultDTO<BookDTO>>();
+  const [states, setStates] = useState<StateDTO[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { data: states, isLoading: areStatesLoading } = useRequest<StateDTO[]>({
-    url: "/states",
-  });
+  const fetchBooks = async (page: number = 1, sortBy: string = "title") => {
+    setIsLoading(true);
+    const response = await axiosInstance<ResultDTO<BookDTO>>(
+      `${BASE_URL}/api/books`,
+      {
+        params: {
+          page: page,
+          pageSize: ITEMS_PER_PAGE,
+          sortBy: sortBy,
+        },
+      },
+    );
+    setData(response.data);
+    setIsLoading(false);
+  };
+
+  const fetchStates = async () => {
+    const response = await axiosInstance<StateDTO[]>(`${BASE_URL}/api/states`);
+    setStates(response.data);
+  };
+
+  useEffect(() => {
+    fetchBooks();
+    fetchStates();
+  }, []);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
@@ -83,14 +97,7 @@ export default function Home() {
 
   const getBooks = async (page: number = 1, sortBy: string = "title") => {
     console.log("RequestApi", page, sortBy);
-    setRefetch({
-      url: "/books",
-      params: {
-        page: page,
-        pageSize: ITEMS_PER_PAGE,
-        sortBy: sortBy,
-      },
-    });
+    fetchBooks(page, sortBy);
   };
 
   return (
@@ -121,10 +128,9 @@ export default function Home() {
         >
           <Tab disableRipple label="All" />
           <Tab disableRipple label="Favorities" />
-          {states &&
-            states.map((state: StateDTO) => (
-              <Tab key={state.id} label={state.name} disableRipple />
-            ))}
+          {states.map((state: StateDTO) => (
+            <Tab key={state.id} label={state.name} disableRipple />
+          ))}
         </StyledTabs>
         <Box sx={{ display: "flex", flexFlow: "row nowrap" }}>
           <SelectSort sortBy={sortBy} updateSort={handleSortChange} />
@@ -132,33 +138,26 @@ export default function Home() {
         </Box>
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1}>
-        {!isLoading && data && states && data.items
-          ? data.items.map((book) => (
-              <Grid
-                key={book.isbn}
-                xs={12}
-                sm={4}
-                md={3}
-                xl={2}
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <BookItem item={book} states={states} />
-              </Grid>
-            ))
-          : Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-              <Skeleton
-                key={index}
-                variant="rectangular"
-                width={210}
-                height={280}
-                sx={{ margin: 2 }}
-              />
-            ))}
+        {!isLoading ? (
+          <BookList data={data} states={states} />
+        ) : (
+          Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+            <Skeleton
+              key={index}
+              variant="rectangular"
+              width={210}
+              height={280}
+              sx={{ margin: 2 }}
+            />
+          ))
+        )}
         <Grid xs={12} justifyContent="center" display="flex">
           <Pagination
-            count={Math.ceil((data?.totalItems ?? 1) / ITEMS_PER_PAGE)}
+            count={Math.ceil(
+              (data?.totalItems && data?.totalItems > 1
+                ? data?.totalItems
+                : 1) / ITEMS_PER_PAGE,
+            )}
             page={page}
             onChange={handlePageChange}
           />

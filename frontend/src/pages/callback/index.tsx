@@ -1,10 +1,10 @@
-import { useAuth } from "@/context/AuthProvider";
+import { useAppContext } from "@/context/AppProvider";
 import { useHandleSignInCallback } from "@logto/react";
 import { useNavigate } from "react-router-dom";
 
 const Callback = () => {
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signIn } = useAppContext();
 
   const { isLoading, isAuthenticated } = useHandleSignInCallback(() => {
     console.log("callback IsAuthenticated: ", isAuthenticated);

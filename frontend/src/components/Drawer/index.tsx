@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   Drawer,
+  useTheme,
 } from "@mui/material";
 import { useLogto } from "@logto/react";
 import { baseUrl } from "@/utils/const";
@@ -14,6 +15,8 @@ import AddIcon from "@mui/icons-material/Add";
 import BookIcon from "@mui/icons-material/Book";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
+import { useState } from "react";
+import AddBookDialog from "../AddBookDialog";
 
 const drawerWidth = 240;
 
@@ -48,6 +51,17 @@ const drawerRoutes: DrawerRoute[] = [
 export default function MenuDrawer({ open }: MenuDrawerProps) {
   const { signOut } = useLogto();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const [openDialog, setOpenDialog] = useState<boolean>(false);
+
+  const handleClickOpen = () => {
+    setOpenDialog(true);
+  };
+
+  const handleClose = () => {
+    setOpenDialog(false);
+  };
+
   return (
     <Drawer
       sx={{
@@ -58,7 +72,6 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
           boxSizing: "border-box",
           top: 72,
           borderRadius: 2,
-          backgroundColor: "#F4F5F9",
         },
       }}
       variant="persistent"
@@ -78,9 +91,10 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
       <Divider />
       <ListItem disablePadding>
         <ListItemButton
-          onClick={() => {
-            //TODO add service to add a book
+          sx={{
+            backgroundColor: theme.palette.primary.main,
           }}
+          onClick={handleClickOpen}
         >
           <ListItemIcon>
             <AddIcon />
@@ -100,6 +114,7 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
           </ListItemButton>
         </ListItem>
       </List>
+      <AddBookDialog open={openDialog} handleClose={handleClose} />
     </Drawer>
   );
 }

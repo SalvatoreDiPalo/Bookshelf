@@ -4,9 +4,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import privateRoutes from "@/routes";
 import "@/global";
 import { LogtoConfig, LogtoProvider } from "@logto/react";
-import { createTheme, ThemeProvider } from "@mui/material";
-import { indigo } from "@mui/material/colors";
-import AuthProvider from "./context/AuthProvider";
+import AppProvider from "./context/AppProvider";
 import { PrivateRoutes } from "./components/PrivateRoutes";
 import Notfound from "./pages/404";
 import Landing from "./pages/Landing";
@@ -45,29 +43,18 @@ const config: LogtoConfig = {
   endpoint: LOGTO_ENDPOINT,
   appId: LOGTO_APPID,
 };
-console.log("config", config);
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: indigo.A200,
-    },
-  },
-});
 
 root.render(
   <StrictMode>
     <LogtoProvider config={config}>
-      <ThemeProvider theme={theme}>
-        <AuthProvider>
-          <StyledEngineProvider injectFirst>
-            <RouterProvider
-              router={router}
-              fallbackElement={<div>loading...</div>}
-            />
-          </StyledEngineProvider>
-        </AuthProvider>
-      </ThemeProvider>
+      <AppProvider>
+        <StyledEngineProvider injectFirst>
+          <RouterProvider
+            router={router}
+            fallbackElement={<div>loading...</div>}
+          />
+        </StyledEngineProvider>
+      </AppProvider>
     </LogtoProvider>
   </StrictMode>,
 );

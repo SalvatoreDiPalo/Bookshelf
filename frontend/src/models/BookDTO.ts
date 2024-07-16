@@ -4,9 +4,9 @@ import { PublisherDTO } from "./PublisherDTO";
 export interface BookDTO {
   isbn: string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   publishedDate: string;
-  description: string;
+  description?: string;
   pageCount: number;
   language?: string;
   createdAt?: Date;
