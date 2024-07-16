@@ -6,6 +6,7 @@ import { Publisher } from "../models/entity/Publisher-entity";
 import { User } from "../models/entity/User-entity";
 import { State } from "../models/entity/State-entity";
 import { Book } from "../models/entity/Book-entity";
+import { UserBookState } from "../models/entity/UserBookState-entity";
 
 export const dependencyInjectorLoader = (dataSource: DataSource) => {
   try {
@@ -23,6 +24,11 @@ export const dependencyInjectorLoader = (dataSource: DataSource) => {
 
     const stateRepository = dataSource.getRepository(State).extend({});
     Container.set("StateRepository", stateRepository);
+
+    const userBookStateRepository = dataSource
+      .getRepository(UserBookState)
+      .extend({});
+    Container.set("UserBookStateRepository", userBookStateRepository);
 
     Container.set("logger", LoggerInstance);
 

@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from "typeorm";
-import { UserBookStates } from "./UserBookStates-entity";
+import { UserBookState } from "./UserBookState-entity";
 import { State } from "./State-entity";
 
 @Entity()
@@ -32,6 +32,6 @@ export class User {
   @OneToMany(() => State, (state) => state.user)
   states?: State[];
 
-  @OneToMany(() => UserBookStates, (userBookStates) => userBookStates.user)
-  userBookStates?: UserBookStates[];
+  @OneToMany(() => UserBookState, (userBookStates) => userBookStates.user)
+  userBookStates?: UserBookState[];
 }

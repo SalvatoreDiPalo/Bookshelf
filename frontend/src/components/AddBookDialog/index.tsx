@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
@@ -10,7 +9,6 @@ import {
   FormHelperText,
   Input,
   LinearProgress,
-  Typography,
   useFormControl,
   useMediaQuery,
   useTheme,
@@ -20,7 +18,9 @@ import * as ISBN from "isbn3";
 import { axiosInstance } from "@/utils/axios";
 import { BASE_URL } from "@/utils/const";
 import { BookDTO } from "@/models/BookDTO";
-import Grid from "@mui/material/Unstable_Grid2";
+import BookInformation from "./BookInformation";
+import { ExistsDTO } from "@/models/ExistsDTO";
+import { useAppContext } from "@/context/AppProvider";
 
 interface AddBookDialogProps {
   open: boolean;
@@ -51,12 +51,14 @@ export default function AddBookDialog({
   open,
   handleClose,
 }: AddBookDialogProps) {
+  const theme = useTheme();
+  const { updateLoading } = useAppContext();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [isbn, setIsbn] = useState<string>("");
   const [isValid, setIsValid] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<BookDTO>();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const [existsBook, setExistsBook] = useState<boolean>(true);
 
   const fetchBook = async () => {
     setIsLoading(true);
@@ -64,32 +66,36 @@ export default function AddBookDialog({
       `${BASE_URL}/api/books/${isbn}`,
     );
     setData(response.data);
+    await checkBook();
     setIsLoading(false);
   };
 
+  const checkBook = async () => {
+    const response = await axiosInstance<ExistsDTO>(
+      `${BASE_URL}/api/books/${isbn}/check-shelf`,
+    );
+    setExistsBook(response.data.exists);
+  };
+
+  const addBookToPersonalShelf = async () => {
+    updateLoading!();
+    const response = await axiosInstance<ExistsDTO>(
+      `${BASE_URL}/api/books/${isbn}`,
+      { method: "POST" },
+    );
+    updateLoading!();
+    console.log("Response", response);
+    handleClose();
+  };
+
   return (
-    <Dialog
-      open={open}
-      fullScreen={fullScreen}
-      onClose={handleClose}
-      PaperProps={{
-        component: "form",
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          const formData = new FormData(event.currentTarget);
-          const formJson = Object.fromEntries((formData as any).entries());
-          const email = formJson.email;
-          console.log(email);
-          handleClose();
-        },
-      }}
-    >
+    <Dialog open={open} fullScreen={fullScreen} onClose={handleClose}>
       {isLoading && <LinearProgress />}
       <DialogTitle>Add Book</DialogTitle>
       <DialogContent>
         <DialogContentText>Add a book by searching by ISBN:</DialogContentText>
 
-        <FormControl sx={{ width: "25ch" }}>
+        <FormControl className="mb-2 w-[25ch]">
           <Input
             required
             margin="dense"
@@ -107,61 +113,13 @@ export default function AddBookDialog({
           <MyFormHelperText isValueValid={isValid} />
         </FormControl>
 
-        {data && (
-          <Grid container columns={12}>
-            <Grid
-              xs={12}
-              md={6}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-            >
-              <Box className="relative w-[200px]">
-                <img
-                  srcSet={`https://loremflickr.com/240/280/book`}
-                  src={`https://loremflickr.com/240/280/book`}
-                  alt={"Book"}
-                  loading="lazy"
-                  width={200}
-                  height={240}
-                  className="book-item-img"
-                  style={{ borderRadius: 8 }}
-                />
-              </Box>
-            </Grid>
-            <Grid xs={12} md={6}>
-              <Typography variant="h6">{data.title}</Typography>
-              {data.subtitle && (
-                <Typography variant="subtitle1" gutterBottom>
-                  {data.subtitle}
-                </Typography>
-              )}
-              <Typography variant="subtitle2" noWrap>
-                {data.authors.map((author) => author.name)}
-              </Typography>
-              {data.publisher && (
-                <Typography variant="caption" noWrap gutterBottom>
-                  {data.publisher.name}
-                </Typography>
-              )}
-              <Typography
-                variant="body2"
-                gutterBottom
-                sx={{
-                  display: "-webkit-box",
-                  overflow: "hidden",
-                  WebkitBoxOrient: "vertical",
-                  WebkitLineClamp: 9,
-                }}
-              >
-                {data.description}
-              </Typography>
-            </Grid>
-          </Grid>
-        )}
+        <BookInformation data={data} />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
+        {!existsBook && (
+          <Button onClick={addBookToPersonalShelf}>Add to Collection</Button>
+        )}
         <Button onClick={fetchBook} disabled={!isValid}>
           Search
         </Button>

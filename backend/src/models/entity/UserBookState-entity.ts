@@ -11,7 +11,7 @@ import { Book } from "./Book-entity";
 
 @Entity()
 @Index(["userId", "stateId", "bookId"], { unique: true })
-export class UserBookStates {
+export class UserBookState {
   @PrimaryGeneratedColumn()
   id?: number;
 

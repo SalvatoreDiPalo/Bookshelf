@@ -6,7 +6,7 @@ import {
   OneToMany,
   Index,
 } from "typeorm";
-import { UserBookStates } from "./UserBookStates-entity";
+import { UserBookState } from "./UserBookState-entity";
 import { User } from "./User-entity";
 
 @Entity()
@@ -27,6 +27,6 @@ export class State {
   @ManyToOne(() => User, (user) => user.states, { nullable: false })
   user?: User;
 
-  @OneToMany(() => UserBookStates, (userBookStates) => userBookStates.state)
-  userBookStates?: UserBookStates[];
+  @OneToMany(() => UserBookState, (userBookStates) => userBookStates.state)
+  userBookStates?: UserBookState[];
 }

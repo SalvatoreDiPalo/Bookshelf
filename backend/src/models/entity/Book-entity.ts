@@ -12,7 +12,7 @@ import {
   ManyToOne,
 } from "typeorm";
 import { Author } from "./Author-entity";
-import { UserBookStates } from "./UserBookStates-entity";
+import { UserBookState } from "./UserBookState-entity";
 import { Publisher } from "./Publisher-entity";
 
 @Entity()
@@ -58,6 +58,6 @@ export class Book {
   @JoinTable()
   authors: Author[];
 
-  @OneToMany(() => UserBookStates, (userBookStates) => userBookStates.book)
-  userBookStates?: UserBookStates[];
+  @OneToMany(() => UserBookState, (userBookStates) => userBookStates.book)
+  userBookStates?: UserBookState[];
 }

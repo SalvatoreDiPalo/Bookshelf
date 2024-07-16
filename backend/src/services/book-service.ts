@@ -11,7 +11,7 @@ import { PaginateDTO } from "../models/dto/paginate-dto";
 import { Volume } from "../models/google-volumes";
 import { User } from "../models/entity/User-entity";
 import { Book } from "../models/entity/Book-entity";
-import { UserBookStates } from "../models/entity/UserBookStates-entity";
+import { UserBookState } from "../models/entity/UserBookState-entity";
 
 @Service()
 export default class BookService {
@@ -23,6 +23,8 @@ export default class BookService {
     private readonly publisherRepository: Repository<Publisher>,
     @Inject("UserRepository")
     private readonly userRepository: Repository<User>,
+    @Inject("UserBookStateRepository")
+    private readonly userBookStateRepository: Repository<UserBookState>,
     @Inject() private readonly googleService: GoogleService,
     @Inject("logger") private readonly logger
   ) {}
@@ -64,6 +66,29 @@ export default class BookService {
     return resultDTO;
   }
 
+  public async checkIsbnInPersonalShelf(
+    user: CurrentUser,
+    isbn: string
+  ): Promise<boolean> {
+    let exists: boolean = await this.bookRepository.exists({
+      where: {
+        userBookStates: {
+          user: {
+            userId: user.sub,
+          },
+        },
+        isbn: isbn,
+      },
+    });
+    this.logger.debug(
+      "Exists book with isbn=%s books associated to user %s",
+      isbn,
+      user.sub
+    );
+
+    return exists;
+  }
+
   public async addBookToShelf(
     user: CurrentUser,
     isbn: string
@@ -81,20 +106,31 @@ export default class BookService {
       throw new HttpException(404, "The user could not be found.");
     }
     this.logger.debug("User founded: %o", dbUser.username);
-    const userBookStates: UserBookStates[] = book.userBookStates || [];
+
     this.logger.debug(
       "Current users associated to this book: %s",
-      userBookStates.length
+      book.userBookStates ?? [].length
     );
-    userBookStates.push({
+
+    const alreadyExistsInShelf = await this.userBookStateRepository.exists({
+      where: {
+        userId: dbUser.id,
+        bookId: book.id,
+      },
+    });
+
+    if (alreadyExistsInShelf) {
+      this.logger.error("Book already exists in shelf");
+      throw new HttpException(400, "Book already exists in shelf");
+    }
+
+    const userBookState = await this.userBookStateRepository.save({
+      bookId: book.id,
       book: book,
       isFavorite: false,
-      user: dbUser,
       userId: dbUser.id,
     });
-    book.userBookStates = userBookStates;
-    await this.bookRepository.save(book);
-    this.logger.debug("User x Book done");
+    this.logger.debug("Added Book to the shelf %o", userBookState);
     return this.mapBook(book);
   }
 

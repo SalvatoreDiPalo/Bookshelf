@@ -53,12 +53,14 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
   const navigate = useNavigate();
   const theme = useTheme();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const [randomId, setRandomId] = useState<number>(Date.now());
 
   const handleClickOpen = () => {
     setOpenDialog(true);
   };
 
   const handleClose = () => {
+    setRandomId(Date.now());
     setOpenDialog(false);
   };
 
@@ -114,7 +116,11 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
           </ListItemButton>
         </ListItem>
       </List>
-      <AddBookDialog open={openDialog} handleClose={handleClose} />
+      <AddBookDialog
+        key={randomId}
+        open={openDialog}
+        handleClose={handleClose}
+      />
     </Drawer>
   );
 }
