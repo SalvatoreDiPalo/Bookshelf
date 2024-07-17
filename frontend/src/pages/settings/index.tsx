@@ -11,20 +11,14 @@ import { reorder } from "@/utils/helpers";
 import { DropResult } from "@hello-pangea/dnd";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/utils/axios";
-import { useAppContext } from "@/context/AppProvider";
 
 export default function Settings() {
-  const { updateLoading } = useAppContext();
-
   const [items, setItems] = useState<StateDTO[]>([]);
   const [checked, setChecked] = useState(false);
 
   const fetchData = async () => {
-    updateLoading!();
     const response = await axiosInstance<StateDTO[]>(`/api/states`);
-    console.log("Response", response);
     setItems(response.data);
-    updateLoading!();
   };
 
   useEffect(() => {
@@ -68,14 +62,11 @@ export default function Settings() {
   };
 
   const saveStates = async () => {
-    updateLoading!();
     const response = await axiosInstance<StateDTO[]>(`/api/states`, {
       method: "POST",
       data: items,
     });
-    console.log("Response Post", response);
     setItems(response.data);
-    updateLoading!();
   };
 
   return (

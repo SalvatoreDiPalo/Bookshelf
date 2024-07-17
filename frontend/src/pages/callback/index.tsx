@@ -6,8 +6,7 @@ const Callback = () => {
   const navigate = useNavigate();
   const { signIn } = useAppContext();
 
-  const { isLoading, isAuthenticated } = useHandleSignInCallback(() => {
-    console.log("callback IsAuthenticated: ", isAuthenticated);
+  const { isLoading } = useHandleSignInCallback(() => {
     //fetchData();
     signIn!();
     navigate("/home");

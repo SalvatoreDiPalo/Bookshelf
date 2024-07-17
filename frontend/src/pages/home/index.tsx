@@ -110,7 +110,6 @@ export default function Home() {
   };
 
   const getBooks = async (page: number = 1, sortBy: string = "title") => {
-    console.log("RequestApi", page, sortBy);
     fetchBooks(page, sortBy);
   };
 

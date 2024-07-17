@@ -1,4 +1,3 @@
-import { useAppContext } from "@/context/AppProvider";
 import { BookProps } from ".";
 import { axiosInstance } from "@/utils/axios";
 import { BookDTO } from "@/models/BookDTO";
@@ -20,13 +19,9 @@ export default function CustomMenu({
   handleClose,
   updateElement,
 }: CustomMenuProps) {
-  const { updateLoading } = useAppContext();
-
   const updateBook = async (url: string, method: Method, params?: any) => {
-    updateLoading!();
     const response = await axiosInstance<BookDTO>(url, { method, params });
     updateElement(response.data);
-    updateLoading!();
   };
 
   const updateFavoriteFlag = () => {
