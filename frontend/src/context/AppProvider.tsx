@@ -49,42 +49,42 @@ const AppProvider = ({ children }: Props) => {
     return initialTheme as PaletteMode;
   });
 
-  const themeObject = useMemo(
-    () =>
-      createTheme({
-        palette: {
-          mode: theme,
-          primary: {
-            main: indigo.A200,
+  const themeObject = useMemo(() => {
+    const secondBackground = theme == "light" ? "#F4F5F9" : "#272727";
+    return createTheme({
+      palette: {
+        mode: theme,
+        primary: {
+          main: indigo.A200,
+          secondBackground: secondBackground,
+        },
+      },
+      components: {
+        MuiAppBar: {
+          styleOverrides: {
+            root: {
+              backgroundColor: theme == "light" ? "#fff" : "#000",
+              color: indigo.A200,
+            },
           },
         },
-        components: {
-          MuiAppBar: {
-            styleOverrides: {
-              root: {
-                backgroundColor: theme == "light" ? "#fff" : "#000",
-                color: indigo.A200,
-              },
+        MuiDrawer: {
+          styleOverrides: {
+            paper: {
+              backgroundColor: secondBackground,
             },
           },
-          MuiDrawer: {
-            styleOverrides: {
-              paper: {
-                backgroundColor: theme == "light" ? "#F4F5F9" : "#272727",
-              },
-            },
-          },
-          MuiTabs: {
-            styleOverrides: {
-              root: {
-                backgroundColor: theme == "light" ? "#F4F5F9" : "#272727",
-              },
-            },
-          }
         },
-      }),
-    [theme],
-  );
+        MuiTabs: {
+          styleOverrides: {
+            root: {
+              backgroundColor: secondBackground,
+            },
+          },
+        },
+      },
+    });
+  }, [theme]);
 
   function getThemeFromLocalStorage() {
     const savedTheme = localStorage.getItem("theme");
@@ -109,7 +109,7 @@ const AppProvider = ({ children }: Props) => {
     const getWhoAmI = async () => {
       try {
         let token = await getAccessToken(BASE_URL);
-        const response = await axios<UserDTO>(`${BASE_URL}/api/users/profile`, {
+        const response = await axios<UserDTO>(`/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -154,7 +154,7 @@ const AppProvider = ({ children }: Props) => {
     signIn,
     signOut,
     updateTheme: toggleTheme,
-    updateLoading: handleLoading
+    updateLoading: handleLoading,
   };
 
   if (authStatus === AuthStatus.Loading) {

@@ -10,7 +10,6 @@ import StateList from "./StateList";
 import { reorder } from "@/utils/helpers";
 import { DropResult } from "@hello-pangea/dnd";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "@/utils/const";
 import { axiosInstance } from "@/utils/axios";
 import { useAppContext } from "@/context/AppProvider";
 
@@ -22,7 +21,7 @@ export default function Settings() {
 
   const fetchData = async () => {
     updateLoading!();
-    const response = await axiosInstance<StateDTO[]>(`${BASE_URL}/api/states`);
+    const response = await axiosInstance<StateDTO[]>(`/api/states`);
     console.log("Response", response);
     setItems(response.data);
     updateLoading!();
@@ -33,7 +32,6 @@ export default function Settings() {
   }, []);
 
   const onDragEnd = ({ destination, source }: DropResult) => {
-    console.log("Destination", destination, "Source", source);
     // dropped outside the list
     if (!destination) return;
 
@@ -71,7 +69,7 @@ export default function Settings() {
 
   const saveStates = async () => {
     updateLoading!();
-    const response = await axiosInstance<StateDTO[]>(`${BASE_URL}/api/states`, {
+    const response = await axiosInstance<StateDTO[]>(`/api/states`, {
       method: "POST",
       data: items,
     });

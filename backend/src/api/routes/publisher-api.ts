@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import Container from "typedi";
 import { Logger } from "winston";
-import { Joi, celebrate } from "celebrate";
 import PublisherService from "../../services/publisher-service";
+import { publishersIdBody } from "../validators/publisher-validators";
 
 const route = Router();
 
@@ -11,9 +11,7 @@ export default (app: Router) => {
 
   route.post(
     "/",
-    celebrate({
-      body: Joi.array().items(Joi.number()),
-    }),
+    publishersIdBody,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
       logger.debug("Calling GetPublishers endpoint with body: %o", req.body);

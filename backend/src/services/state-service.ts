@@ -4,12 +4,15 @@ import { StateDTO } from "../models/dto/state-dto";
 import { HttpException } from "../models/exceptions/http-exception";
 import { State } from "../models/entity/State-entity";
 import { User } from "../models/entity/User-entity";
+import { UserBookState } from "../models/entity/UserBookState-entity";
 
 @Service()
 export default class StateService {
   constructor(
     @Inject("StateRepository")
     private readonly stateRepository: Repository<State>,
+    @Inject("UserBookStateRepository")
+    private readonly userBookStateRepository: Repository<UserBookState>,
     @Inject("logger") private readonly logger
   ) {}
 
@@ -37,6 +40,9 @@ export default class StateService {
           id: user.id,
         },
       },
+      relations: {
+        userBookStates: true
+      }
     });
 
     const finalStates: StateDTO[] = [];
@@ -56,7 +62,7 @@ export default class StateService {
           );
         }
       }
-      
+
       savedState = await this.stateRepository.save({
         id: savedState ? savedState.id : undefined,
         name: state.name,
@@ -97,6 +103,19 @@ export default class StateService {
       return;
     }
     this.logger.debug("Needs to remove %o", statesFromDb);
+
+    const userBookStates = statesFromDb
+      .flatMap((state: State) => state.userBookStates ?? [])
+      .map((userBookState: UserBookState) => {
+        userBookState.state = null;
+        userBookState.stateId = null;
+        return userBookState;
+      });
+    if (userBookStates) {
+      this.logger.debug("Removing state from UserBookStates table: %o", userBookStates);
+      await this.userBookStateRepository.save(userBookStates);
+    }
+
     await this.stateRepository.delete(statesFromDb.map((state) => state.id));
   }
 

@@ -2,7 +2,7 @@ import { Inject, Service } from "typedi";
 import { BookDTO } from "../models/dto/book-dto";
 import { Author } from "../models/entity/Author-entity";
 import { Publisher } from "../models/entity/Publisher-entity";
-import { In, Repository } from "typeorm";
+import { createQueryBuilder, In, Repository } from "typeorm";
 import { CurrentUser } from "../models/current-user";
 import GoogleService from "./google";
 import { ResultDTO } from "../models/dto/result-dto";
@@ -12,6 +12,9 @@ import { Volume } from "../models/google-volumes";
 import { User } from "../models/entity/User-entity";
 import { Book } from "../models/entity/Book-entity";
 import { UserBookState } from "../models/entity/UserBookState-entity";
+import { State } from "../models/entity/State-entity";
+import { config } from "../config";
+import { StatsDTO } from "../models/dto/stats-dto";
 
 @Service()
 export default class BookService {
@@ -25,6 +28,8 @@ export default class BookService {
     private readonly userRepository: Repository<User>,
     @Inject("UserBookStateRepository")
     private readonly userBookStateRepository: Repository<UserBookState>,
+    @Inject("StateRepository")
+    private readonly stateRepository: Repository<State>,
     @Inject() private readonly googleService: GoogleService,
     @Inject("logger") private readonly logger
   ) {}
@@ -32,7 +37,9 @@ export default class BookService {
   public async getPersonalShelf(
     user: CurrentUser,
     paginate: PaginateDTO,
-    sort: string = "title"
+    sort: string = "title",
+    isFavorite?: boolean,
+    stateId?: number
   ): Promise<ResultDTO<BookDTO>> {
     const skip = (paginate.page - 1) * paginate.pageSize;
     let books: [Book[], number] = await this.bookRepository.findAndCount({
@@ -41,6 +48,8 @@ export default class BookService {
           user: {
             userId: user.sub,
           },
+          ...(isFavorite && { isFavorite: true }),
+          ...(stateId && { stateId: stateId }),
         },
       },
       relations: {
@@ -65,6 +74,48 @@ export default class BookService {
     };
 
     return resultDTO;
+  }
+
+  public async getPersonalShelfStats(user: CurrentUser): Promise<StatsDTO> {
+    const dbUser = await this.getUser(user);
+    const finishedState: State = await this.stateRepository.findOne({
+      where: {
+        user: {
+          id: dbUser.id,
+        },
+        name: config.defaultStates.finished,
+      },
+    });
+
+    const { finishedNumber } = await this.userBookStateRepository
+      .createQueryBuilder("userBookState")
+      .select("count(userBookState.stateId)", "finishedNumber")
+      .where("userBookState.stateId = :stateId", { stateId: finishedState.id })
+      .groupBy("userBookState.stateId")
+      .getRawOne();
+
+    this.logger.debug("Finished books per user: %o", finishedNumber);
+
+    const booksAdded = await this.userBookStateRepository.count({
+      where: {
+        userId: dbUser.id,
+      },
+    });
+    this.logger.debug("Added books per user: %o", booksAdded);
+
+    const favoriteBooks = await this.userBookStateRepository.count({
+      where: {
+        userId: dbUser.id,
+        isFavorite: true,
+      },
+    });
+    this.logger.debug("Favorite books per user: %o", favoriteBooks);
+
+    return {
+      booksAdded: booksAdded,
+      favoriteBooks: favoriteBooks,
+      finishedBooks: Number(finishedNumber),
+    };
   }
 
   public async checkIsbnInPersonalShelf(
@@ -95,36 +146,9 @@ export default class BookService {
     isbn: string,
     isFavorite: boolean
   ): Promise<BookDTO> {
-    let book = await this.findBookByIsbn(isbn);
-    if (book === null) {
-      throw new HttpException(404, "The book could not be found.");
-    }
-    this.logger.debug("Book founded: %s", book.title);
-    const dbUser: User = await this.userRepository.findOneBy({
-      userId: user.sub,
-    });
-    if (!dbUser) {
-      this.logger.error("Could not found the user");
-      throw new HttpException(404, "The user could not be found.");
-    }
-    this.logger.debug("User founded: %o", dbUser.username);
+    const [dbUser, book] = await this.getUserAndBook(user, isbn);
+    const userBookState = await this.getUserBookState(dbUser, book);
 
-    this.logger.debug(
-      "Current users associated to this book: %s",
-      book.userBookStates ?? [].length
-    );
-
-    const userBookState = await this.userBookStateRepository.findOne({
-      where: {
-        userId: dbUser.id,
-        bookId: book.id,
-      },
-    });
-
-    if (!userBookState) {
-      this.logger.error("Book not exists in shelf");
-      throw new HttpException(400, "Book not exists in shelf");
-    }
     userBookState.isFavorite = isFavorite;
     await this.userBookStateRepository.save(userBookState);
     this.logger.debug(
@@ -132,6 +156,50 @@ export default class BookService {
       isFavorite,
       book.isbn
     );
+    book.userBookStates = [userBookState];
+
+    return this.mapBook(book);
+  }
+
+  public async updateBookStatusInShelf(
+    user: CurrentUser,
+    isbn: string,
+    stateId: number
+  ): Promise<BookDTO> {
+    const [dbUser, book] = await this.getUserAndBook(user, isbn);
+    const userBookState = await this.getUserBookState(dbUser, book);
+
+    const stateFromDb = await this.stateRepository.findOne({
+      where: {
+        id: stateId,
+        user: {
+          id: dbUser.id,
+        },
+      },
+    });
+    if (!stateFromDb) {
+      throw new HttpException(404, "The state could not be found.");
+    }
+
+    userBookState.stateId = stateFromDb.id;
+    await this.userBookStateRepository.save(userBookState);
+    book.userBookStates = [userBookState];
+    this.logger.debug("Set book with stateId=%o", stateId, book.isbn);
+    return this.mapBook(book);
+  }
+
+  public async removeBookStatusInShelf(
+    user: CurrentUser,
+    isbn: string
+  ): Promise<BookDTO> {
+    const [dbUser, book] = await this.getUserAndBook(user, isbn);
+    const userBookState = await this.getUserBookState(dbUser, book);
+
+    userBookState.stateId = null;
+    userBookState.state = null;
+    await this.userBookStateRepository.save(userBookState);
+    this.logger.debug("Remove stateId from book %s", book.isbn);
+    book.userBookStates = [userBookState];
     return this.mapBook(book);
   }
 
@@ -139,24 +207,7 @@ export default class BookService {
     user: CurrentUser,
     isbn: string
   ): Promise<BookDTO> {
-    let book = await this.findBookByIsbn(isbn);
-    if (book === null) {
-      throw new HttpException(404, "The book could not be found.");
-    }
-    this.logger.debug("Book founded: %s", book.title);
-    const dbUser: User = await this.userRepository.findOneBy({
-      userId: user.sub,
-    });
-    if (!dbUser) {
-      this.logger.error("Could not found the user");
-      throw new HttpException(404, "The user could not be found.");
-    }
-    this.logger.debug("User founded: %o", dbUser.username);
-
-    this.logger.debug(
-      "Current users associated to this book: %s",
-      book.userBookStates ?? [].length
-    );
+    const [dbUser, book] = await this.getUserAndBook(user, isbn);
 
     const alreadyExistsInShelf = await this.userBookStateRepository.exists({
       where: {
@@ -255,6 +306,14 @@ export default class BookService {
   }
 
   private mapBook(book: Book): BookDTO {
+    const isFavorite =
+      book.userBookStates && book.userBookStates.length
+        ? book.userBookStates[0].isFavorite
+        : false;
+    const stateId =
+      book.userBookStates && book.userBookStates.length
+        ? book.userBookStates[0].stateId
+        : undefined;
     return {
       isbn: book.isbn,
       title: book.title,
@@ -277,10 +336,8 @@ export default class BookService {
           name: author.name,
         };
       }),
-      isFavorite:
-        book.userBookStates && book.userBookStates.length
-          ? book.userBookStates[0].isFavorite
-          : false,
+      isFavorite,
+      stateId,
     } as BookDTO;
   }
 
@@ -338,5 +395,51 @@ export default class BookService {
     this.logger.debug("Returning %o", authors);
 
     return authors;
+  }
+
+  private async getUserAndBook(
+    user: CurrentUser,
+    isbn: string
+  ): Promise<[User, Book]> {
+    const book = await this.findBookByIsbn(isbn);
+    if (book === null) {
+      throw new HttpException(404, "The book could not be found.");
+    }
+    this.logger.debug("Book founded: %s", book.title);
+
+    const dbUser: User = await this.getUser(user);
+
+    return [dbUser, book];
+  }
+
+  private async getUser(user: CurrentUser) {
+    const dbUser: User = await this.userRepository.findOneBy({
+      userId: user.sub,
+    });
+    if (!dbUser) {
+      this.logger.error("Could not found the user");
+      throw new HttpException(404, "The user could not be found.");
+    }
+    this.logger.debug("User founded: %o", dbUser.username);
+    return dbUser;
+  }
+
+  private async getUserBookState(
+    dbUser: User,
+    book: Book
+  ): Promise<UserBookState> {
+    const userBookState = await this.userBookStateRepository.findOne({
+      where: {
+        userId: dbUser.id,
+        bookId: book.id,
+      },
+    });
+
+    if (!userBookState) {
+      this.logger.error("Book not exists in shelf");
+      throw new HttpException(400, "Book not exists in shelf");
+    }
+
+    return userBookState;
   }
 }

@@ -1,30 +1,18 @@
 import { BookDTO } from "@/models/BookDTO";
-import {
-  Box,
-  Divider,
-  IconButton,
-  Menu,
-  MenuItem,
-  Tooltip,
-  Typography,
-  styled,
-} from "@mui/material";
+import { Box, IconButton, Tooltip, Typography, styled } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
 import { StateDTO } from "@/models/StateDTO";
-import { axiosInstance } from "@/utils/axios";
-import { BASE_URL } from "@/utils/const";
-import { useAppContext } from "@/context/AppProvider";
+import CustomMenu from "./BookMenu";
 
-interface BookProps {
+export interface BookProps {
   item: BookDTO;
   states: StateDTO[];
+  updateElement: (item: BookDTO) => void;
 }
 
-export default function BookItem({ item, states }: BookProps) {
+export default function BookItem({ item, states, updateElement }: BookProps) {
   const authors = item.authors.map((author) => author.name).join(" & ");
-
-  const { updateLoading } = useAppContext();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -35,26 +23,6 @@ export default function BookItem({ item, states }: BookProps) {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const addToFavorities = async () => {
-    updateLoading!();
-    const response = await axiosInstance<BookDTO>(
-      `${BASE_URL}/api/books/${item.isbn}/favorite`,
-      { method: "POST" },
-    );
-    // TODO update parent list or item
-    updateLoading!();
-  };
-
-  const removeFromFavorities = async () => {
-    updateLoading!();
-    const response = await axiosInstance<BookDTO>(
-      `${BASE_URL}/api/books/${item.isbn}/favorite`,
-      { method: "DELETE" },
-    );
-    // TODO update parent list or item
-    updateLoading!();
   };
 
   return (
@@ -89,59 +57,14 @@ export default function BookItem({ item, states }: BookProps) {
         </IconButton>
       </Box>
 
-      <Menu
-        id="basic-menu"
+      <CustomMenu
+        item={item}
         anchorEl={anchorEl}
+        handleClose={handleClose}
         open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-              "& .MuiAvatar-root": {
-                width: 32,
-                height: 32,
-                ml: -0.5,
-                mr: 1,
-              },
-              "&::before": {
-                content: '""',
-                display: "block",
-                position: "absolute",
-                top: 0,
-                left: 14,
-                width: 10,
-                height: 10,
-                bgcolor: "background.paper",
-                transform: "translateY(-50%) rotate(45deg)",
-                zIndex: 0,
-              },
-            },
-          },
-        }}
-      >
-        {item.isFavorite ? (
-          <MenuItem onClick={removeFromFavorities}>
-            Remove from Favorities
-          </MenuItem>
-        ) : (
-          <MenuItem onClick={addToFavorities}>Add to Favorities</MenuItem>
-        )}
-        <Divider sx={{ my: 0.5 }} />
-        {states &&
-          states.map((state) => (
-            <MenuItem key={state.id} onClick={handleClose}>
-              Add to "{state.name}"
-            </MenuItem>
-          ))}
-        <Divider sx={{ my: 0.5 }} />
-        <MenuItem onClick={handleClose}>Delete</MenuItem>
-      </Menu>
+        states={states}
+        updateElement={updateElement}
+      />
 
       <Tooltip title={authors}>
         <Typography variant="subtitle1" gutterBottom noWrap width={210}>

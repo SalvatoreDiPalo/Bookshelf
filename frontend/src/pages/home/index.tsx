@@ -14,7 +14,7 @@ import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import { BookDTO } from "@/models/BookDTO";
 import { ResultDTO } from "@/models/ResultDTO";
 import { StateDTO } from "@/models/StateDTO";
-import { BASE_URL, ITEMS_PER_PAGE } from "@/utils/const";
+import { ITEMS_PER_PAGE } from "@/utils/const";
 import { axiosInstance } from "@/utils/axios";
 import BookList from "./components/book-list";
 
@@ -48,24 +48,26 @@ export default function Home() {
   const [states, setStates] = useState<StateDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const fetchBooks = async (page: number = 1, sortBy: string = "title") => {
+  const fetchBooks = async (
+    page: number = 1,
+    sortBy: string = "title",
+    otherQueryOptions?: FetchBookProp,
+  ) => {
     setIsLoading(true);
-    const response = await axiosInstance<ResultDTO<BookDTO>>(
-      `${BASE_URL}/api/books`,
-      {
-        params: {
-          page: page,
-          pageSize: ITEMS_PER_PAGE,
-          sortBy: sortBy,
-        },
+    const response = await axiosInstance<ResultDTO<BookDTO>>(`/api/books`, {
+      params: {
+        page: page,
+        pageSize: ITEMS_PER_PAGE,
+        sortBy: sortBy,
+        ...otherQueryOptions,
       },
-    );
+    });
     setData(response.data);
     setIsLoading(false);
   };
 
   const fetchStates = async () => {
-    const response = await axiosInstance<StateDTO[]>(`${BASE_URL}/api/states`);
+    const response = await axiosInstance<StateDTO[]>(`/api/states`);
     setStates(response.data);
   };
 
@@ -76,6 +78,18 @@ export default function Home() {
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
+    // Favorities
+    switch (newValue) {
+      case 0:
+        fetchBooks(page, sortBy);
+        break;
+      case 1:
+        fetchBooks(page, sortBy, { isFavorite: true });
+        break;
+      default:
+        fetchBooks(page, sortBy, { stateId: states[newValue - 2].id });
+        break;
+    }
   };
 
   const handleSortChange = (sortBy: string) => {
@@ -139,7 +153,7 @@ export default function Home() {
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1}>
         {!isLoading ? (
-          <BookList data={data} states={states} />
+          <BookList data={data} states={states} setData={setData} />
         ) : (
           Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
             <Skeleton
@@ -165,4 +179,9 @@ export default function Home() {
       </Grid>
     </Box>
   );
+}
+
+interface FetchBookProp {
+  isFavorite?: boolean;
+  stateId?: number;
 }

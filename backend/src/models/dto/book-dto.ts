@@ -15,6 +15,7 @@ export interface BookDTO {
   bookCoverUrl?: number;
   authors: AuthorDTO[];
   groupId?: number;
+  stateId?: number;
   isFavorite?: boolean;
 }
 

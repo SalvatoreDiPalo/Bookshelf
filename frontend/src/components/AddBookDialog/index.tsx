@@ -16,7 +16,6 @@ import {
 import { useMemo, useState } from "react";
 import * as ISBN from "isbn3";
 import { axiosInstance } from "@/utils/axios";
-import { BASE_URL } from "@/utils/const";
 import { BookDTO } from "@/models/BookDTO";
 import BookInformation from "./BookInformation";
 import { ExistsDTO } from "@/models/ExistsDTO";
@@ -63,9 +62,7 @@ export default function AddBookDialog({
   const fetchBook = async () => {
     setExistsBook(true);
     setIsLoading(true);
-    const response = await axiosInstance<BookDTO>(
-      `${BASE_URL}/api/books/${isbn}`,
-    );
+    const response = await axiosInstance<BookDTO>(`/api/books/isbn/${isbn}`);
     setData(response.data);
     await checkBook();
     setIsLoading(false);
@@ -73,17 +70,16 @@ export default function AddBookDialog({
 
   const checkBook = async () => {
     const response = await axiosInstance<ExistsDTO>(
-      `${BASE_URL}/api/books/${isbn}/check-shelf`,
+      `/api/books/isbn/${isbn}/check-shelf`,
     );
     setExistsBook(response.data.exists);
   };
 
   const addBookToPersonalShelf = async () => {
     updateLoading!();
-    const response = await axiosInstance<ExistsDTO>(
-      `${BASE_URL}/api/books/${isbn}`,
-      { method: "POST" },
-    );
+    const response = await axiosInstance<ExistsDTO>(`/api/books/isbn/${isbn}`, {
+      method: "POST",
+    });
     updateLoading!();
     console.log("Response", response);
     handleClose();

@@ -3,7 +3,12 @@ import { verifyAuthFromRequest } from "../middlewares/auth_middleware";
 import Container from "typedi";
 import BookService from "../../services/book-service";
 import { Logger } from "winston";
-import { Joi, celebrate } from "celebrate";
+import {
+  isbnAndStateIdParams,
+  isbnParam,
+  isFavoriteQuery,
+  searchQuery,
+} from "../validators/book-validators";
 
 const route = Router();
 
@@ -11,12 +16,8 @@ export default (app: Router) => {
   app.use("/books", route);
 
   route.get(
-    "/:isbn",
-    celebrate({
-      params: {
-        isbn: Joi.string().required(),
-      },
-    }),
+    "/isbn/:isbn",
+    isbnParam,
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
@@ -33,12 +34,8 @@ export default (app: Router) => {
   );
 
   route.post(
-    "/:isbn",
-    celebrate({
-      params: {
-        isbn: Joi.string().required(),
-      },
-    }),
+    "/isbn/:isbn",
+    isbnParam,
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
@@ -62,13 +59,7 @@ export default (app: Router) => {
 
   route.get(
     "/",
-    celebrate({
-      query: {
-        page: Joi.number().positive().default(1),
-        pageSize: Joi.number().positive().default(20),
-        sortBy: Joi.string().default("title"),
-      },
-    }),
+    searchQuery,
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
@@ -81,7 +72,11 @@ export default (app: Router) => {
             page: Number(req.query.page),
             pageSize: Number(req.query.pageSize),
           },
-          String(req.query.sortBy)
+          String(req.query.sortBy),
+          req.query.isFavorite
+            ? Boolean(req.query.isFavorite ?? "false")
+            : undefined,
+          req.query.stateId ? Number(req.query.stateId ?? "0") : undefined
         );
         return res.status(200).json(bookDto);
       } catch (e) {
@@ -92,16 +87,31 @@ export default (app: Router) => {
   );
 
   route.get(
-    "/:isbn/check-shelf",
-    celebrate({
-      params: {
-        isbn: Joi.string().required(),
-      },
-    }),
+    "/stats",
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
-      logger.debug("Calling CheckPersonalShelf endpoint");
+      logger.debug("Calling getPersonalShelfStats endpoint");
+      try {
+        const bookServiceInstance = Container.get(BookService);
+        const statsDTO = await bookServiceInstance.getPersonalShelfStats(
+          req.currentUser
+        );
+        return res.status(200).json(statsDTO);
+      } catch (e) {
+        logger.error("🔥 error: %o", e);
+        return next(e);
+      }
+    }
+  );
+
+  route.get(
+    "/isbn/:isbn/check-shelf",
+    isbnParam,
+    verifyAuthFromRequest,
+    async (req: Request, res: Response, next: NextFunction) => {
+      const logger: Logger = Container.get("logger");
+      logger.debug("Calling checkIsbnInPersonalShelf endpoint");
       try {
         const bookServiceInstance = Container.get(BookService);
         const existsBookInUserShelf: boolean =
@@ -117,18 +127,15 @@ export default (app: Router) => {
     }
   );
 
-  route.post(
-    "/:isbn/favorite",
-    celebrate({
-      params: {
-        isbn: Joi.string().required(),
-      },
-    }),
+  route.patch(
+    "/isbn/:isbn/favorite",
+    isbnParam,
+    isFavoriteQuery,
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
       logger.debug(
-        "Calling AddBookToShelf endpoint with param: %o",
+        "Calling updateFavoriteBookFlag endpoint with param: %o",
         req.params.isbn
       );
       try {
@@ -136,9 +143,9 @@ export default (app: Router) => {
         const book = await bookServiceInstance.updateFavoriteBookFlag(
           req.currentUser,
           req.params.isbn,
-          true
+          Boolean(req.query.isFavorite)
         );
-        return res.status(201).json(book);
+        return res.status(200).json(book);
       } catch (e) {
         logger.error("🔥 error: %o", e);
         return next(e);
@@ -146,28 +153,48 @@ export default (app: Router) => {
     }
   );
 
-  route.delete(
-    "/:isbn/favorite",
-    celebrate({
-      params: {
-        isbn: Joi.string().required(),
-      },
-    }),
+  route.patch(
+    "/isbn/:isbn/state/:stateId",
+    isbnAndStateIdParams,
     verifyAuthFromRequest,
     async (req: Request, res: Response, next: NextFunction) => {
       const logger: Logger = Container.get("logger");
       logger.debug(
-        "Calling AddBookToShelf endpoint with param: %o",
+        "Calling updateBookStatusInShelf endpoint with params: %o",
+        req.params
+      );
+      try {
+        const bookServiceInstance = Container.get(BookService);
+        const book = await bookServiceInstance.updateBookStatusInShelf(
+          req.currentUser,
+          req.params.isbn,
+          Number(req.params.stateId ?? "-1")
+        );
+        return res.status(200).json(book);
+      } catch (e) {
+        logger.error("🔥 error: %o", e);
+        return next(e);
+      }
+    }
+  );
+
+  route.patch(
+    "/isbn/:isbn/state",
+    isbnParam,
+    verifyAuthFromRequest,
+    async (req: Request, res: Response, next: NextFunction) => {
+      const logger: Logger = Container.get("logger");
+      logger.debug(
+        "Calling removeBookStatusInShelf endpoint with param: %o",
         req.params.isbn
       );
       try {
         const bookServiceInstance = Container.get(BookService);
-        await bookServiceInstance.updateFavoriteBookFlag(
+        const book = await bookServiceInstance.removeBookStatusInShelf(
           req.currentUser,
-          req.params.isbn,
-          false
+          req.params.isbn
         );
-        return res.status(204).json();
+        return res.status(200).json(book);
       } catch (e) {
         logger.error("🔥 error: %o", e);
         return next(e);
