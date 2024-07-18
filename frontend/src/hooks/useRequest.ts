@@ -21,25 +21,20 @@ export const useRequest = <T>(
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
-    console.log("fetchData");
     try {
       let headerToken = "Bearer ";
       if (!token || token === "") {
-        console.log("Fetching token inside useRequest");
         const apiToken = await getAccessToken(BASE_URL);
         headerToken += apiToken;
       } else {
         headerToken += token;
       }
-      console.log("Token", headerToken);
       // Set the authorization header
       headerToken !== "" &&
         (client.defaults.headers.common.Authorization = headerToken);
       const response: AxiosResponse = await client(refetch);
-      console.log("Response", refetch, response);
       setData(response?.data);
     } catch (error: any) {
-      console.error("Error in useRequest", error);
       setError(error.response?.data);
     } finally {
       setIsLoading(false);

@@ -19,7 +19,6 @@ import { axiosInstance } from "@/utils/axios";
 import { BookDTO } from "@/models/BookDTO";
 import BookInformation from "./BookInformation";
 import { ExistsDTO } from "@/models/ExistsDTO";
-import { useAppContext } from "@/context/AppProvider";
 
 interface AddBookDialogProps {
   open: boolean;
@@ -34,7 +33,6 @@ function MyFormHelperText({ isValueValid }: FormHelperProps) {
   const { filled, focused } = useFormControl() || {};
 
   const errorText = useMemo(() => {
-    console.log("filled && !focused", filled && !focused);
     if (filled && !focused) {
       // Do isbn validation
       return !isValueValid ? "ISBN not valid!" : "";
@@ -51,7 +49,6 @@ export default function AddBookDialog({
   handleClose,
 }: AddBookDialogProps) {
   const theme = useTheme();
-  const { updateLoading } = useAppContext();
   const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [isbn, setIsbn] = useState<string>("");
   const [isValid, setIsValid] = useState<boolean>(false);
@@ -76,12 +73,9 @@ export default function AddBookDialog({
   };
 
   const addBookToPersonalShelf = async () => {
-    updateLoading!();
     const response = await axiosInstance<ExistsDTO>(`/api/books/isbn/${isbn}`, {
       method: "POST",
     });
-    updateLoading!();
-    console.log("Response", response);
     handleClose();
   };
 

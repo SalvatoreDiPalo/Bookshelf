@@ -28,7 +28,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "nodemon",
-    "start": "ts-node src/index.ts",
+    "start": "ts-node --files src/index.ts",
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "nodemonConfig": {

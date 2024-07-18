@@ -1,4 +1,5 @@
 import { UserDTO } from "@/models/UserDTO";
+import { AxiosInterceptor } from "@/utils/axios";
 import { BASE_URL } from "@/utils/const";
 import { useLogto } from "@logto/react";
 import {
@@ -22,14 +23,15 @@ export interface IAuth {
   authStatus?: AuthStatus;
   user?: UserDTO;
   token?: string;
+  setShowLoaderHandler: (value: boolean) => void;
   signIn?: () => void;
   signOut?: () => void;
   updateTheme?: () => void;
-  updateLoading?: () => void;
 }
 
 const defaultState: IAuth = {
   authStatus: AuthStatus.Loading,
+  setShowLoaderHandler: (value: boolean) => {},
 };
 
 type Props = {
@@ -42,7 +44,7 @@ const AppProvider = ({ children }: Props) => {
   const { isAuthenticated, getAccessToken } = useLogto();
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [user, setUser] = useState<UserDTO>();
-  const [open, setOpen] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
   const [theme, setTheme] = useState<PaletteMode>(() => {
     let initialTheme = localStorage.getItem("theme");
     initialTheme = initialTheme ? initialTheme : "light";
@@ -86,6 +88,10 @@ const AppProvider = ({ children }: Props) => {
     });
   }, [theme]);
 
+  function setShowLoaderHandler(value: boolean) {
+    setShowLoading(value);
+  }
+
   function getThemeFromLocalStorage() {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -114,7 +120,6 @@ const AppProvider = ({ children }: Props) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log("User", response.data);
         setUser(response.data);
         setAuthStatus(AuthStatus.SignedIn);
       } catch (e) {
@@ -122,12 +127,6 @@ const AppProvider = ({ children }: Props) => {
         setAuthStatus(AuthStatus.SignedOut);
       }
     };
-    console.log(
-      "AuthProvider: useEffect. isAuthenticated: ",
-      isAuthenticated,
-      "AuthStatus: ",
-      authStatus,
-    );
     setAuthStatus(AuthStatus.Loading);
     if (isAuthenticated) {
       getWhoAmI();
@@ -144,17 +143,13 @@ const AppProvider = ({ children }: Props) => {
     setAuthStatus(AuthStatus.SignedOut);
   }
 
-  const handleLoading = () => {
-    setOpen((prevValue) => !prevValue);
-  };
-
   const state: IAuth = {
     authStatus,
     user,
     signIn,
     signOut,
     updateTheme: toggleTheme,
-    updateLoading: handleLoading,
+    setShowLoaderHandler: setShowLoaderHandler,
   };
 
   if (authStatus === AuthStatus.Loading) {
@@ -164,13 +159,15 @@ const AppProvider = ({ children }: Props) => {
   return (
     <AuthContext.Provider value={state}>
       <ThemeProvider theme={themeObject}>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={open}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-        {children}
+        <AxiosInterceptor>
+          <Backdrop
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showLoading}
+          >
+            <CircularProgress color="inherit" />
+          </Backdrop>
+          {children}
+        </AxiosInterceptor>
       </ThemeProvider>
     </AuthContext.Provider>
   );
