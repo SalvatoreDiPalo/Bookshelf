@@ -1,8 +1,8 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { User } from "../user.entity";
-import { userRepositoryInstance } from "../user.repository";
+import { User } from "../../common/user/user.entity";
+import { userRepositoryInstance } from "../../common/user/user.repository";
 
 class GetProfileService {
   // Retrieves a single user by their ID

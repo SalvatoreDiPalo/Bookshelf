@@ -1,5 +1,5 @@
 import { query } from "@/libs/utils/database";
-import type { User } from "@/modules/user/user.entity";
+import type { User } from "@/modules/common/user/user.entity";
 
 class UserRepository {
   async findOneByUserId(userId: string): Promise<User | undefined> {
@@ -37,7 +37,6 @@ class UserRepository {
       `,
       [userId]
     );
-    console.log("results exists", result);
     return result.rows[0];
   }
 }

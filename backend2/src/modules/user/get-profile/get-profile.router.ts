@@ -1,5 +1,5 @@
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { UserSchema } from "../user.entity";
+import { UserSchema } from "../../common/user/user.entity";
 import { getProfileServiceInstance } from "./get-profile.service";
 import { verifyAuthFromRequest } from "@/libs/middleware/auth";
 import express, { Router } from "express";

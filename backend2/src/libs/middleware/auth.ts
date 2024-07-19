@@ -16,7 +16,6 @@ export const verifyAuthFromRequest = async (
   // Extract the token
 
   logger.debug("Check whether the user is authenticated correctly");
-  console.log("Porcodediooo");
   if (!req.header("Authorization")) {
     return handleServiceResponse(
       ServiceResponse.failure(
@@ -27,9 +26,7 @@ export const verifyAuthFromRequest = async (
       res
     );
   }
-  console.log("Calcolo header");
   const authorizationHeader = req.header("Authorization")!;
-  console.log("Header Auth", authorizationHeader);
 
   const bearerTokenIdentifier = "Bearer";
 
@@ -45,7 +42,6 @@ export const verifyAuthFromRequest = async (
   }
 
   const token = authorizationHeader.slice(bearerTokenIdentifier.length + 1);
-  console.log("Token", token);
 
   try {
     //Payload contiene il jt decodificato

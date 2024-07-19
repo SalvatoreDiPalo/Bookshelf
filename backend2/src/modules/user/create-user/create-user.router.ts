@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { UserSchema } from "../user.entity";
+import { UserSchema } from "../../common/user/user.entity";
 import { createUserController } from "./create-user.controller";
 import { verifyAuthFromRequest } from "@/libs/middleware/auth";
 

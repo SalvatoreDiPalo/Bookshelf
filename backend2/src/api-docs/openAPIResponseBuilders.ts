@@ -2,8 +2,13 @@ import { StatusCodes } from "http-status-codes";
 import type { z } from "zod";
 
 import { ServiceResponseSchema } from "@/libs/models/serviceResponse";
+import { ZodRequestBody } from "@asteasolutions/zod-to-openapi";
 
-export function createApiResponse(schema: z.ZodTypeAny, description: string, statusCode = StatusCodes.OK) {
+export function createApiResponse(
+  schema: z.ZodTypeAny,
+  description: string,
+  statusCode = StatusCodes.OK
+) {
   return {
     [statusCode]: {
       description,
@@ -13,5 +18,24 @@ export function createApiResponse(schema: z.ZodTypeAny, description: string, sta
         },
       },
     },
+  };
+}
+
+export function createApiRequest(
+  schema: z.ZodTypeAny,
+  description: string,
+  required: boolean = true
+) {
+  const body: ZodRequestBody = {
+    description: description,
+    content: {
+      "application/json": {
+        schema: schema,
+      },
+    },
+    required: required,
+  };
+  return {
+    body: body,
   };
 }

@@ -1,5 +1,5 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
-import { UserSchema } from "./user.entity";
+import { UserSchema } from "../common/user/user.entity";
 import express, { Router } from "express";
 import {
   getProfileRouteConfig,
