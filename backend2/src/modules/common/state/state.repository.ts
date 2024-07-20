@@ -1,9 +1,10 @@
 import { query } from "@/libs/utils/database";
 import { State } from "./state.entity";
+import { QueryResult } from "pg";
 
 class StateRepository {
   async findAllByUser(idUser: number): Promise<State[]> {
-    const result = await query(
+    const result: QueryResult<State> = await query(
       `
         SELECT st.* FROM state st WHERE st.userId = $1;
       `,

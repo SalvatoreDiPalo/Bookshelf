@@ -9,11 +9,9 @@ import { verifyAuthFromRequest } from "@/libs/middleware/auth";
 import express, { Router } from "express";
 import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 import { validateRequest } from "@/libs/utils/httpHandlers";
-import {
-  CreateStateSchema,
-  CreateStatesSchema,
-} from "./create-states.validation";
+import { CreateStatesSchema } from "./create-states.validation";
 import { createStatesController } from "./create-states.controller";
+import { CreateStateSchema } from "../states.validation";
 
 export const createStatesRouteConfig: RouteConfig = {
   method: "post",

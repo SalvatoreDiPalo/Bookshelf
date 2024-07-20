@@ -1,16 +1,16 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { CreateStates } from "./create-states.validation";
 import { State } from "@/modules/common/state/state.entity";
 import { stateRepositoryInstance } from "@/modules/common/state/state.repository";
 import { User } from "@/modules/common/user/user.entity";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { stateMapperInstance } from "../state.mapper";
 import { userBookStateRepositoryInstance } from "@/modules/common/userBookState/userBookState.repository";
+import { CreateStates } from "../states.validation";
 
 class CreateStatesService {
-  // Create user
+  // Create states
   async createStates(
     userId: string,
     statesToAdd: CreateStates[]

@@ -1,8 +1,5 @@
 import { State } from "../common/state/state.entity";
-import {
-  CreateStates,
-  createStateSchema,
-} from "./create-states/create-states.validation";
+import { CreateStates, CreateStateSchema } from "./states.validation";
 
 class StateMapper {
   toReponse(entity: State): CreateStates {
@@ -11,7 +8,7 @@ class StateMapper {
       name: entity.name,
       isEditable: entity.editable,
     };
-    return createStateSchema.parse(record);
+    return CreateStateSchema.parse(record);
   }
 }
 

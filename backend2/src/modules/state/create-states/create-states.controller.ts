@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { UserJwt } from "@/libs/models/userJwt";
 import { handleServiceResponse } from "@/libs/utils/httpHandlers";
 import { createStatesServiceInstance } from "./create-states.service";
-import { CreateStates } from "./create-states.validation";
+import { CreateStates } from "../states.validation";
 
 class CreateStatesController {
   public async createStates(request: Request, response: Response) {
