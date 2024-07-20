@@ -79,8 +79,7 @@ class CreateStatesService {
       await this.deleteStates(currentStates);
       logger.debug("Returning %o", finalStates);
       return ServiceResponse.success<CreateStates[]>(
-        "Users found",
-        finalStates
+        finalStates,
       );
     } catch (ex) {
       const errorMessage = `Error inserting users: $${(ex as Error).message}`;

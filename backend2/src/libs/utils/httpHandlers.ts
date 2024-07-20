@@ -9,13 +9,12 @@ export const handleServiceResponse = (
   serviceResponse: ServiceResponse<any>,
   response: Response
 ) => {
-  return response.status(serviceResponse.statusCode).send(serviceResponse);
+  return response.status(serviceResponse.statusCode).send(serviceResponse.success ? serviceResponse.responseObject : serviceResponse);
 };
 
 export const validateRequest =
   (schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
     try {
-      console.log("req", req.body);
       schema.parse({ body: req.body, query: req.query, params: req.params });
       next();
     } catch (err) {

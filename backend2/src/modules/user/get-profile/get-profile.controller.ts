@@ -8,7 +8,6 @@ class GetProfileController {
     const currentUser: UserJwt = request.currentUser;
 
     const user = await getProfileServiceInstance.getProfile(currentUser.id);
-
     return handleServiceResponse(user, response);
   }
 }

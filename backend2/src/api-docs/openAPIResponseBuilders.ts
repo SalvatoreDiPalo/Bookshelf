@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import type { z } from "zod";
 
-import { ServiceResponseSchema } from "@/libs/models/serviceResponse";
 import { ZodRequestBody } from "@asteasolutions/zod-to-openapi";
 
 export function createApiResponse(
@@ -14,7 +13,7 @@ export function createApiResponse(
       description,
       content: {
         "application/json": {
-          schema: ServiceResponseSchema(schema),
+          schema: schema,
         },
       },
     },

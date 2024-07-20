@@ -30,7 +30,6 @@ class GetStatesService {
       );
 
       return ServiceResponse.success<CreateStates[]>(
-        "Users found",
         states.map((state) => stateMapperInstance.toReponse(state))
       );
     } catch (ex) {

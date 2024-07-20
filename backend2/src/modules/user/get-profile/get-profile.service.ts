@@ -8,22 +8,24 @@ class GetProfileService {
   // Retrieves a single user by their ID
   async getProfile(userId: string): Promise<ServiceResponse<User | null>> {
     try {
-      logger.debug("Trying to recover the user's profile");
+      logger.debug(`Trying to recover the user's profile with ${userId}`);
       const user: User | undefined =
         await userRepositoryInstance.findOneByUserId(userId);
       if (!user) {
+        logger.debug("User not found");
         return ServiceResponse.failure(
           "User not found",
           null,
           StatusCodes.NOT_FOUND
         );
       }
-      return ServiceResponse.success<User>("User found", user);
+      logger.debug("User founded");
+      return ServiceResponse.success<User>(user);
     } catch (ex) {
+      logger.error(ex);
       const errorMessage = `Error finding user with user id ${userId}:, ${
         (ex as Error).message
       }`;
-      logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while finding user.",
         null,

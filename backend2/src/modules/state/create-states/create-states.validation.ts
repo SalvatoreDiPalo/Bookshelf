@@ -4,7 +4,7 @@ import { CreateStateSchema } from "../states.validation";
 
 extendZodWithOpenApi(z);
 
-// Input Validation for 'GET users/:id' endpoint
+// Input Validation for 'POST states' endpoint
 export const CreateStatesSchema = z.object({
-  body: z.array(CreateStateSchema),
+  body: z.array(CreateStateSchema).nonempty(),
 });
