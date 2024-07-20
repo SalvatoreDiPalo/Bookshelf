@@ -1,6 +1,6 @@
 {
   "name": "bookshelf-backend",
-  "version": "1.0.14",
+  "version": "0.0.1",
   "author": "Salvatore Di Palo",
   "main": "index.ts",
   "private": true,
