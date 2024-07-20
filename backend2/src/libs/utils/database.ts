@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 
 import { env } from "@/libs/utils/envConfig";
+import { logger } from "@/server";
 
 const db = new Pool({
   user: env.DB_USERNAME,
@@ -14,7 +15,7 @@ export const query = async (text: string, params: any[] = []) => {
   const start = Date.now();
   const res = await db.query(text, params);
   const duration = Date.now() - start;
-  console.log("executed query", { text, duration, rows: res.rowCount });
+  logger.debug("executed query", { text, duration, rows: res.rowCount });
   return res;
 };
 

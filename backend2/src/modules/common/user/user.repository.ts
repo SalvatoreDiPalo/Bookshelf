@@ -5,7 +5,7 @@ class UserRepository {
   async findOneByUserId(userId: string): Promise<User | undefined> {
     const result = await query(
       `
-        SELECT us.* FROM public."user" us WHERE us.userId = $1
+        SELECT us.* FROM public."user" us WHERE us."userId" = $1
       `,
       [userId]
     );

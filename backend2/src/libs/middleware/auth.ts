@@ -17,6 +17,7 @@ export const verifyAuthFromRequest = async (
 
   logger.debug("Check whether the user is authenticated correctly");
   if (!req.header("Authorization")) {
+    logger.debug("Authorization header not present");
     return handleServiceResponse(
       ServiceResponse.failure(
         "auth.authorization_header_missing",
@@ -31,6 +32,7 @@ export const verifyAuthFromRequest = async (
   const bearerTokenIdentifier = "Bearer";
 
   if (!authorizationHeader.startsWith(bearerTokenIdentifier)) {
+    logger.debug("Authorization header does not start with Bearer");
     return handleServiceResponse(
       ServiceResponse.failure(
         "auth.authorization_token_type_not_supported",
@@ -55,13 +57,14 @@ export const verifyAuthFromRequest = async (
         audience: env.LOGTO_BASE_URL,
       }
     );
+    logger.debug("Adding user to request");
     const userJwt = {
       id: payload.sub,
       ...payload,
     } as UserJwt;
     req.currentUser = userJwt;
   } catch (err) {
-    console.error("Error", err);
+    logger.error("Error", err);
     let errorMessage =
       err instanceof Error ? err.message : "Could not validate the JWT!";
 
