@@ -21,6 +21,7 @@ app.set("trust proxy", true);
 // Middlewares
 app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
 app.use(helmet());
+app.use(express.json());
 app.use(rateLimiter);
 
 // Request logging
