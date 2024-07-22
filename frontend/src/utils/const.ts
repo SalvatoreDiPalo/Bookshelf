@@ -6,5 +6,7 @@ export const LOGTO_ENDPOINT = import.meta.env.VITE_LOGTO_ENDPOINT || ""; // Repl
 export const BASE_URL = import.meta.env.VITE_API_URL || ""; // Replace with your own Logto endpoint
 
 export const ITEMS_PER_PAGE: number = import.meta.env.VITE_BOOKS_ITEMS_PER_PAGE;
+export const GOOGLE_BOOKS_ITEMS_PER_PAGE: number = import.meta.env.VITE_GOOGLE_BOOKS_ITEMS_PER_PAGE;
+export const GOOGLE_BOOKS_API: number = import.meta.env.VITE_GOOGLE_BOOKS_API;
 
 export const TOKEN_KEY = "token";
