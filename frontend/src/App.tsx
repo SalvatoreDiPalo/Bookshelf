@@ -1,7 +1,6 @@
 import { Box, CssBaseline, styled } from "@mui/material";
 import { Fragment, useState } from "react";
 import { Outlet, ScrollRestoration } from "react-router-dom";
-import useDebugRender from "tilg";
 import MenuAppBar from "./components/AppBar";
 import MenuDrawer from "./components/Drawer";
 
@@ -29,7 +28,6 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
 }));
 
 export default function App() {
-  useDebugRender();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleDrawer = () => {
