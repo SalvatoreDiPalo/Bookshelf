@@ -1,120 +1,111 @@
 import {
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
-  DialogContentText,
-  DialogTitle,
-  FormControl,
-  FormHelperText,
-  Input,
+  DialogProps,
   LinearProgress,
-  useFormControl,
-  useMediaQuery,
-  useTheme,
+  styled,
 } from "@mui/material";
-import { useMemo, useState } from "react";
-import * as ISBN from "isbn3";
-import { axiosInstance } from "@/utils/axios";
-import { BookDTO } from "@/models/BookDTO";
-import BookInformation from "./BookInformation";
-import { ExistsDTO } from "@/models/ExistsDTO";
+import { useState } from "react";
+import BookItem from "./BookItem";
+import Paper from "@mui/material/Paper";
+import InputBase from "@mui/material/InputBase";
+import { GoogleList } from "@/models/google-list";
+import { Volume } from "@/models/google-volumes";
+import { GOOGLE_BOOKS_API, GOOGLE_BOOKS_ITEMS_PER_PAGE } from "@/utils/const";
+import axios from "axios";
 
 interface AddBookDialogProps {
   open: boolean;
   handleClose: () => void;
 }
 
-interface FormHelperProps {
-  isValueValid: boolean;
-}
-
-function MyFormHelperText({ isValueValid }: FormHelperProps) {
-  const { filled, focused } = useFormControl() || {};
-
-  const errorText = useMemo(() => {
-    if (filled && !focused) {
-      // Do isbn validation
-      return !isValueValid ? "ISBN not valid!" : "";
-    }
-
-    return "";
-  }, [filled, focused]);
-
-  return <FormHelperText error>{errorText}</FormHelperText>;
-}
+const TransparentDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
+  ".MuiDialog-container > .MuiPaper-root": {
+    backgroundColor: "transparent",
+    backgroundImage: "unset",
+  },
+  ".MuiDialogContent-root": {
+    overflowY: "hidden",
+    padding: 0,
+  },
+}));
 
 export default function AddBookDialog({
   open,
   handleClose,
 }: AddBookDialogProps) {
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const [isbn, setIsbn] = useState<string>("");
-  const [isValid, setIsValid] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [data, setData] = useState<BookDTO>();
-  const [existsBook, setExistsBook] = useState<boolean>(true);
+  const [text, setText] = useState<string>("");
+  const [items, setItems] = useState<Volume[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const fetchBook = async () => {
-    setExistsBook(true);
-    setIsLoading(true);
-    const response = await axiosInstance<BookDTO>(`/api/books/isbn/${isbn}`);
-    setData(response.data);
-    await checkBook();
-    setIsLoading(false);
-  };
-
-  const checkBook = async () => {
-    const response = await axiosInstance<ExistsDTO>(
-      `/api/books/isbn/${isbn}/check-shelf`,
-    );
-    setExistsBook(response.data.exists);
-  };
-
-  const addBookToPersonalShelf = async () => {
-    const response = await axiosInstance<ExistsDTO>(`/api/books/isbn/${isbn}`, {
-      method: "POST",
-    });
-    handleClose();
+  const loadImages = async () => {
+    if (!text.length) {
+      // TODO handle error
+      return;
+    }
+    setLoading(true);
+    const response = await axios
+      .get<GoogleList<Volume>>(`${GOOGLE_BOOKS_API}/volumes`, {
+        params: {
+          q: text,
+          maxResults: GOOGLE_BOOKS_ITEMS_PER_PAGE,
+          startIndex: 0,
+        },
+      })
+      .finally(() => setLoading(false));
+    setItems(response.data.items);
   };
 
   return (
-    <Dialog open={open} fullScreen={fullScreen} onClose={handleClose}>
-      {isLoading && <LinearProgress />}
-      <DialogTitle>Add Book</DialogTitle>
+    <TransparentDialog
+      open={open}
+      onClose={handleClose}
+      className="bg-transparent"
+    >
       <DialogContent>
-        <DialogContentText>Add a book by searching by ISBN:</DialogContentText>
-
-        <FormControl className="mb-2 w-[25ch]">
-          <Input
-            required
-            margin="dense"
-            id="isbn"
-            name="isbn"
-            type="text"
-            value={isbn}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setIsbn(event.target.value);
-              const parsedIsbn: ISBN | null = ISBN.parse(event.target.value);
-              setIsValid((parsedIsbn && parsedIsbn.isValid) ?? false);
-            }}
+        <Paper
+          component="form"
+          sx={{
+            p: "8px 16px",
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <InputBase
+            sx={{ flex: 1 }}
+            placeholder="Search books"
+            inputProps={{ "aria-label": "search books" }}
             fullWidth
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              setText(event.target.value)
+            }
           />
-          <MyFormHelperText isValueValid={isValid} />
-        </FormControl>
 
-        <BookInformation data={data} />
+          <Button variant="contained" onClick={() => loadImages()}>
+            Search
+          </Button>
+        </Paper>
+        {loading && <LinearProgress />}
+        <Paper
+          sx={{
+            height: 500,
+            overflowY: "auto",
+            overflowX: "hidden",
+            marginTop: 1,
+            p: "16px",
+            flexFlow: "column nowrap",
+            minHeight: 400,
+            width: "100%",
+            display: items.length ? "flex" : "none",
+          }}
+        >
+          {items.map((book) => (
+            <BookItem key={book.id} data={book} />
+          ))}
+        </Paper>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose}>Cancel</Button>
-        {!existsBook && (
-          <Button onClick={addBookToPersonalShelf}>Add to Collection</Button>
-        )}
-        <Button onClick={fetchBook} disabled={!isValid}>
-          Search
-        </Button>
-      </DialogActions>
-    </Dialog>
+    </TransparentDialog>
   );
 }

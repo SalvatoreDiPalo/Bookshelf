@@ -22,6 +22,7 @@ const drawerWidth = 240;
 
 interface MenuDrawerProps {
   open: boolean;
+  handleDrawer: () => void;
 }
 
 interface DrawerRoute {
@@ -48,7 +49,7 @@ const drawerRoutes: DrawerRoute[] = [
   },
 ];
 
-export default function MenuDrawer({ open }: MenuDrawerProps) {
+export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
   const { signOut } = useLogto();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -57,6 +58,7 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
 
   const handleClickOpen = () => {
     setOpenDialog(true);
+    handleDrawer();
   };
 
   const handleClose = () => {
@@ -116,11 +118,13 @@ export default function MenuDrawer({ open }: MenuDrawerProps) {
           </ListItemButton>
         </ListItem>
       </List>
-      <AddBookDialog
-        key={randomId}
-        open={openDialog}
-        handleClose={handleClose}
-      />
+      {openDialog && (
+        <AddBookDialog
+          key={randomId}
+          open={openDialog}
+          handleClose={handleClose}
+        />
+      )}
     </Drawer>
   );
 }
