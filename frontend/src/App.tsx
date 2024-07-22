@@ -11,6 +11,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;
 }>(({ theme, open }) => ({
   flexGrow: 1,
+  overflowX: "auto",
   padding: theme.spacing(3),
   transition: theme.transitions.create("margin", {
     easing: theme.transitions.easing.sharp,
@@ -37,10 +38,10 @@ export default function App() {
 
   return (
     <Fragment>
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", overflowX: "hidden" }}>
         <CssBaseline />
         <MenuAppBar open={open} handleDrawer={handleDrawer} />
-        <MenuDrawer open={open} />
+        <MenuDrawer open={open} handleDrawer={handleDrawer} />
         <Main open={open}>
           <Outlet />
           <ScrollRestoration />

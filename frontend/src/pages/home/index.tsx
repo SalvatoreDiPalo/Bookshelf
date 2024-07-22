@@ -23,7 +23,7 @@ const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   display: "flex",
   borderRadius: 10,
   minHeight: 44,
-  maxWidth: "60%",
+  maxWidth: "100%",
   "& .MuiTabs-flexContainer": {
     position: "relative",
     height: "100%",
@@ -118,7 +118,9 @@ export default function Home() {
       <Box
         sx={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "center",
+          flexFlow: "row wrap",
+          gap: 1,
           marginBottom: 4,
         }}
       >
@@ -142,7 +144,7 @@ export default function Home() {
           <Tab disableRipple label="All" />
           <Tab disableRipple label="Favorities" />
           {states.map((state: StateDTO) => (
-            <Tab key={state.id} label={state.name} disableRipple />
+            <Tab key={state.id} label={state.name} />
           ))}
         </StyledTabs>
         <Box sx={{ display: "flex", flexFlow: "row nowrap" }}>
