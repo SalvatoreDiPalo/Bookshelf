@@ -11,8 +11,9 @@ import requestLogger from "@/libs/middleware/requestLogger";
 import { env } from "@/libs/utils/envConfig";
 import { userRouter } from "./modules/user/user.registry";
 import { stateRouter } from "./modules/state/state.registry";
+import { bookRouter } from "./modules/book/book.registry";
 
-const logger = pino({ name: "server start" });
+const logger = pino({ name: "server start", level: env.LOG_LEVEL });
 const app: Express = express();
 
 // Set the application to trust the reverse proxy
@@ -31,6 +32,7 @@ app.use(requestLogger);
 app.use("/health-check", healthCheckRouter);
 app.use("/users", userRouter);
 app.use("/states", stateRouter);
+app.use("/books", bookRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

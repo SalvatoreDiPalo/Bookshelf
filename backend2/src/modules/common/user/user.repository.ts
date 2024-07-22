@@ -22,7 +22,7 @@ class UserRepository {
     const result = await query(
       `
         INSERT INTO public."user" ("userId", username, "isVisibile") 
-        VALUES($1, $2, $3);
+        VALUES($1, $2, $3) RETURNING *;
       `,
       [userId, username, isVisibile]
     );

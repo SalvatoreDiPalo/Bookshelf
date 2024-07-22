@@ -38,7 +38,7 @@ class StateRepository {
     const result = await query(
       `
         INSERT INTO public.state ("name", "userId", editable, "order")
-        VALUES($1, $2, $3, $4);
+        VALUES($1, $2, $3, $4) RETURNING *;
       `,
       [name, idUser, editable, order]
     );

@@ -17,7 +17,7 @@ class PublisherRepository {
   async insert(name: string): Promise<Publisher> {
     const result = await query(
       `
-        INSERT INTO public.publisher ("name") VALUES($1);
+        INSERT INTO public.publisher ("name") VALUES($1) RETURNING *;
       `,
       [name]
     );

@@ -15,7 +15,7 @@ export const query = async (text: string, params: any[] = []) => {
   const start = Date.now();
   const res = await db.query(text, params);
   const duration = Date.now() - start;
-  logger.debug("executed query", { text, duration, rows: res.rowCount });
+  logger.debug("executed query %o", { text, duration, rows: res.rowCount });
   return res;
 };
 

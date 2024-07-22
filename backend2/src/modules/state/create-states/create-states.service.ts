@@ -85,7 +85,7 @@ class CreateStatesService {
       const errorMessage = `Error inserting users: $${(ex as Error).message}`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
-        "An error occurred while creating user.",
+        "An error occurred while creating states.",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );

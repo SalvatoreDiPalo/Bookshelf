@@ -8,6 +8,10 @@ export const env = cleanEnv(process.env, {
     devDefault: testOnly("test"),
     choices: ["development", "production", "test"],
   }),
+  LOG_LEVEL: str({
+    devDefault: testOnly("debug"),
+    choices: ["fatal", "error", "warn", "info", "debug", "trace"],
+  }),
   HOST: host({ devDefault: testOnly("localhost") }),
   PORT: port({ devDefault: testOnly(3000) }),
   CORS_ORIGIN: str({ devDefault: testOnly("http://localhost:3000") }),

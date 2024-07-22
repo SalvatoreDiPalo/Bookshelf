@@ -10,5 +10,5 @@ export const UserBookStateSchema = z.object({
   userId: z.number().positive(),
   stateId: z.number().positive().optional(),
   bookId: z.number().positive(),
-  editable: z.boolean().default(false).readonly(),
+  isFavorite: z.boolean().default(false).readonly(),
 });

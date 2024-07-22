@@ -1,12 +1,13 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { Router } from "express";
-import { StateSchema } from "../common/state/state.entity";
+import { createBookRouteConfig, createBookRouter } from "./create-book/create-book.router";
+import { BookSchema } from "./book.validation";
 
-export const stateRegistry = new OpenAPIRegistry();
+export const bookRegistry = new OpenAPIRegistry();
 
-stateRegistry.register("Book", StateSchema);
-//stateRegistry.registerPath(getStatesRouteConfig);
+bookRegistry.register("Book", BookSchema);
+bookRegistry.registerPath(createBookRouteConfig);
 //stateRegistry.registerPath(createStatesRouteConfig);
 
 export const bookRouter: Router = express.Router();
-//bookRouter.use("/", [createStatesRouter, getStatesRouter]);
+bookRouter.use("/", [createBookRouter]);
