@@ -14,6 +14,8 @@ import { GoogleList } from "@/models/google-list";
 import { Volume } from "@/models/google-volumes";
 import { GOOGLE_BOOKS_API, GOOGLE_BOOKS_ITEMS_PER_PAGE } from "@/utils/const";
 import axios from "axios";
+import { GoogleIdentifier } from "@/models/enum/GoogleIdentifier";
+import { axiosInstance } from "@/utils/axios";
 
 interface AddBookDialogProps {
   open: boolean;
@@ -37,35 +39,64 @@ export default function AddBookDialog({
 }: AddBookDialogProps) {
   const [text, setText] = useState<string>("");
   const [items, setItems] = useState<Volume[]>([]);
+  const [booksAlreadyPresent, setBooksAlreadyPresent] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const loadImages = async () => {
+  const loadData = async () => {
     if (!text.length) {
       // TODO handle error
       return;
     }
     setLoading(true);
-    const response = await axios
-      .get<GoogleList<Volume>>(`${GOOGLE_BOOKS_API}/volumes`, {
-        params: {
-          q: text,
-          maxResults: GOOGLE_BOOKS_ITEMS_PER_PAGE,
-          startIndex: 0,
+
+    try {
+      const response = await axios.get<GoogleList<Volume>>(
+        `${GOOGLE_BOOKS_API}/volumes`,
+        {
+          params: {
+            q: text,
+            maxResults: GOOGLE_BOOKS_ITEMS_PER_PAGE,
+            startIndex: 0,
+            printType: "books",
+          },
         },
-      })
-      .finally(() => setLoading(false));
-    setItems(response.data.items);
+      );
+      const books = response.data.items.filter(
+        (volume) =>
+          volume.volumeInfo.industryIdentifiers &&
+          volume.volumeInfo.industryIdentifiers.some(
+            (identifier) => identifier.type === GoogleIdentifier.ISBN_13,
+          ),
+      );
+      setItems(books);
+
+      const checkBooksResponse = await axiosInstance.post<string[]>(
+        `/library/check`,
+        books.map((book) => book.id),
+      );
+      setBooksAlreadyPresent(checkBooksResponse.data);
+    } catch (err) {
+      console.error("Errore while loading data", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <TransparentDialog
       open={open}
       onClose={handleClose}
+      disableRestoreFocus
       className="bg-transparent"
     >
       <DialogContent>
         <Paper
           component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            loadData();
+          }}
           sx={{
             p: "8px 16px",
             display: "flex",
@@ -81,9 +112,10 @@ export default function AddBookDialog({
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setText(event.target.value)
             }
+            autoFocus
           />
 
-          <Button variant="contained" onClick={() => loadImages()}>
+          <Button variant="contained" onClick={() => loadData()}>
             Search
           </Button>
         </Paper>
@@ -102,7 +134,11 @@ export default function AddBookDialog({
           }}
         >
           {items.map((book) => (
-            <BookItem key={book.id} data={book} />
+            <BookItem
+              key={book.id}
+              data={book}
+              isInLibrary={booksAlreadyPresent.includes(book.id)}
+            />
           ))}
         </Paper>
       </DialogContent>

@@ -54,7 +54,7 @@ export default function Home() {
     otherQueryOptions?: FetchBookProp,
   ) => {
     setIsLoading(true);
-    const response = await axiosInstance<ResultDTO<BookDTO>>(`/api/books`, {
+    const response = await axiosInstance<ResultDTO<BookDTO>>(`/library`, {
       params: {
         page: page,
         pageSize: ITEMS_PER_PAGE,
@@ -67,7 +67,7 @@ export default function Home() {
   };
 
   const fetchStates = async () => {
-    const response = await axiosInstance<StateDTO[]>(`/api/states`);
+    const response = await axiosInstance<StateDTO[]>(`/states`);
     setStates(response.data);
   };
 
