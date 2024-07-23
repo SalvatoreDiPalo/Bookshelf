@@ -64,7 +64,7 @@ export const verifyAuthFromRequest = async (
     } as UserJwt;
     req.currentUser = userJwt;
   } catch (err) {
-    logger.error("Error", err);
+    logger.error("Error validating user %o", err);
     let errorMessage =
       err instanceof Error ? err.message : "Could not validate the JWT!";
 

@@ -7,7 +7,7 @@ class BookAuthorsRepository {
   ): Promise<void> {
     await query(
       `
-        INSERT INTO public."book_authors_author" ("bookId", "authorId") VALUES($1, $2);
+        INSERT INTO public."book_authors" ("bookId", "authorId") VALUES($1, $2);
       `,
       [bookId, authorId]
     );

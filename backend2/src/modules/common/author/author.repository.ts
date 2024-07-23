@@ -5,7 +5,7 @@ class AuthorRepository {
   async findAllByNameIn(names: string[]): Promise<Author[]> {
     const result = await query(
       `
-        SELECT au.* FROM public.author au WHERE au."name" = ANY ($1);
+        SELECT au.* FROM public.authors au WHERE au."name" = ANY ($1);
       `,
       [names]
     );
@@ -16,8 +16,8 @@ class AuthorRepository {
   async findAllByBookId(bookId: number): Promise<Author[]> {
     const result = await query(
       `
-        SELECT au.* FROM public.author au
-        JOIN book_authors_author bks ON bks."authorId" = au."id"
+        SELECT au.* FROM public.authors au
+        JOIN book_authors bks ON bks."authorId" = au."id"
         where bks."bookId" = $1;
       `,
       [bookId]
@@ -29,7 +29,7 @@ class AuthorRepository {
   async insert(name: string): Promise<Author> {
     const result = await query(
       `
-        INSERT INTO public."author" ("name") VALUES($1) RETURNING *;
+        INSERT INTO public."authors" ("name") VALUES($1) RETURNING *;
       `,
       [name]
     );

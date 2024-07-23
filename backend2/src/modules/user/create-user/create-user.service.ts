@@ -26,7 +26,7 @@ class CreateUserService {
       );
       return ServiceResponse.success<User>(createdUser);
     } catch (ex) {
-      const errorMessage = `Error inserting users: $${(ex as Error).message}`;
+      const errorMessage = `Error inserting users: ${(ex as Error).message}`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while creating user.",

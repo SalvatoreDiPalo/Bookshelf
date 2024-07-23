@@ -1,7 +1,8 @@
 import { StatusCodes } from "http-status-codes";
-import type { z } from "zod";
+import { z } from "zod";
 
 import { ZodRequestBody } from "@asteasolutions/zod-to-openapi";
+import { RouteParameter } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
 
 export function createApiResponse(
   schema: z.ZodTypeAny,
@@ -20,7 +21,7 @@ export function createApiResponse(
   };
 }
 
-export function createApiRequest(
+export function createApiRequestBody(
   schema: z.ZodTypeAny,
   description: string,
   required: boolean = true
@@ -37,4 +38,13 @@ export function createApiRequest(
   return {
     body: body,
   };
+}
+
+export function createPaginatedResponseSchema<ItemType extends z.ZodTypeAny>(
+  itemSchema: ItemType
+) {
+  return z.object({
+    totalItems: z.number(),
+    items: z.array(itemSchema),
+  });
 }

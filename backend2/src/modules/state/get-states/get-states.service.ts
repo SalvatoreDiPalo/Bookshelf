@@ -33,7 +33,7 @@ class GetStatesService {
         states.map((state) => stateMapperInstance.toReponse(state))
       );
     } catch (ex) {
-      const errorMessage = `Error inserting users: $${(ex as Error).message}`;
+      const errorMessage = `Error searching states: ${(ex as Error).message}`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while getting states.",

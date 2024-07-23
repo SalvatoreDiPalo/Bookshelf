@@ -12,6 +12,7 @@ import { env } from "@/libs/utils/envConfig";
 import { userRouter } from "./modules/user/user.registry";
 import { stateRouter } from "./modules/state/state.registry";
 import { bookRouter } from "./modules/book/book.registry";
+import { libraryRouter } from "./modules/library/library.registry";
 
 const logger = pino({ name: "server start", level: env.LOG_LEVEL });
 const app: Express = express();
@@ -33,6 +34,7 @@ app.use("/health-check", healthCheckRouter);
 app.use("/users", userRouter);
 app.use("/states", stateRouter);
 app.use("/books", bookRouter);
+app.use("/library", libraryRouter);
 
 // Swagger UI
 app.use(openAPIRouter);

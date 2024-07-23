@@ -4,12 +4,17 @@ import { ZodSchema } from "zod";
 
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { fromError } from "zod-validation-error";
+import { logger } from "@/server";
 
 export const handleServiceResponse = (
   serviceResponse: ServiceResponse<any>,
   response: Response
 ) => {
-  return response.status(serviceResponse.statusCode).send(serviceResponse.success ? serviceResponse.responseObject : serviceResponse);
+  return response
+    .status(serviceResponse.statusCode)
+    .send(
+      serviceResponse.success ? serviceResponse.responseObject : serviceResponse
+    );
 };
 
 export const validateRequest =
@@ -18,6 +23,7 @@ export const validateRequest =
       schema.parse({ body: req.body, query: req.query, params: req.params });
       next();
     } catch (err) {
+      logger.error("Error validating request %o", err);
       const validationError = fromError(err);
       const errorMessage = validationError.toString();
       const statusCode = StatusCodes.BAD_REQUEST;

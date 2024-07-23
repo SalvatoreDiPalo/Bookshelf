@@ -9,7 +9,7 @@ class UserBookStateRepository {
     const result = await query(
       `
         SELECT ubs.*
-        FROM user_book_state ubs
+        FROM user_book_states ubs
         WHERE ubs."bookId" = $1 AND ubs."userId" = $2;
       `,
       [bookId, userId]
@@ -20,7 +20,7 @@ class UserBookStateRepository {
   async updateStateIdToNullByStateIds(stateIds: number[]): Promise<void> {
     await query(
       `
-        UPDATE public.user_book_state SET "stateId" = NULL WHERE "stateId" = ANY ($1);
+        UPDATE public.user_book_states SET "stateId" = NULL WHERE "stateId" = ANY ($1);
       `,
       [stateIds]
     );

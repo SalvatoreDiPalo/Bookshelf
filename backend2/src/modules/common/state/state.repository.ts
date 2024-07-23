@@ -6,7 +6,7 @@ class StateRepository {
   async findAllByUser(idUser: number): Promise<State[]> {
     const result: QueryResult<State> = await query(
       `
-        SELECT st.* FROM state st WHERE st.userId = $1;
+        SELECT st.* FROM "states" st WHERE st."userId" = $1;
       `,
       [idUser]
     );
@@ -20,8 +20,8 @@ class StateRepository {
   ): Promise<State | undefined> {
     const result = await query(
       `
-        SELECT st.* FROM state st 
-        WHERE st.userId = $1 AND st."name" = $2;        
+        SELECT st.* FROM states st 
+        WHERE st."userId" = $1 AND st."name" = $2;        
       `,
       [userId, name]
     );
@@ -37,7 +37,7 @@ class StateRepository {
   ): Promise<State> {
     const result = await query(
       `
-        INSERT INTO public.state ("name", "userId", editable, "order")
+        INSERT INTO public."states" ("name", "userId", editable, "order")
         VALUES($1, $2, $3, $4) RETURNING *;
       `,
       [name, idUser, editable, order]
@@ -49,7 +49,7 @@ class StateRepository {
   async updateOrder(id: number, order: number): Promise<State> {
     const result = await query(
       `
-        UPDATE public.state SET "order" = $1 WHERE id = $2;
+        UPDATE public."states" SET "order" = $1 WHERE "id" = $2 RETURNING *;
       `,
       [order, id]
     );
@@ -60,7 +60,7 @@ class StateRepository {
   async deleteById(id: number): Promise<void> {
     await query(
       `
-        DELETE FROM public.state WHERE id=$1;
+        DELETE FROM public.states WHERE id=$1;
       `,
       [id]
     );
@@ -69,7 +69,7 @@ class StateRepository {
   async deleteByIds(ids: number[]): Promise<void> {
     await query(
       `
-        DELETE FROM public.state WHERE id = ANY ($1);
+        DELETE FROM public.states WHERE id = ANY ($1);
       `,
       [ids]
     );

@@ -8,7 +8,7 @@ class BookRepository {
   async findOneByIsbn(isbn: string): Promise<Book | undefined> {
     const result = await query(
       `
-        SELECT bo.* FROM public."book" bo WHERE bo."isbn" = $1;
+        SELECT bo.* FROM public."books" bo WHERE bo."isbn" = $1;
       `,
       [isbn]
     );
@@ -23,8 +23,8 @@ class BookRepository {
     const result: QueryResult<BookFindColumns> = await query(
       `
         SELECT bo.*, p.name as "publisherName"
-        FROM public."book" bo
-        LEFT JOIN publisher p ON bo."publisherId" = p.id
+        FROM public."books" bo
+        LEFT JOIN publishers p ON bo."publisherId" = p.id
         WHERE bo."isbn" = $1;
       `,
       [isbn]
@@ -40,7 +40,7 @@ class BookRepository {
   async insert(book: BookWithRelations): Promise<Book> {
     const result = await query(
       `
-        INSERT INTO public.book ("bookId", isbn, title, "subTitle", description, "publishedDate", "bookCoverId", "pageCount", "createdDate", "updatedDate", "publisherId")
+        INSERT INTO public.books ("bookId", isbn, title, "subTitle", description, "publishedDate", "bookCoverId", "pageCount", "createdDate", "updatedDate", "publisherId")
         VALUES($1, $2, $3, $4, $5, $6, $7, $8, now(), now(), $9) RETURNING *;
       `,
       [

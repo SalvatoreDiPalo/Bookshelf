@@ -5,7 +5,7 @@ class PublisherRepository {
   async findByName(name: string): Promise<Publisher | undefined> {
     const result = await query(
       `
-        SELECT pu.* FROM public.publisher pu WHERE pu."name" = $1;
+        SELECT pu.* FROM public.publishers pu WHERE pu."name" = $1;
       `,
       [name]
     );
@@ -17,7 +17,7 @@ class PublisherRepository {
   async insert(name: string): Promise<Publisher> {
     const result = await query(
       `
-        INSERT INTO public.publisher ("name") VALUES($1) RETURNING *;
+        INSERT INTO public.publishers ("name") VALUES($1) RETURNING *;
       `,
       [name]
     );

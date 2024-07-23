@@ -5,7 +5,7 @@ class UserRepository {
   async findOneByUserId(userId: string): Promise<User | undefined> {
     const result = await query(
       `
-        SELECT us.* FROM public."user" us WHERE us."userId" = $1
+        SELECT us.* FROM public."users" us WHERE us."userId" = $1
       `,
       [userId]
     );
@@ -21,7 +21,7 @@ class UserRepository {
   ): Promise<User> {
     const result = await query(
       `
-        INSERT INTO public."user" ("userId", username, "isVisibile") 
+        INSERT INTO public."users" ("userId", username, "isVisibile") 
         VALUES($1, $2, $3) RETURNING *;
       `,
       [userId, username, isVisibile]
@@ -33,7 +33,7 @@ class UserRepository {
   async existsByUserId(userId: string): Promise<User> {
     const result = await query(
       `
-        SELECT EXISTS(SELECT 1 FROM user WHERE userId = $1);
+        SELECT EXISTS(SELECT 1 FROM users WHERE userId = $1);
       `,
       [userId]
     );

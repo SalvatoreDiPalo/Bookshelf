@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import {
-  createApiRequest,
+  createApiRequestBody,
   createApiResponse,
 } from "@/api-docs/openAPIResponseBuilders";
 import { verifyAuthFromRequest } from "@/libs/middleware/auth";
@@ -17,7 +17,7 @@ export const createStatesRouteConfig: RouteConfig = {
   method: "post",
   path: "/states",
   tags: ["State"],
-  request: createApiRequest(z.array(CreateStateSchema), "", true),
+  request: createApiRequestBody(z.array(CreateStateSchema), "", true),
   responses: createApiResponse(z.array(CreateStateSchema), "Success"),
 };
 

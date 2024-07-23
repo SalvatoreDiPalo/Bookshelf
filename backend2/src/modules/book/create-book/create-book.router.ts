@@ -1,5 +1,5 @@
 import {
-  createApiRequest,
+  createApiRequestBody,
   createApiResponse,
 } from "@/api-docs/openAPIResponseBuilders";
 import { verifyAuthFromRequest } from "@/libs/middleware/auth";
@@ -15,7 +15,7 @@ export const createBookRouteConfig: RouteConfig = {
   method: "post",
   path: "/books",
   tags: ["Book"],
-  request: createApiRequest(CreateBookSchema, "", true),
+  request: createApiRequestBody(CreateBookSchema, "", true),
   responses: createApiResponse(BookWithRelationsSchema, "Success"),
 };
 

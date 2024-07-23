@@ -70,7 +70,7 @@ class CreateBookService {
       return ServiceResponse.success<BookWithRelations>(finalBook);
     } catch (ex) {
       await client.query("ROLLBACK");
-      const errorMessage = `Error inserting book: $${(ex as Error).message}`;
+      const errorMessage = `Error inserting book: ${(ex as Error).message}`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while creating book.",
