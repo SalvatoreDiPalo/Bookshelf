@@ -102,6 +102,7 @@ export default function Settings() {
           variant="outlined"
           className="mr-2 mt-2"
           onClick={addEmptyState}
+          disabled={items.length >= 10}
         >
           Add
         </Button>

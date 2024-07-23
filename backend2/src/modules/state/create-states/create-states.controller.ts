@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { UserJwt } from "@/libs/models/userJwt";
 import { handleServiceResponse } from "@/libs/utils/httpHandlers";
 import { createStatesServiceInstance } from "./create-states.service";
-import { CreateStates } from "../states.validation";
+import { CreateStatesSchema } from "./create-states.validation";
 
 class CreateStatesController {
   public async createStates(request: Request, response: Response) {
@@ -10,7 +10,7 @@ class CreateStatesController {
 
     const states = await createStatesServiceInstance.createStates(
       currentUser.id,
-      request.body as CreateStates[]
+      CreateStatesSchema.parse(request.body)
     );
 
     return handleServiceResponse(states, response);
