@@ -1,11 +1,13 @@
 import { query } from "@/libs/utils/database";
 import { QueryResult } from "pg";
-import { Book, BookWithRelations } from "../book/book.validation";
-import { SearchLibrary } from "./get-library/get-library.validation";
+import { BookWithRelations } from "../../book/book.validation";
+import { SearchLibrary } from "../../library/get-library/get-library.validation";
 import {
   getLibraryMapperInstance,
   LibraryBookIn,
-} from "./get-library/get-library.mapper";
+} from "../../library/get-library/get-library.mapper";
+import { Library } from "./library.entity";
+import { Stats } from "@/modules/library/get-stats-library/get-stats-library.validation";
 
 class LibraryRepository {
   async findAll(
@@ -41,7 +43,7 @@ class LibraryRepository {
             ) AS "authors"
         FROM "books" b 
         LEFT JOIN "publishers" pub ON pub."id"=b."publisherId"  
-        LEFT JOIN "user_book_states" ubs ON ubs."bookId"=b."id"  
+        LEFT JOIN "library" ubs ON ubs."bookId"=b."id"  
         WHERE  (ubs."userId" = $1) AND ($2::int IS NULL OR $2 = ubs."stateId") AND ($3::bool IS NULL OR ubs."isFavorite" IS TRUE)
         ORDER BY b."${searchLibrary.sortBy}" ASC LIMIT $4 OFFSET $5;
       `,
@@ -68,7 +70,7 @@ class LibraryRepository {
         LEFT JOIN "book_authors" bAut ON bAut."bookId"=b."id" 
         LEFT JOIN "authors" aut ON aut."id"=bAut."authorId"  
         LEFT JOIN "publishers" pub ON pub."id"=b."publisherId"  
-        LEFT JOIN "user_book_states" ubs ON ubs."bookId"=b."id"  
+        LEFT JOIN "library" ubs ON ubs."bookId"=b."id"  
         WHERE ("ubs"."userId" = $1) AND ($2::int IS NULL OR $2 = ubs."stateId") AND ($3::bool IS NULL OR ubs."isFavorite" IS TRUE)
       `,
       [userId, searchLibrary.stateId ?? null, searchLibrary.isFavorite ?? null]
@@ -92,7 +94,7 @@ class LibraryRepository {
     const result = await query(
       `
         SELECT b."bookId"
-        FROM user_book_states ubs  
+        FROM library ubs  
         JOIN books b ON ubs."bookId" = b.id
         WHERE ubs."userId" = $1 AND b."bookId" = ANY($2)
       `,
@@ -101,27 +103,76 @@ class LibraryRepository {
     return result.rows.map((row) => row.bookId);
   }
 
-  async insert(book: BookWithRelations): Promise<Book> {
+  async findUserBookStateByBookIdAndUserId(
+    bookId: number,
+    userId: number
+  ): Promise<Library | undefined> {
     const result = await query(
       `
-        INSERT INTO public.books ("bookId", isbn, title, "subTitle", description, "publishedDate", "bookCoverId", "pageCount", "createdDate", "updatedDate", "publisherId")
-        VALUES($1, $2, $3, $4, $5, $6, $7, $8, now(), now(), $9) RETURNING *;
+        SELECT ubs.*
+        FROM library ubs
+        WHERE ubs."bookId" = $1 AND ubs."userId" = $2;
       `,
-      [
-        book.bookId,
-        book.isbn,
-        book.title,
-        book.subTitle,
-        book.description,
-        book.publishedDate,
-        null,
-        book.pageCount,
-        book.publisher ? book.publisher.id : null,
-      ]
+      [bookId, userId]
     );
+    return result.rows.length ? result.rows[0] : undefined;
+  }
 
-    return result.rows[0];
+  async existsByBookIdAndUserId(
+    bookId: number,
+    userId: number
+  ): Promise<boolean> {
+    const result = await query(
+      `
+        SELECT EXISTS(
+          SELECT 1 FROM library ubs
+          WHERE ubs."bookId" = $1 AND ubs."userId" = $2
+        );
+      `,
+      [bookId, userId]
+    );
+    return result.rows.length ? result.rows[0].exists : false;
+  }
+
+  async updateStateIdToNullByStateIds(stateIds: number[]): Promise<void> {
+    await query(
+      `
+        UPDATE public.library SET "stateId" = NULL WHERE "stateId" = ANY ($1);
+      `,
+      [stateIds]
+    );
+  }
+
+  async insert(ubs: Library): Promise<void> {
+    await query(
+      `
+        INSERT INTO public.library ("userId", "stateId", "bookId", "isFavorite") VALUES($1, $2, $3, $4);
+      `,
+      [ubs.userId, ubs.stateId, ubs.bookId, ubs.isFavorite]
+    );
+  }
+
+  async getStats(userId: number, finishedName: string): Promise<Stats> {
+    const result: QueryResult<Stats> = await query(
+      `
+        SELECT COUNT(*) AS "booksAdded",
+              COUNT(CASE WHEN s."name" = $1 THEN 1 END) AS "finishedBooks",
+              COUNT(CASE WHEN "isFavorite" = true THEN 1 END) AS "favoriteBooks"
+        FROM public."library" l
+        LEFT JOIN public.states s ON l."stateId" = s.id
+        WHERE l."userId" = $2
+        GROUP BY l."userId";
+      `,
+      [finishedName, userId]
+    );
+    return result.rows.length ? result.rows[0] : emptyStats;
   }
 }
 
 export const libraryRepositoryInstance = new LibraryRepository();
+
+const emptyStats: Stats = {
+  booksAdded: 0,
+  finishedBooks: 0,
+  favoriteBooks: 0,
+};

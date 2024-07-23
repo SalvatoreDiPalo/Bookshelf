@@ -13,6 +13,10 @@ import {
   checkBooksInLibraryRouteConfig,
   checkBooksInLibraryRouter,
 } from "./check-books-in-library/check-books-in-library.router";
+import {
+  getStatsLibraryRouteConfig,
+  getStatsLibraryRouter,
+} from "./get-stats-library/get-stats-library.router";
 
 export const libraryRegistry = new OpenAPIRegistry();
 
@@ -20,10 +24,12 @@ libraryRegistry.register("Library", BookSchema);
 libraryRegistry.registerPath(getLibraryRouteConfig);
 libraryRegistry.registerPath(addBookToLibraryRouteConfig);
 libraryRegistry.registerPath(checkBooksInLibraryRouteConfig);
+libraryRegistry.registerPath(getStatsLibraryRouteConfig);
 
 export const libraryRouter: Router = express.Router();
 libraryRouter.use("/", [
   getLibraryRouter,
   addBookToLibraryRouter,
   checkBooksInLibraryRouter,
+  getStatsLibraryRouter,
 ]);

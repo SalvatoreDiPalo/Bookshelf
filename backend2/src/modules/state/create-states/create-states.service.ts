@@ -6,8 +6,8 @@ import { stateRepositoryInstance } from "@/modules/common/state/state.repository
 import { User } from "@/modules/common/user/user.entity";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { stateMapperInstance } from "../state.mapper";
-import { userBookStateRepositoryInstance } from "@/modules/common/userBookState/userBookState.repository";
 import { CreateStates } from "../states.validation";
+import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 
 class CreateStatesService {
   // Create states
@@ -78,9 +78,7 @@ class CreateStatesService {
 
       await this.deleteStates(currentStates);
       logger.debug("Returning %o", finalStates);
-      return ServiceResponse.success<CreateStates[]>(
-        finalStates,
-      );
+      return ServiceResponse.success<CreateStates[]>(finalStates);
     } catch (ex) {
       const errorMessage = `Error inserting states: ${(ex as Error).message}`;
       logger.error(errorMessage);
@@ -104,9 +102,7 @@ class CreateStatesService {
 
     const stateIds = statesFromDb.map((state) => state.id);
 
-    await userBookStateRepositoryInstance.updateStateIdToNullByStateIds(
-      stateIds
-    );
+    await libraryRepositoryInstance.updateStateIdToNullByStateIds(stateIds);
 
     await stateRepositoryInstance.deleteByIds(stateIds);
   }

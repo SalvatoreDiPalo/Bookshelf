@@ -5,7 +5,7 @@ import { User } from "@/modules/common/user/user.entity";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { BookWithRelations } from "@/modules/book/book.validation";
 import { bookRepositoryInstance } from "@/modules/book/book.repository";
-import { userBookStateRepositoryInstance } from "@/modules/common/userBookState/userBookState.repository";
+import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 
 class AddBookToLibraryService {
   // Add book to library
@@ -38,7 +38,7 @@ class AddBookToLibraryService {
       }
 
       const alreadyExistsInLibrary =
-        await userBookStateRepositoryInstance.existsByBookIdAndUserId(
+        await libraryRepositoryInstance.existsByBookIdAndUserId(
           book.id!,
           user.id
         );
@@ -52,7 +52,7 @@ class AddBookToLibraryService {
       }
 
       logger.debug("Adding book %o to library of user", book.id, user.id);
-      await userBookStateRepositoryInstance.insert({
+      await libraryRepositoryInstance.insert({
         userId: user.id,
         stateId: null,
         bookId: book.id!,

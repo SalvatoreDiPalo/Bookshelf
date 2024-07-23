@@ -8,10 +8,10 @@ import { Publisher } from "@/modules/common/publisher/publisher.entity";
 import { publisherRepositoryInstance } from "@/modules/common/publisher/publisher.repository";
 import { bookRepositoryInstance } from "../book.repository";
 import { CreateBook } from "./create-book.validation";
-import { userBookStateRepositoryInstance } from "@/modules/common/userBookState/userBookState.repository";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { getClient } from "@/libs/utils/database";
 import { bookAuthorsRepositoryInstance } from "@/modules/common/bookAuthors/bookAuthors.repository";
+import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 
 class CreateBookService {
   // Create Book
@@ -95,13 +95,13 @@ class CreateBookService {
     );
     bookWithRelations.authors = authors;
 
-    const userBookState =
-      await userBookStateRepositoryInstance.findUserBookStateByBookIdAndUserId(
+    const library =
+      await libraryRepositoryInstance.findUserBookStateByBookIdAndUserId(
         bookWithRelations.id!,
         userId
       );
-    bookWithRelations.stateId = userBookState?.stateId;
-    bookWithRelations.isFavorite = userBookState?.isFavorite ?? false;
+    bookWithRelations.stateId = library?.stateId ?? undefined;
+    bookWithRelations.isFavorite = library?.isFavorite ?? false;
     return bookWithRelations;
   }
 

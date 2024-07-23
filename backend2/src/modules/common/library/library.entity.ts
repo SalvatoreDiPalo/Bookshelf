@@ -3,9 +3,9 @@ import { z } from "zod";
 
 extendZodWithOpenApi(z);
 
-export type UserBookState = z.infer<typeof UserBookStateSchema>;
+export type Library = z.infer<typeof LibrarySchema>;
 
-export const UserBookStateSchema = z.object({
+export const LibrarySchema = z.object({
   id: z.number().positive().optional(),
   userId: z.number().positive(),
   stateId: z.number().positive().nullable(),

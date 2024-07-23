@@ -3,7 +3,7 @@ import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { SearchLibrary } from "./get-library.validation";
-import { libraryRepositoryInstance } from "../library.repository";
+import { libraryRepositoryInstance } from "../../common/library/library.repository";
 import { BookWithRelations } from "@/modules/book/book.validation";
 import { ResultDTO } from "@/libs/models/resultDto";
 

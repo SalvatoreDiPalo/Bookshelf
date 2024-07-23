@@ -22,10 +22,10 @@ class GetProfileService {
       logger.debug("User founded");
       return ServiceResponse.success<User>(user);
     } catch (ex) {
-      logger.error(ex);
       const errorMessage = `Error finding user with user id ${userId}:, ${
         (ex as Error).message
       }`;
+      logger.error(errorMessage);
       return ServiceResponse.failure(
         "An error occurred while finding user.",
         null,

@@ -3,14 +3,12 @@ import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { libraryRepositoryInstance } from "../../common/library/library.repository";
-import { CheckBooksInLibrary } from "./check-books-in-library.validation";
+import { Stats } from "./get-stats-library.validation";
+import { env } from "@/libs/utils/envConfig";
 
-class CheckBooksInLibraryService {
-  async checkBooks(
-    userJwtId: string,
-    googleBookIds: CheckBooksInLibrary
-  ): Promise<ServiceResponse<string[] | null>> {
-    logger.debug("Params %o - searchLibrary: %o", userJwtId, googleBookIds);
+class GetStatsLibraryService {
+  async getStats(userJwtId: string): Promise<ServiceResponse<Stats | null>> {
+    logger.debug("User %o", userJwtId);
     try {
       let user = await userRepositoryInstance.findOneByUserId(userJwtId);
       if (!user) {
@@ -21,21 +19,19 @@ class CheckBooksInLibraryService {
           StatusCodes.UNAUTHORIZED
         );
       }
+      const result = await libraryRepositoryInstance.getStats(
+        user.id,
+        env.DEFAULT_FINISHED
+      );
 
-      const result =
-        await libraryRepositoryInstance.getBooksInLibraryByGoogleIds(
-          user.id,
-          googleBookIds
-        );
-
-      return ServiceResponse.success<string[]>(result);
+      return ServiceResponse.success<Stats>(result);
     } catch (ex) {
-      const errorMessage = `Error checking books in library: ${
+      const errorMessage = `Error searching stats from library: ${
         (ex as Error).message
       }`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
-        "An error occurred while checking books in library.",
+        "An error occurred while searching stats from library.",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
@@ -43,5 +39,4 @@ class CheckBooksInLibraryService {
   }
 }
 
-export const checkBooksInLibraryServiceInstance =
-  new CheckBooksInLibraryService();
+export const getStatsLibraryServiceInstance = new GetStatsLibraryService();
