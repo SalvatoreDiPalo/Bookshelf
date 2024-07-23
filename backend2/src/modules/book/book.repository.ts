@@ -17,6 +17,26 @@ class BookRepository {
     return rows.length ? rows[0] : undefined;
   }
 
+  async findOneWithRelationsById(
+    id: number
+  ): Promise<BookWithRelations | undefined> {
+    const result: QueryResult<BookFindColumns> = await query(
+      `
+        SELECT bo.*, p.name as "publisherName"
+        FROM public."books" bo
+        LEFT JOIN publishers p ON bo."publisherId" = p.id
+        WHERE bo."id" = $1;
+      `,
+      [id]
+    );
+
+    const rows: BookFindColumns[] = result.rows;
+    if (!rows.length) {
+      return undefined;
+    }
+    return bookMapperInstance.toResponseWithRelations(rows[0]);
+  }
+
   async findOneWithRelationsByIsbn(
     isbn: string
   ): Promise<BookWithRelations | undefined> {

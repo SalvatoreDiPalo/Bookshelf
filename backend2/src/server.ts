@@ -21,7 +21,8 @@ const app: Express = express();
 app.set("trust proxy", true);
 
 // Middlewares
-app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+//app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
+app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(rateLimiter);

@@ -79,6 +79,28 @@ class LibraryRepository {
     return row;
   }
 
+  /**
+   * Checks whether the google books ids received as input are already associated with the current user
+   * @param userId id of the current user
+   * @param googleBookIds id of the google books
+   * @returns ID of Google books in the library
+   */
+  async getBooksInLibraryByGoogleIds(
+    userId: number,
+    googleBookIds: string[]
+  ): Promise<string[]> {
+    const result = await query(
+      `
+        SELECT b."bookId"
+        FROM user_book_states ubs  
+        JOIN books b ON ubs."bookId" = b.id
+        WHERE ubs."userId" = $1 AND b."bookId" = ANY($2)
+      `,
+      [userId, googleBookIds]
+    );
+    return result.rows.map((row) => row.bookId);
+  }
+
   async insert(book: BookWithRelations): Promise<Book> {
     const result = await query(
       `
