@@ -4,8 +4,8 @@ import { logger } from "@/server";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { SearchLibrary } from "./get-library.validation";
 import { libraryRepositoryInstance } from "../../common/library/library.repository";
-import { BookWithRelations } from "@/modules/book/book.validation";
 import { ResultDTO } from "@/libs/models/resultDto";
+import { BookWithRelations } from "@/modules/common/book/book.entity";
 
 class GetLibraryService {
   // Get Library

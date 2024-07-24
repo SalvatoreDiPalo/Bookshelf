@@ -4,16 +4,16 @@ import { verifyAuthFromRequest } from "@/libs/middleware/auth";
 import express, { Router } from "express";
 import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 import { validateRequest } from "@/libs/utils/httpHandlers";
-import { BookWithRelationsSchema } from "@/modules/book/book.validation";
 import {
   AddBookToLibraryParamSchema,
   AddBookToLibrarySchema,
 } from "./add-book-to-library.validation";
 import { addBookToLibraryController } from "./add-book-to-library.controller";
+import { BookWithRelationsSchema } from "@/modules/common/book/book.entity";
 
 export const addBookToLibraryRouteConfig: RouteConfig = {
   method: "post",
-  path: "/library/add/:bookId",
+  path: "/library/book/{bookId}",
   tags: ["Library"],
   request: {
     params: AddBookToLibrarySchema,
@@ -23,7 +23,7 @@ export const addBookToLibraryRouteConfig: RouteConfig = {
 
 export const addBookToLibraryRouter: Router = express.Router();
 addBookToLibraryRouter.post(
-  "/add/:bookId",
+  "/book/:bookId",
   validateRequest(AddBookToLibraryParamSchema),
   verifyAuthFromRequest,
   addBookToLibraryController.addBookToLibrary

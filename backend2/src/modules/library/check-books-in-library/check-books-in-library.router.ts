@@ -20,7 +20,9 @@ export const checkBooksInLibraryRouteConfig: RouteConfig = {
   tags: ["Library"],
   description:
     "Allows to receive the ID of books already present in the current user's library. Check by comparison if the google book id is present in the library",
-  request: createApiRequestBody(GoogleBookIdsSchema, "Google book ids"),
+  request: {
+    body: createApiRequestBody(GoogleBookIdsSchema, "Google book ids"),
+  },
   responses: createApiResponse(GoogleBookIdsSchema, "Success"),
 };
 

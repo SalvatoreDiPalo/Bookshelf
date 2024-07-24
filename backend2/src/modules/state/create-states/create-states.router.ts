@@ -17,7 +17,9 @@ export const createStatesRouteConfig: RouteConfig = {
   method: "post",
   path: "/states",
   tags: ["State"],
-  request: createApiRequestBody(CreateStatesSchema, "", true),
+  request: {
+    body: createApiRequestBody(CreateStatesSchema, "", true),
+  },
   responses: createApiResponse(CreateStatesSchema, "Success"),
 };
 

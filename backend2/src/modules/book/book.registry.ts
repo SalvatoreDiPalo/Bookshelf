@@ -1,7 +1,7 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import express, { Router } from "express";
 import { createBookRouteConfig, createBookRouter } from "./create-book/create-book.router";
-import { BookSchema } from "./book.validation";
+import { BookSchema } from "../common/book/book.entity";
 
 export const bookRegistry = new OpenAPIRegistry();
 

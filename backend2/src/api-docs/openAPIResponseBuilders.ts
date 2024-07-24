@@ -2,7 +2,6 @@ import { StatusCodes } from "http-status-codes";
 import { z } from "zod";
 
 import { ZodRequestBody } from "@asteasolutions/zod-to-openapi";
-import { RouteParameter } from "@asteasolutions/zod-to-openapi/dist/openapi-registry";
 
 export function createApiResponse(
   schema: z.ZodTypeAny,
@@ -25,8 +24,8 @@ export function createApiRequestBody(
   schema: z.ZodTypeAny,
   description: string,
   required: boolean = true
-) {
-  const body: ZodRequestBody = {
+): ZodRequestBody {
+  return {
     description: description,
     content: {
       "application/json": {
@@ -34,9 +33,6 @@ export function createApiRequestBody(
       },
     },
     required: required,
-  };
-  return {
-    body: body,
   };
 }
 

@@ -24,10 +24,11 @@ export default function CustomMenu({
     updateElement(response.data);
   };
 
-  const updateFavoriteFlag = () => {
-    const url = `/api/books/isbn/${item.isbn}/favorite`;
-    const params = { isFavorite: !item.isFavorite };
-    updateBook(url, "PATCH", params);
+  const updateFavoriteFlag = async () => {
+    const url = `/library/book/${item.id}/favorite`;
+    const body = { isFavorite: !item.isFavorite };
+    const response = await axiosInstance.patch<BookDTO>(url, body);
+    updateElement(response.data);
   };
 
   const updateBookState = (id: number) => {

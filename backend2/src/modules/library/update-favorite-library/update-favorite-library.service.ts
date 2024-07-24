@@ -7,11 +7,11 @@ import { libraryRepositoryInstance } from "@/modules/common/library/library.repo
 import { BookWithRelations } from "@/modules/common/book/book.entity";
 import { bookRepositoryInstance } from "@/modules/common/book/book.repository";
 
-class AddBookToLibraryService {
-  // Add book to library
-  async addBookToLibrary(
+class UpdateFavoriteLibraryService {
+  async updateFavorite(
     userId: string,
-    bookId: number
+    bookId: number,
+    isFavorite: boolean
   ): Promise<ServiceResponse<BookWithRelations | null>> {
     try {
       const user: User | undefined =
@@ -37,36 +37,21 @@ class AddBookToLibraryService {
         );
       }
 
-      const alreadyExistsInLibrary =
-        await libraryRepositoryInstance.existsByBookIdAndUserId(
-          book.id!,
-          user.id
-        );
-      if (alreadyExistsInLibrary) {
-        logger.error("Book already exists in library", bookId);
-        return ServiceResponse.failure(
-          "Book already present in library",
-          null,
-          StatusCodes.BAD_REQUEST
-        );
-      }
-
-      logger.debug("Adding book %o to library of user", book.id, user.id);
-      await libraryRepositoryInstance.insert({
-        userId: user.id,
-        stateId: null,
-        bookId: book.id!,
-        isFavorite: false,
-      });
+      await libraryRepositoryInstance.updateFavorite(
+        bookId,
+        user.id,
+        isFavorite
+      );
+      book.isFavorite = isFavorite;
 
       return ServiceResponse.success<BookWithRelations>(book);
     } catch (ex) {
-      const errorMessage = `Error adding book to library: ${
+      const errorMessage = `Error updating favorite in library: ${
         (ex as Error).message
       }`;
       logger.error(errorMessage);
       return ServiceResponse.failure(
-        "An error occurred while adding book to library.",
+        "An error occurred while updating book favorite in library.",
         null,
         StatusCodes.INTERNAL_SERVER_ERROR
       );
@@ -74,4 +59,5 @@ class AddBookToLibraryService {
   }
 }
 
-export const addBookToLibraryServiceInstance = new AddBookToLibraryService();
+export const updateFavoriteLibraryServiceInstance =
+  new UpdateFavoriteLibraryService();

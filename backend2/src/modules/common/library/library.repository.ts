@@ -1,13 +1,10 @@
 import { query } from "@/libs/utils/database";
 import { QueryResult } from "pg";
-import { BookWithRelations } from "../../book/book.validation";
+import { BookWithRelations } from "../book/book.entity";
 import { SearchLibrary } from "../../library/get-library/get-library.validation";
-import {
-  getLibraryMapperInstance,
-  LibraryBookIn,
-} from "../../library/get-library/get-library.mapper";
 import { Library } from "./library.entity";
 import { Stats } from "@/modules/library/get-stats-library/get-stats-library.validation";
+import { BookDbWithRelations, bookMapperInstance } from "../book/book.mapper";
 
 class LibraryRepository {
   async findAll(
@@ -15,7 +12,7 @@ class LibraryRepository {
     searchLibrary: SearchLibrary
   ): Promise<BookWithRelations[]> {
     const offset = (searchLibrary.page - 1) * searchLibrary.pageSize;
-    const result: QueryResult<LibraryBookIn> = await query(
+    const result: QueryResult<BookDbWithRelations> = await query(
       `
         SELECT 
         b."id" AS "id", 
@@ -56,7 +53,9 @@ class LibraryRepository {
       ]
     );
 
-    return result.rows.map((row) => getLibraryMapperInstance.toResponse(row));
+    return result.rows.map((row) =>
+      bookMapperInstance.toResponseWithRelations(row)
+    );
   }
 
   async countAll(
@@ -140,6 +139,19 @@ class LibraryRepository {
         UPDATE public.library SET "stateId" = NULL WHERE "stateId" = ANY ($1);
       `,
       [stateIds]
+    );
+  }
+
+  async updateFavorite(
+    bookId: number,
+    userId: number,
+    isFavorite: boolean
+  ): Promise<void> {
+    await query(
+      `
+        UPDATE public.library SET "isFavorite" = $1 WHERE "bookId" = $2 AND "userId" = $3;
+      `,
+      [isFavorite, bookId, userId]
     );
   }
 

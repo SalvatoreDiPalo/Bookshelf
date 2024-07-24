@@ -38,7 +38,9 @@ export default function BookItem({ isInLibrary, data }: BookItemProps) {
       volumeToBookDTO(volume),
     );
     const book: BookDTO = response.data;
-    await axiosInstance<BookDTO>(`/library/add/${book.id}`, { method: "POST" });
+    await axiosInstance<BookDTO>(`/library/book/${book.id}`, {
+      method: "POST",
+    });
     setOpen(false);
   };
 

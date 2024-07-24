@@ -1,7 +1,7 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
-import { AuthorSchema } from "../common/author/author.entity";
-import { PublisherSchema } from "../common/publisher/publisher.entity";
+import { AuthorSchema } from "../author/author.entity";
+import { PublisherSchema } from "../publisher/publisher.entity";
 import { commonValidations } from "@/libs/utils/commonValidation";
 
 extendZodWithOpenApi(z);

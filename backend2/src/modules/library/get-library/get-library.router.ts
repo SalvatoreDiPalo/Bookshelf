@@ -1,5 +1,4 @@
 import {
-  createApiRequestBody,
   createApiResponse,
   createPaginatedResponseSchema,
 } from "@/api-docs/openAPIResponseBuilders";
@@ -9,9 +8,9 @@ import express, { Router } from "express";
 import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 import { validateRequest } from "@/libs/utils/httpHandlers";
 import { getLibraryController } from "./get-library.controller";
-import { BookWithRelationsSchema } from "@/modules/book/book.validation";
 import { LibraryQuerySchema } from "./get-library.validation";
 import { LibrarySchema } from "../library.validation";
+import { BookWithRelationsSchema } from "@/modules/common/book/book.entity";
 
 export const getLibraryRouteConfig: RouteConfig = {
   method: "get",

@@ -1,8 +1,12 @@
-import { Author } from "@/modules/common/author/author.entity";
-import { BookWithRelations, BookWithRelationsSchema } from "@/modules/book/book.validation";
+import {
+  Book,
+  BookWithRelations,
+  BookWithRelationsSchema,
+} from "./book.entity";
+import { Author } from "../author/author.entity";
 
-class GetLibraryMapper {
-  toResponse(entity: LibraryBookIn): BookWithRelations {
+class BookMapper {
+  toResponseWithRelations(entity: BookDbWithRelations): BookWithRelations {
     const record: BookWithRelations = {
       authors: entity.authors,
 
@@ -30,23 +34,9 @@ class GetLibraryMapper {
   }
 }
 
-export const getLibraryMapperInstance = new GetLibraryMapper();
+export const bookMapperInstance = new BookMapper();
 
-export interface LibraryBookIn {
-  id: number;
-  isbn: string;
-  title: string;
-  subTitle?: string;
-  publishedDate: string;
-  description?: string;
-  pageCount?: number;
-  language?: string;
-  createdAt: string;
-  updatedAt: string;
-  bookCoverUrl?: string;
-  groupId?: number;
-  bookId: string;
-  publisherId?: number;
+export interface BookDbWithRelations extends Book {
   publisherName?: string;
 
   authors: Author[];
@@ -54,5 +44,4 @@ export interface LibraryBookIn {
   ubsId?: number;
   userId?: number;
   stateId?: number;
-  isFavorite?: boolean;
 }

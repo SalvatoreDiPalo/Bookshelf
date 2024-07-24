@@ -8,14 +8,19 @@ import express, { Router } from "express";
 import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 import { createBookController } from "./create-book.controller";
 import { validateRequest } from "@/libs/utils/httpHandlers";
-import { CreateBookBodySchema, CreateBookSchema } from "./create-book.validation";
-import { BookWithRelationsSchema } from "../book.validation";
+import {
+  CreateBookBodySchema,
+  CreateBookSchema,
+} from "./create-book.validation";
+import { BookWithRelationsSchema } from "../../common/book/book.entity";
 
 export const createBookRouteConfig: RouteConfig = {
   method: "post",
   path: "/books",
   tags: ["Book"],
-  request: createApiRequestBody(CreateBookSchema, "", true),
+  request: {
+    body: createApiRequestBody(CreateBookSchema, "", true),
+  },
   responses: createApiResponse(BookWithRelationsSchema, "Success"),
 };
 

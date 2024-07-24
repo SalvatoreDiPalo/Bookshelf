@@ -1,6 +1,6 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
-import { BookWithRelationsSchema } from "../book.validation";
+import { BookWithRelationsSchema } from "../../common/book/book.entity";
 
 extendZodWithOpenApi(z);
 

@@ -1,17 +1,16 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { Book, BookWithRelations } from "../book.validation";
+import { Book, BookWithRelations } from "../../common/book/book.entity";
 import { authorRepositoryInstance } from "@/modules/common/author/author.repository";
 import { Author } from "@/modules/common/author/author.entity";
 import { Publisher } from "@/modules/common/publisher/publisher.entity";
 import { publisherRepositoryInstance } from "@/modules/common/publisher/publisher.repository";
-import { bookRepositoryInstance } from "../book.repository";
+import { bookRepositoryInstance } from "../../common/book/book.repository";
 import { CreateBook } from "./create-book.validation";
 import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { getClient } from "@/libs/utils/database";
 import { bookAuthorsRepositoryInstance } from "@/modules/common/bookAuthors/bookAuthors.repository";
-import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 
 class CreateBookService {
   // Create Book
@@ -32,11 +31,11 @@ class CreateBookService {
         );
       }
 
-      let book = await this.findBookWithRelationsByIsbn(
+      let book = await bookRepositoryInstance.findOneWithRelationsByIsbn(
         bookToCreate.isbn,
         user.id
       );
-      if (book !== null) {
+      if (book) {
         logger.debug("Book already present, returning it");
         return ServiceResponse.success<BookWithRelations>(book);
       }
@@ -78,31 +77,6 @@ class CreateBookService {
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
-  }
-
-  private async findBookWithRelationsByIsbn(
-    isbn: string,
-    userId: number
-  ): Promise<BookWithRelations | null> {
-    // TODO add find book with relations
-    const bookWithRelations =
-      await bookRepositoryInstance.findOneWithRelationsByIsbn(isbn);
-    if (!bookWithRelations) {
-      return null;
-    }
-    const authors = await authorRepositoryInstance.findAllByBookId(
-      bookWithRelations.id!
-    );
-    bookWithRelations.authors = authors;
-
-    const library =
-      await libraryRepositoryInstance.findUserBookStateByBookIdAndUserId(
-        bookWithRelations.id!,
-        userId
-      );
-    bookWithRelations.stateId = library?.stateId ?? undefined;
-    bookWithRelations.isFavorite = library?.isFavorite ?? false;
-    return bookWithRelations;
   }
 
   private async addAuthors(authorsToAdd: string[]) {
