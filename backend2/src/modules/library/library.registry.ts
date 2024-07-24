@@ -21,6 +21,10 @@ import {
   updateFavoriteLibraryRouteConfig,
   updateFavoriteLibraryRouter,
 } from "./update-favorite-library/update-favorite-library.router";
+import {
+  updateStateLibraryRouteConfig,
+  updateStateLibraryRouter,
+} from "./update-state-library/update-state-library.router";
 
 export const libraryRegistry = new OpenAPIRegistry();
 
@@ -30,6 +34,7 @@ libraryRegistry.registerPath(addBookToLibraryRouteConfig);
 libraryRegistry.registerPath(checkBooksInLibraryRouteConfig);
 libraryRegistry.registerPath(getStatsLibraryRouteConfig);
 libraryRegistry.registerPath(updateFavoriteLibraryRouteConfig);
+libraryRegistry.registerPath(updateStateLibraryRouteConfig);
 
 export const libraryRouter: Router = express.Router();
 libraryRouter.use("/", [
@@ -38,4 +43,5 @@ libraryRouter.use("/", [
   checkBooksInLibraryRouter,
   getStatsLibraryRouter,
   updateFavoriteLibraryRouter,
+  updateStateLibraryRouter,
 ]);

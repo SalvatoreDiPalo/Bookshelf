@@ -3,7 +3,6 @@ import { axiosInstance } from "@/utils/axios";
 import { BookDTO } from "@/models/BookDTO";
 import { useMemo } from "react";
 import { Divider, Menu, MenuItem } from "@mui/material";
-import { Method } from "axios";
 
 interface CustomMenuProps extends BookProps {
   open: boolean;
@@ -19,11 +18,6 @@ export default function CustomMenu({
   handleClose,
   updateElement,
 }: CustomMenuProps) {
-  const updateBook = async (url: string, method: Method, params?: any) => {
-    const response = await axiosInstance<BookDTO>(url, { method, params });
-    updateElement(response.data);
-  };
-
   const updateFavoriteFlag = async () => {
     const url = `/library/book/${item.id}/favorite`;
     const body = { isFavorite: !item.isFavorite };
@@ -31,14 +25,18 @@ export default function CustomMenu({
     updateElement(response.data);
   };
 
-  const updateBookState = (id: number) => {
-    const url = `/api/books/isbn/${item.isbn}/state/${id}`;
-    updateBook(url, "PATCH");
+  const updateBookState = async (id: number) => {
+    const url = `/library/book/${item.id}/state`;
+    const body = { stateId: id };
+    const response = await axiosInstance.patch<BookDTO>(url, body);
+    updateElement(response.data);
   };
 
-  const removeBookState = () => {
-    const url = `/api/books/isbn/${item.isbn}/state`;
-    updateBook(url, "PATCH");
+  const removeBookState = async () => {
+    const url = `/library/book/${item.id}/state`;
+    const body = { stateId: null };
+    const response = await axiosInstance.patch<BookDTO>(url, body);
+    updateElement(response.data);
   };
 
   const Favorite = useMemo(

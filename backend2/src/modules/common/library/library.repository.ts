@@ -155,6 +155,19 @@ class LibraryRepository {
     );
   }
 
+  async updateStateId(
+    bookId: number,
+    userId: number,
+    stateId: number | null
+  ): Promise<void> {
+    await query(
+      `
+        UPDATE public.library SET "stateId" = $1 WHERE "bookId" = $2 AND "userId" = $3;
+      `,
+      [stateId, bookId, userId]
+    );
+  }
+
   async insert(ubs: Library): Promise<void> {
     await query(
       `

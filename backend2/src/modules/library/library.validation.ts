@@ -23,3 +23,11 @@ export const LibrarySchema = z.object({
     .refine((num) => num > 0, "stateId must be a positive number")
     .optional(),
 });
+
+export const BookIdSchema = z.object({
+  bookId: commonValidations.id,
+});
+
+export const BookIdSchemaParamsSchema = z.object({
+  params: BookIdSchema,
+});
