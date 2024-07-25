@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Pagination, Tab, Tabs, styled } from "@mui/material";
+import { Box, Divider, Pagination, Tab, Tabs, styled } from "@mui/material";
 import AlignmentButtons from "./components/alignment-buttons";
 import SelectSort from "./components/select-sort";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
@@ -145,20 +145,24 @@ export default function Home() {
           <AlignmentButtons alignment={alignment} setAlignment={setAlignment} />
         </Box>
       </Box>
-      <Grid container columns={alignment === 0 ? 12 : 1}>
+      <Grid container columns={alignment === 0 ? 12 : 1} spacing={2}>
         <BookList
           data={data}
           states={states}
           setData={setData}
           isLoading={isLoading}
         />
-        <Grid xs={12} justifyContent="center" display="flex">
+        <Grid xs={12}>
+          <Divider />
+        </Grid>
+        <Grid xs={12} justifyContent="center" display="flex" marginTop={2}>
           <Pagination
             count={Math.ceil(
               (data?.totalItems && data?.totalItems > 1
                 ? data?.totalItems
                 : 1) / ITEMS_PER_PAGE,
             )}
+            color="primary"
             page={page}
             onChange={handlePageChange}
           />

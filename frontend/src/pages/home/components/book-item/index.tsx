@@ -32,36 +32,38 @@ export default function BookItem({
   };
 
   return (
-    <StyledBox className="w-full max-w-[290px] m-h-[340px] cursor-pointer p-4">
-      <Box className="relative w-full h-[240px]">
+    <StyledBox className="max-h-[250px] w-full max-w-[164px] cursor-pointer">
+      <Box className="relative max-h-[164px] w-full">
         <img
           srcSet={`https://loremflickr.com/240/280/book`}
           src={`https://loremflickr.com/240/280/book`}
           alt={"Book"}
           loading="lazy"
           width={"100%"}
-          height={240}
+          height={"100%"}
           className="book-item-img"
-          style={{ borderRadius: 8 }}
+          style={{ borderRadius: 8, aspectRatio: "1 / 1" }}
         />
-      </Box>
-
-      <Box className="flex w-full flex-row flex-nowrap items-center">
-        <Tooltip title={item.title}>
-          <Typography variant="h6" gutterBottom noWrap width={210}>
-            {item.title}
-          </Typography>
-        </Tooltip>
-
         <IconButton
           aria-controls={open ? "basic-menu" : undefined}
           aria-haspopup="true"
           aria-expanded={open ? "true" : undefined}
           onClick={handleClick}
+          sx={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+          }}
         >
           <MoreHorizIcon />
         </IconButton>
       </Box>
+
+      <Tooltip title={item.title}>
+        <Typography variant="subtitle2" noWrap>
+          {item.title}
+        </Typography>
+      </Tooltip>
 
       <CustomMenu
         item={item}
@@ -74,8 +76,8 @@ export default function BookItem({
       />
 
       <Tooltip title={authors}>
-        <Typography variant="subtitle1" gutterBottom noWrap width={210}>
-          {authors && authors.length ? authors : "N/A"}
+        <Typography variant="caption" noWrap>
+          By {authors && authors.length ? authors : "N/A"}
         </Typography>
       </Tooltip>
     </StyledBox>

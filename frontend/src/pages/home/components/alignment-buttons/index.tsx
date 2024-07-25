@@ -24,6 +24,7 @@ export default function AlignmentButtons({
       exclusive
       defaultValue={0}
       onChange={handleAlignment}
+      color="primary"
       sx={{ height: "100%" }}
     >
       <ToggleButton value={0} aria-label="left aligned">

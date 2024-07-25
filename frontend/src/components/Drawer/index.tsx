@@ -78,7 +78,9 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
           width: drawerWidth,
           boxSizing: "border-box",
           top: 72,
-          borderRadius: 2,
+          height: "calc(100% - 72px)",
+          borderTopRightRadius: 8,
+          boxShadow: 2
         },
       }}
       variant="persistent"
