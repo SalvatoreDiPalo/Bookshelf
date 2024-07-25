@@ -17,6 +17,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { useState } from "react";
 import AddBookDialog from "../AddBookDialog";
+import { useAppContext } from "@/context/AppProvider";
 
 const drawerWidth = 240;
 
@@ -53,6 +54,7 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
   const { signOut } = useLogto();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { shouldReload } = useAppContext();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [randomId, setRandomId] = useState<number>(Date.now());
 
@@ -64,6 +66,7 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
   const handleClose = () => {
     setRandomId(Date.now());
     setOpenDialog(false);
+    shouldReload!();
   };
 
   return (

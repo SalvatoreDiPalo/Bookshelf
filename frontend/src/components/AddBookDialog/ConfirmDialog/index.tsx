@@ -14,11 +14,13 @@ interface BookInformationProps {
 }
 
 interface ConfirmDialogProps extends BookInformationProps {
+  isInLibrary: boolean;
   open: boolean;
   handleClose: (volume?: Volume) => void;
 }
 
 export default function ConfirmDialog({
+  isInLibrary,
   open,
   data,
   handleClose,
@@ -37,8 +39,13 @@ export default function ConfirmDialog({
         <BookInformation data={data} />
       </DialogContent>
       <DialogActions>
+        {isInLibrary && <Typography>Already present in the library</Typography>}
         <Button onClick={() => handleClose()}>No</Button>
-        <Button onClick={() => handleClose(data)} autoFocus>
+        <Button
+          onClick={() => handleClose(data)}
+          autoFocus
+          disabled={isInLibrary}
+        >
           Yes
         </Button>
       </DialogActions>

@@ -23,10 +23,12 @@ export interface IAuth {
   authStatus?: AuthStatus;
   user?: UserDTO;
   token?: string;
+  shouldReloadComponent?: string;
   setShowLoaderHandler: (value: boolean) => void;
   signIn?: () => void;
   signOut?: () => void;
   updateTheme?: () => void;
+  shouldReload?: () => void;
 }
 
 const defaultState: IAuth = {
@@ -45,6 +47,8 @@ const AppProvider = ({ children }: Props) => {
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [user, setUser] = useState<UserDTO>();
   const [showLoading, setShowLoading] = useState(false);
+  const [shouldReloadComponent, setShouldReloadComponent] =
+    useState<string>();
   const [theme, setTheme] = useState<PaletteMode>(() => {
     let initialTheme = localStorage.getItem("theme");
     initialTheme = initialTheme ? initialTheme : "light";
@@ -143,13 +147,21 @@ const AppProvider = ({ children }: Props) => {
     setAuthStatus(AuthStatus.SignedOut);
   }
 
+  function shouldReload() {
+    const random = window.crypto.randomUUID();
+    console.log("Should reload called", random);
+    setShouldReloadComponent(random);
+  }
+
   const state: IAuth = {
     authStatus,
     user,
+    shouldReloadComponent,
     signIn,
     signOut,
     updateTheme: toggleTheme,
     setShowLoaderHandler: setShowLoaderHandler,
+    shouldReload,
   };
 
   if (authStatus === AuthStatus.Loading) {

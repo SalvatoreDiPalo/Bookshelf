@@ -1,3 +1,5 @@
+import { GoogleIdentifier } from "./enum/GoogleIdentifier";
+
 export interface Volume {
   kind: string;
   id: string;
@@ -12,7 +14,7 @@ export interface Volume {
     description: string;
     industryIdentifiers: [
       {
-        type: string;
+        type: GoogleIdentifier;
         identifier: string;
       }
     ];
@@ -28,10 +30,10 @@ export interface Volume {
     averageRating: number;
     ratingsCount: number;
     contentVersion: string;
-    imageLinks: {
-      smallThumbnail: string;
-      thumbnail: string;
-      small: string;
+    imageLinks?: {
+      smallThumbnail?: string;
+      thumbnail?: string;
+      small?: string;
       medium: string;
       large: string;
       extraLarge: string;

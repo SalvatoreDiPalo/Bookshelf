@@ -21,15 +21,14 @@ export default function BookList({ data, states, setData }: BookListProps) {
       ),
       totalItems: prevValue!.totalItems,
     }));
+  };
 
-    /*     setItems((prevElem) => [
-      ...prevElem,
-      {
-        id: -Math.floor(Math.random() * 10000),
-        name: `Empty-${prevElem.length + 1}`,
-        isEditable: true,
-      },
-    ]); */
+  const removeElement = (item: BookDTO) => {
+    setData((prevValue) => ({
+      ...prevValue,
+      items: prevValue!.items.filter((book) => book.id !== item.id),
+      totalItems: prevValue!.totalItems,
+    }));
   };
 
   return data && data.items && data.items.length ? (
@@ -44,7 +43,12 @@ export default function BookList({ data, states, setData }: BookListProps) {
         justifyContent="center"
         alignItems="center"
       >
-        <BookItem item={book} states={states} updateElement={updateElement} />
+        <BookItem
+          item={book}
+          states={states}
+          updateElement={updateElement}
+          removeElement={removeElement}
+        />
       </Grid>
     ))
   ) : (

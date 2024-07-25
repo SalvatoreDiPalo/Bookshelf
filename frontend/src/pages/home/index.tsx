@@ -17,6 +17,7 @@ import { StateDTO } from "@/models/StateDTO";
 import { ITEMS_PER_PAGE } from "@/utils/const";
 import { axiosInstance } from "@/utils/axios";
 import BookList from "./components/book-list";
+import { useAppContext } from "@/context/AppProvider";
 
 const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
   overflow: "hidden",
@@ -47,6 +48,7 @@ export default function Home() {
   const [data, setData] = useState<ResultDTO<BookDTO>>();
   const [states, setStates] = useState<StateDTO[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { shouldReloadComponent } = useAppContext();
 
   const fetchBooks = async (
     page: number = 1,
@@ -54,7 +56,7 @@ export default function Home() {
     otherQueryOptions?: FetchBookProp,
   ) => {
     setIsLoading(true);
-    const response = await axiosInstance<ResultDTO<BookDTO>>(`/api/books`, {
+    const response = await axiosInstance<ResultDTO<BookDTO>>(`/library`, {
       params: {
         page: page,
         pageSize: ITEMS_PER_PAGE,
@@ -67,7 +69,7 @@ export default function Home() {
   };
 
   const fetchStates = async () => {
-    const response = await axiosInstance<StateDTO[]>(`/api/states`);
+    const response = await axiosInstance<StateDTO[]>(`/states`);
     setStates(response.data);
   };
 
@@ -76,20 +78,19 @@ export default function Home() {
     fetchStates();
   }, []);
 
+  // This will force the component to re-render
+  useEffect(() => {
+    if (shouldReloadComponent) {
+      const otherProps = getOtherProps(selectedTab, states);
+      fetchBooks(page, sortBy, otherProps);
+    }
+  }, [shouldReloadComponent]);
+
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
     // Favorities
-    switch (newValue) {
-      case 0:
-        fetchBooks(page, sortBy);
-        break;
-      case 1:
-        fetchBooks(page, sortBy, { isFavorite: true });
-        break;
-      default:
-        fetchBooks(page, sortBy, { stateId: states[newValue - 2].id });
-        break;
-    }
+    const otherProps = getOtherProps(newValue, states);
+    fetchBooks(page, sortBy, otherProps);
   };
 
   const handleSortChange = (sortBy: string) => {
@@ -185,4 +186,18 @@ export default function Home() {
 interface FetchBookProp {
   isFavorite?: boolean;
   stateId?: number;
+}
+
+function getOtherProps(
+  newValue: number,
+  states: StateDTO[],
+): FetchBookProp | undefined {
+  switch (newValue) {
+    case 0:
+      return;
+    case 1:
+      return { isFavorite: true };
+    default:
+      return { stateId: states[newValue - 2].id };
+  }
 }

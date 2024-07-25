@@ -10,7 +10,7 @@ export default function Profile() {
   const [stats, setStats] = useState<StatsDTO>();
 
   const getStats = async () => {
-    const response = await axiosInstance<StatsDTO>("/api/books/stats");
+    const response = await axiosInstance<StatsDTO>("/library/stats");
     setStats(response.data);
   };
 

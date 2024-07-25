@@ -17,7 +17,7 @@ export default function Settings() {
   const [checked, setChecked] = useState(false);
 
   const fetchData = async () => {
-    const response = await axiosInstance<StateDTO[]>(`/api/states`);
+    const response = await axiosInstance<StateDTO[]>(`/states`);
     setItems(response.data);
   };
 
@@ -62,7 +62,7 @@ export default function Settings() {
   };
 
   const saveStates = async () => {
-    const response = await axiosInstance<StateDTO[]>(`/api/states`, {
+    const response = await axiosInstance<StateDTO[]>(`/states`, {
       method: "POST",
       data: items,
     });
@@ -102,6 +102,7 @@ export default function Settings() {
           variant="outlined"
           className="mr-2 mt-2"
           onClick={addEmptyState}
+          disabled={items.length >= 10}
         >
           Add
         </Button>

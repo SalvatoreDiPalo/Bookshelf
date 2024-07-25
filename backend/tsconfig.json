@@ -1,14 +1,20 @@
 {
   "compilerOptions": {
-    "lib": ["es5", "es6"],
-    "target": "es5",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "outDir": "./build",
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "sourceMap": true,
-    "esModuleInterop": true
+    "target": "ESNext",
+    "module": "CommonJS",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "moduleResolution": "Node",
+    "outDir": "dist",
+    "importsNotUsedAsValues": "remove",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vitest/globals", "./src/libs/types/express/index.d.ts"]
   },
-  "typeRoots": ["./node_module/@types", "./src/types"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

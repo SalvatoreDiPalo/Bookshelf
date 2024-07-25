@@ -2,8 +2,12 @@ import { Volume } from "@/models/google-volumes";
 import { Box, BoxProps, styled, Typography } from "@mui/material";
 import { useState } from "react";
 import ConfirmDialog from "../ConfirmDialog";
+import { axiosInstance } from "@/utils/axios";
+import { BookDTO } from "@/models/BookDTO";
+import { volumeToBookDTO } from "@/utils/helpers";
 
 interface BookItemProps {
+  isInLibrary: boolean;
   data?: Volume;
 }
 
@@ -16,27 +20,49 @@ const BookBox = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 12,
 }));
 
-export default function BookItem({ data }: BookItemProps) {
+export default function BookItem({ isInLibrary, data }: BookItemProps) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (volume?: Volume) => {
-    setOpen(false);
+  const handleClose = async (volume?: Volume) => {
+    if (!volume) {
+      setOpen(false);
+      return;
+    }
     // TODO call api to create a book and add it to user library
+    const response = await axiosInstance.post<BookDTO>(
+      `/books`,
+      volumeToBookDTO(volume),
+    );
+    const book: BookDTO = response.data;
+    await axiosInstance<BookDTO>(`/library/book/${book.id}`, {
+      method: "POST",
+    });
+    setOpen(false);
   };
 
   if (!data || !data.volumeInfo) return null;
+
+  const imageLinks = data.volumeInfo.imageLinks;
 
   return (
     <>
       <BookBox onClick={handleClickOpen}>
         <Box className="relative mr-2 w-[46px]">
           <img
-            srcSet={data.volumeInfo.imageLinks.smallThumbnail}
-            src={data.volumeInfo.imageLinks.smallThumbnail}
+            srcSet={
+              imageLinks?.smallThumbnail ??
+              imageLinks?.small ??
+              imageLinks?.thumbnail
+            }
+            src={
+              imageLinks?.smallThumbnail ??
+              imageLinks?.small ??
+              imageLinks?.thumbnail
+            }
             alt={"Book"}
             loading="lazy"
             width={46}
@@ -69,7 +95,12 @@ export default function BookItem({ data }: BookItemProps) {
         </Box>
       </BookBox>
       {open && (
-        <ConfirmDialog open={open} handleClose={handleClose} data={data} />
+        <ConfirmDialog
+          open={open}
+          handleClose={handleClose}
+          data={data}
+          isInLibrary={isInLibrary}
+        />
       )}
     </>
   );
