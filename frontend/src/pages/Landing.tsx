@@ -8,7 +8,7 @@ export default function Landing() {
   const { isAuthenticated, signIn, signOut } = useLogto();
   return (
     <>
-      <AppBar position="fixed">
+      <AppBar position="fixed" className="shadow-none">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Persistent drawer

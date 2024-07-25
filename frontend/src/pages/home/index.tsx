@@ -151,6 +151,7 @@ export default function Home() {
           states={states}
           setData={setData}
           isLoading={isLoading}
+          isSingleLine={alignment === 1}
         />
         <Grid xs={12}>
           <Divider />

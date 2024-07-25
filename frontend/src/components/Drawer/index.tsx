@@ -80,7 +80,7 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
           top: 72,
           height: "calc(100% - 72px)",
           borderTopRightRadius: 8,
-          boxShadow: 2
+          boxShadow: 2,
         },
       }}
       variant="persistent"
@@ -98,15 +98,21 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
         ))}
       </List>
       <Divider />
-      <ListItem disablePadding>
+      <ListItem>
         <ListItemButton
           sx={{
             backgroundColor: theme.palette.primary.main,
+            borderRadius: 8,
+            height: "90%",
+            color: "#fff",
+            "&:hover": {
+              backgroundColor: "#758afe",
+            },
           }}
           onClick={handleClickOpen}
         >
           <ListItemIcon>
-            <AddIcon />
+            <AddIcon sx={{ color: "#fff" }} />
           </ListItemIcon>
           <ListItemText primary="Add a Book" />
         </ListItemButton>

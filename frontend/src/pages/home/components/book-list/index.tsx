@@ -11,6 +11,7 @@ interface BookListProps {
   states: StateDTO[];
   data?: ResultDTO<BookDTO>;
   isLoading?: boolean;
+  isSingleLine: boolean;
   setData: Dispatch<SetStateAction<ResultDTO<BookDTO> | undefined>>;
 }
 
@@ -18,6 +19,7 @@ export default function BookList({
   isLoading,
   data,
   states,
+  isSingleLine,
   setData,
 }: BookListProps) {
   const updateElement = (item: BookDTO) => {
@@ -89,6 +91,7 @@ export default function BookList({
       <BookItem
         item={book}
         states={states}
+        isSingleLine={isSingleLine}
         updateElement={updateElement}
         removeElement={removeElement}
       />

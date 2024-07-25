@@ -1,5 +1,13 @@
 import { BookDTO } from "@/models/BookDTO";
-import { Box, IconButton, Tooltip, Typography, styled } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Theme,
+  Tooltip,
+  Typography,
+  makeStyles,
+  styled,
+} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
 import { StateDTO } from "@/models/StateDTO";
@@ -8,6 +16,7 @@ import CustomMenu from "./BookMenu";
 export interface BookProps {
   item: BookDTO;
   states: StateDTO[];
+  isSingleLine?: boolean;
   updateElement: (item: BookDTO) => void;
   removeElement: (item: BookDTO) => void;
 }
@@ -15,6 +24,7 @@ export interface BookProps {
 export default function BookItem({
   item,
   states,
+  isSingleLine,
   updateElement,
   removeElement,
 }: BookProps) {
@@ -32,17 +42,15 @@ export default function BookItem({
   };
 
   return (
-    <StyledBox className="max-h-[250px] w-full max-w-[164px] cursor-pointer">
-      <Box className="relative max-h-[164px] w-full">
-        <img
+    <StyledBox isSingleLine={isSingleLine ?? false}>
+      <Box className="relative max-h-[164px]">
+        <Image
           srcSet={`https://loremflickr.com/240/280/book`}
           src={`https://loremflickr.com/240/280/book`}
           alt={"Book"}
           loading="lazy"
-          width={"100%"}
-          height={"100%"}
           className="book-item-img"
-          style={{ borderRadius: 8, aspectRatio: "1 / 1" }}
+          isSingleLine={isSingleLine ?? false}
         />
         <IconButton
           aria-controls={open ? "basic-menu" : undefined}
@@ -59,11 +67,18 @@ export default function BookItem({
         </IconButton>
       </Box>
 
-      <Tooltip title={item.title}>
-        <Typography variant="subtitle2" noWrap>
-          {item.title}
-        </Typography>
-      </Tooltip>
+      <Box>
+        <Tooltip title={item.title}>
+          <Typography variant="subtitle2" noWrap>
+            {item.title}
+          </Typography>
+        </Tooltip>
+        <Tooltip title={authors}>
+          <Typography variant="caption" noWrap>
+            By {authors && authors.length ? authors : "N/A"}
+          </Typography>
+        </Tooltip>
+      </Box>
 
       <CustomMenu
         item={item}
@@ -74,20 +89,41 @@ export default function BookItem({
         updateElement={updateElement}
         removeElement={removeElement}
       />
-
-      <Tooltip title={authors}>
-        <Typography variant="caption" noWrap>
-          By {authors && authors.length ? authors : "N/A"}
-        </Typography>
-      </Tooltip>
     </StyledBox>
   );
 }
 
-const StyledBox = styled(Box)(({ theme }) => ({
+export interface StyleProps {
+  isSingleLine: boolean;
+}
+
+const StyledBox = styled(Box)<StyleProps>(({ theme, isSingleLine }) => ({
+  maxHeight: 250,
+  width: "100%",
+  maxWidth: isSingleLine ? "none" : 164,
+  cursor: "pointer",
   ":hover": {
     ".book-item-img": {
       transform: "scale(1.02)",
     },
   },
+  ...(isSingleLine && {
+    display: "flex",
+    flexFlow: "row",
+    marginRight: 2
+  }),
+}));
+
+const Image = styled("img")<StyleProps>(({ theme, isSingleLine }) => ({
+  ...(!isSingleLine
+    ? {
+        height: "100%",
+        width: "100%",
+      }
+    : {
+        maxHeight: 164,
+        maxWidth: 86,
+      }),
+  borderRadius: 8,
+  aspectRatio: "1 / 1",
 }));
