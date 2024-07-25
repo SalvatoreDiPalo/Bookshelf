@@ -4,12 +4,12 @@ import { verifyAuthFromRequest } from "@/libs/middleware/auth";
 import express, { Router } from "express";
 import { RouteConfig } from "@asteasolutions/zod-to-openapi";
 import { validateRequest } from "@/libs/utils/httpHandlers";
-import { addBookToLibraryController } from "./add-book-to-library.controller";
 import { BookWithRelationsSchema } from "@/modules/common/book/book.entity";
 import { BookIdSchema, BookIdSchemaParamsSchema } from "../library.validation";
+import { removeBookFromLibraryController } from "./remove-book-from-library.controller";
 
-export const addBookToLibraryRouteConfig: RouteConfig = {
-  method: "post",
+export const removeBookFromLibraryRouteConfig: RouteConfig = {
+  method: "delete",
   path: "/library/book/{bookId}",
   tags: ["Library"],
   request: {
@@ -18,10 +18,10 @@ export const addBookToLibraryRouteConfig: RouteConfig = {
   responses: createApiResponse(BookWithRelationsSchema, "Success"),
 };
 
-export const addBookToLibraryRouter: Router = express.Router();
-addBookToLibraryRouter.post(
+export const removeBookFromLibraryRouter: Router = express.Router();
+removeBookFromLibraryRouter.delete(
   "/book/:bookId",
   validateRequest(BookIdSchemaParamsSchema),
   verifyAuthFromRequest,
-  addBookToLibraryController.addBookToLibrary
+  removeBookFromLibraryController.removeBookFromLibrary
 );

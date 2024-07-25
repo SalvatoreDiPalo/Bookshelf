@@ -177,6 +177,17 @@ class LibraryRepository {
     );
   }
 
+  async delete(userId: number, bookId: number): Promise<boolean> {
+    const result = await query(
+      `
+        DELETE FROM public."library"
+        WHERE "userId"=$1 AND "bookId" = $2;
+      `,
+      [userId, bookId]
+    );
+    return result.rowCount === 1;
+  }
+
   async getStats(userId: number, finishedName: string): Promise<Stats> {
     const result: QueryResult<Stats> = await query(
       `

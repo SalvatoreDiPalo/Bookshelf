@@ -32,9 +32,9 @@ class CreateBookService {
       }
 
       let book = await bookRepositoryInstance.findOneWithRelationsByIsbn(
-        bookToCreate.isbn,
-        user.id
+        bookToCreate.isbn
       );
+      logger.debug("Isbn %o", bookToCreate.isbn);
       if (book) {
         logger.debug("Book already present, returning it");
         return ServiceResponse.success<BookWithRelations>(book);
