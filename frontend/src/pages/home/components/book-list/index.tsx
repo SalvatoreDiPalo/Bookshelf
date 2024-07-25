@@ -3,16 +3,23 @@ import { ResultDTO } from "@/models/ResultDTO";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 import BookItem from "../book-item";
 import { StateDTO } from "@/models/StateDTO";
-import { Typography } from "@mui/material";
+import { Skeleton, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
+import { ITEMS_PER_PAGE } from "@/utils/const";
 
 interface BookListProps {
-  data?: ResultDTO<BookDTO>;
   states: StateDTO[];
+  data?: ResultDTO<BookDTO>;
+  isLoading?: boolean;
   setData: Dispatch<SetStateAction<ResultDTO<BookDTO> | undefined>>;
 }
 
-export default function BookList({ data, states, setData }: BookListProps) {
+export default function BookList({
+  isLoading,
+  data,
+  states,
+  setData,
+}: BookListProps) {
   const updateElement = (item: BookDTO) => {
     setData((prevValue) => ({
       ...prevValue,
@@ -31,10 +38,10 @@ export default function BookList({ data, states, setData }: BookListProps) {
     }));
   };
 
-  return data && data.items && data.items.length ? (
-    data.items.map((book) => (
+  if (isLoading) {
+    return Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
       <Grid
-        key={book.isbn}
+        key={index}
         xs={12}
         sm={4}
         md={3}
@@ -43,23 +50,48 @@ export default function BookList({ data, states, setData }: BookListProps) {
         justifyContent="center"
         alignItems="center"
       >
-        <BookItem
-          item={book}
-          states={states}
-          updateElement={updateElement}
-          removeElement={removeElement}
+        <Skeleton
+          key={index}
+          variant="rectangular"
+          width={210}
+          height={280}
+          sx={{ margin: 2 }}
         />
       </Grid>
-    ))
-  ) : (
+    ));
+  }
+
+  if (!data || !data.items || !data.items.length) {
+    return (
+      <Grid
+        xs={12}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        className="mb-2"
+      >
+        <Typography>There are no books to display!</Typography>
+      </Grid>
+    );
+  }
+
+  return data.items.map((book) => (
     <Grid
+      key={book.isbn}
       xs={12}
+      sm={4}
+      md={3}
+      xl={2}
       display="flex"
       justifyContent="center"
       alignItems="center"
-      className="mb-2"
     >
-      <Typography>There are no books to display!</Typography>
+      <BookItem
+        item={book}
+        states={states}
+        updateElement={updateElement}
+        removeElement={removeElement}
+      />
     </Grid>
-  );
+  ));
 }

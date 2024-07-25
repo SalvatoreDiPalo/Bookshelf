@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Pagination,
-  Skeleton,
-  Tab,
-  Tabs,
-  TabsProps,
-  styled,
-} from "@mui/material";
+import { Box, Pagination, Tab, Tabs, styled } from "@mui/material";
 import AlignmentButtons from "./components/alignment-buttons";
 import SelectSort from "./components/select-sort";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
@@ -19,7 +11,7 @@ import { axiosInstance } from "@/utils/axios";
 import BookList from "./components/book-list";
 import { useAppContext } from "@/context/AppProvider";
 
-const StyledTabs = styled(Tabs)<TabsProps>(({ theme }) => ({
+const StyledTabs = styled(Tabs)(() => ({
   overflow: "hidden",
   display: "flex",
   borderRadius: 10,
@@ -154,19 +146,12 @@ export default function Home() {
         </Box>
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1}>
-        {!isLoading ? (
-          <BookList data={data} states={states} setData={setData} />
-        ) : (
-          Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
-            <Skeleton
-              key={index}
-              variant="rectangular"
-              width={210}
-              height={280}
-              sx={{ margin: 2 }}
-            />
-          ))
-        )}
+        <BookList
+          data={data}
+          states={states}
+          setData={setData}
+          isLoading={isLoading}
+        />
         <Grid xs={12} justifyContent="center" display="flex">
           <Pagination
             count={Math.ceil(
