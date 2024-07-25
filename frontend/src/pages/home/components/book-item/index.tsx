@@ -32,21 +32,21 @@ export default function BookItem({
   };
 
   return (
-    <StyledBox className="m-h-[340px] cursor-pointer p-4">
-      <Box className="relative h-[240px] w-[200px]">
+    <StyledBox className="w-full max-w-[290px] m-h-[340px] cursor-pointer p-4">
+      <Box className="relative w-full h-[240px]">
         <img
           srcSet={`https://loremflickr.com/240/280/book`}
           src={`https://loremflickr.com/240/280/book`}
           alt={"Book"}
           loading="lazy"
-          width={200}
+          width={"100%"}
           height={240}
           className="book-item-img"
           style={{ borderRadius: 8 }}
         />
       </Box>
 
-      <Box className="flex w-[200px] flex-row flex-nowrap items-center">
+      <Box className="flex w-full flex-row flex-nowrap items-center">
         <Tooltip title={item.title}>
           <Typography variant="h6" gutterBottom noWrap width={210}>
             {item.title}
@@ -75,7 +75,7 @@ export default function BookItem({
 
       <Tooltip title={authors}>
         <Typography variant="subtitle1" gutterBottom noWrap width={210}>
-          {authors}
+          {authors && authors.length ? authors : "N/A"}
         </Typography>
       </Tooltip>
     </StyledBox>
