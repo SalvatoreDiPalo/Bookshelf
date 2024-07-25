@@ -133,13 +133,14 @@ export default function AddBookDialog({
             display: items.length ? "flex" : "none",
           }}
         >
-          {items.map((book) => (
-            <BookItem
-              key={book.id}
-              data={book}
-              isInLibrary={booksAlreadyPresent.includes(book.id)}
-            />
-          ))}
+          {!loading &&
+            items.map((book) => (
+              <BookItem
+                key={book.id}
+                data={book}
+                isInLibrary={booksAlreadyPresent.includes(book.id)}
+              />
+            ))}
         </Paper>
       </DialogContent>
     </TransparentDialog>
