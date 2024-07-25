@@ -25,9 +25,6 @@ export const env = cleanEnv(process.env, {
   DB_PASSWORD: str({ devDefault: testOnly("admin") }),
   DB_NAME: str({ devDefault: testOnly("postgres") }),
 
-  // Google Books
-  GOOGLE_BOOKS_URL: url(),
-
   // LogTo
   LOGTO_JWKS: url(),
   LOGTO_ISSUER: url(),

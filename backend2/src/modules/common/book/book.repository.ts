@@ -106,7 +106,7 @@ class BookRepository {
     return bookMapperInstance.toResponseWithRelations(rows[0]);
   }
 
-  async insert(book: BookWithRelations): Promise<Book> {
+  async insert(book: Book): Promise<Book> {
     const result = await query(
       `
         INSERT INTO public.books ("bookId", isbn, title, "subTitle", description, "publishedDate", "bookCoverId", "pageCount", "createdDate", "updatedDate", "publisherId")
@@ -121,7 +121,7 @@ class BookRepository {
         book.publishedDate,
         null,
         book.pageCount,
-        book.publisher ? book.publisher.id : null,
+        book.publisherId,
       ]
     );
 

@@ -53,10 +53,11 @@ class CreateBookService {
       logger.debug("Publisher added %o", publisher);
 
       bookToCreate.publisherId = publisher?.id;
+      logger.debug("Adding book %o", bookToCreate as BookWithRelations);
       const savedBook: Book = await bookRepositoryInstance.insert(
         bookToCreate as BookWithRelations
       );
-      logger.debug("Book added %o", savedBook);
+      logger.debug("Book added %o", savedBook.id);
 
       this.addAuthorsRelationToBook(authors, savedBook.id!);
 
@@ -100,7 +101,6 @@ class CreateBookService {
         name: savedAuthor.name,
       });
     }
-    logger.debug("Returning %o", authors);
 
     return authors;
   }
@@ -126,7 +126,6 @@ class CreateBookService {
         publisherName
       );
     }
-    logger.debug("Returning %o", existingPublisher);
 
     return existingPublisher;
   }

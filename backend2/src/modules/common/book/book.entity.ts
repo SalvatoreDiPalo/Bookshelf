@@ -13,7 +13,7 @@ export const BookSchema = z.object({
   subTitle: z.string().optional(),
   publishedDate: z.string(),
   description: z.string().optional(),
-  pageCount: z.number().positive().optional(),
+  pageCount: z.number().nonnegative().optional(),
   language: z.string().optional(),
   createdAt: z.date().optional().readonly(),
   updatedAt: z.date().optional().readonly(),
