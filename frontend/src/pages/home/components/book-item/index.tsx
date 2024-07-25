@@ -9,9 +9,15 @@ export interface BookProps {
   item: BookDTO;
   states: StateDTO[];
   updateElement: (item: BookDTO) => void;
+  removeElement: (item: BookDTO) => void;
 }
 
-export default function BookItem({ item, states, updateElement }: BookProps) {
+export default function BookItem({
+  item,
+  states,
+  updateElement,
+  removeElement,
+}: BookProps) {
   const authors = item.authors.map((author) => author.name).join(" & ");
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -64,6 +70,7 @@ export default function BookItem({ item, states, updateElement }: BookProps) {
         open={open}
         states={states}
         updateElement={updateElement}
+        removeElement={removeElement}
       />
 
       <Tooltip title={authors}>

@@ -17,6 +17,7 @@ export default function CustomMenu({
   anchorEl,
   handleClose,
   updateElement,
+  removeElement,
 }: CustomMenuProps) {
   const updateFavoriteFlag = async () => {
     const url = `/library/book/${item.id}/favorite`;
@@ -37,6 +38,12 @@ export default function CustomMenu({
     const body = { stateId: null };
     const response = await axiosInstance.patch<BookDTO>(url, body);
     updateElement(response.data);
+  };
+
+  const removeBook = async () => {
+    const url = `/library/book/${item.id}`;
+    const response = await axiosInstance.delete<BookDTO>(url);
+    removeElement(response.data);
   };
 
   const Favorite = useMemo(
@@ -107,7 +114,7 @@ export default function CustomMenu({
       <Divider sx={{ my: 0.5 }} />
       {StatesTab}
       <Divider sx={{ my: 0.5 }} />
-      <MenuItem onClick={handleClose}>Delete</MenuItem>
+      <MenuItem onClick={removeBook}>Delete</MenuItem>
     </Menu>
   );
 }
