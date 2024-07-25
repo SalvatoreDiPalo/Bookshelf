@@ -173,7 +173,7 @@ const AppProvider = ({ children }: Props) => {
       <ThemeProvider theme={themeObject}>
         <AxiosInterceptor>
           <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1000 }}
             open={showLoading}
           >
             <CircularProgress color="inherit" />
