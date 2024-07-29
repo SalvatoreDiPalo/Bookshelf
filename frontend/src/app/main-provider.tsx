@@ -23,6 +23,7 @@ export enum AuthStatus {
 }
 
 export interface IAuth {
+  isLoading: boolean;
   authStatus?: AuthStatus;
   user?: UserDTO;
   token?: string;
@@ -36,6 +37,7 @@ export interface IAuth {
 
 const defaultState: IAuth = {
   authStatus: AuthStatus.Loading,
+  isLoading: false,
   setShowLoaderHandler: (value: boolean) => {},
 };
 
@@ -49,7 +51,7 @@ const AppProvider = ({ children }: Props) => {
   const { isAuthenticated, getAccessToken } = useLogto();
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [user, setUser] = useState<UserDTO>();
-  const [showLoading, setShowLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [shouldReloadComponent, setShouldReloadComponent] = useState<string>();
   const [theme, setTheme] = useState<PaletteMode>(() => {
     let initialTheme = localStorage.getItem('theme');
@@ -95,7 +97,7 @@ const AppProvider = ({ children }: Props) => {
   }, [theme]);
 
   function setShowLoaderHandler(value: boolean) {
-    setShowLoading(value);
+    setIsLoading(value);
   }
 
   function getThemeFromLocalStorage() {
@@ -159,6 +161,7 @@ const AppProvider = ({ children }: Props) => {
     authStatus,
     user,
     shouldReloadComponent,
+    isLoading,
     signIn,
     signOut,
     updateTheme: toggleTheme,
@@ -181,7 +184,7 @@ const AppProvider = ({ children }: Props) => {
                   color: '#fff',
                   zIndex: (theme) => theme.zIndex.drawer + 1000,
                 }}
-                open={showLoading}
+                open={isLoading}
               >
                 <CircularProgress color="inherit" />
               </Backdrop>
