@@ -1,14 +1,14 @@
-import { BookDTO } from '@/models/BookDTO';
 import { ITEMS_PER_PAGE } from '@/utils/const';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { Pagination, Skeleton, Typography } from '@mui/material';
 import { BookListProps } from '@/types/props/book-props';
-import BookListEntry from './books-list-entry';
+import BookListEntry from './components/books-list-entry';
 import { useEffect, useState } from 'react';
-import { ResultDTO } from '@/models/ResultDTO';
 import { useAppContext } from '@/app/main-provider';
 import { axiosInstance } from '@/utils/axios';
-import { StateDTO } from '@/models/StateDTO';
+import { StateDTO } from '@/models/state-dto';
+import { ResultDTO } from '@/models/result-dto';
+import { BookDTO } from '@/models/book-dto';
 
 export default function BooksList({
   states,

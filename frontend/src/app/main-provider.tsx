@@ -1,5 +1,5 @@
 import { MainErrorFallback } from '@/components/errors/main';
-import { UserDTO } from '@/models/UserDTO';
+import { UserDTO } from '@/models/user-dto';
 import { AxiosInterceptor } from '@/utils/axios';
 import { BASE_URL } from '@/utils/const';
 import { useLogto } from '@logto/react';
@@ -38,7 +38,7 @@ export interface IAuth {
 const defaultState: IAuth = {
   authStatus: AuthStatus.Loading,
   isLoading: false,
-  setShowLoaderHandler: (value: boolean) => {},
+  setShowLoaderHandler: (_: boolean) => {},
 };
 
 type Props = {
@@ -122,7 +122,7 @@ const AppProvider = ({ children }: Props) => {
   useEffect(() => {
     const getWhoAmI = async () => {
       try {
-        let token = await getAccessToken(BASE_URL);
+        const token = await getAccessToken(BASE_URL);
         const response = await axios<UserDTO>(`/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -141,7 +141,7 @@ const AppProvider = ({ children }: Props) => {
     } else {
       setAuthStatus(AuthStatus.SignedOut);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, getAccessToken]);
 
   function signIn() {
     setAuthStatus(AuthStatus.SignedIn);

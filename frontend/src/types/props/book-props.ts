@@ -1,5 +1,5 @@
-import { BookDTO } from '@/models/BookDTO';
-import { StateDTO } from '@/models/StateDTO';
+import { BookDTO } from '@/models/book-dto';
+import { StateDTO } from '@/models/state-dto';
 
 export interface BookListProps {
   states: StateDTO[];

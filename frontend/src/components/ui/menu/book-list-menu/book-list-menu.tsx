@@ -1,8 +1,8 @@
 import { axiosInstance } from '@/utils/axios';
-import { BookDTO } from '@/models/BookDTO';
 import { useMemo } from 'react';
 import { Divider, Menu, MenuItem } from '@mui/material';
 import { BookListMenuProps } from '@/types/props/book-props';
+import { BookDTO } from '@/models/book-dto';
 
 export default function BookListMenu({
   item,

@@ -1,8 +1,8 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { useLogto } from "@logto/react";
-import { useCallback, useEffect, useState } from "react";
-import { useAppContext } from "@/app/routes/AppProvider";
-import { BASE_URL } from "@/utils/const";
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { useLogto } from '@logto/react';
+import { useCallback, useEffect, useState } from 'react';
+import { BASE_URL } from '@/utils/const';
+import { useAppContext } from '@/app/main-provider';
 
 const client = axios.create({
   baseURL: `${BASE_URL}/API`,
@@ -22,15 +22,15 @@ export const useRequest = <T>(
   const fetchData = useCallback(async () => {
     setIsLoading(true);
     try {
-      let headerToken = "Bearer ";
-      if (!token || token === "") {
+      let headerToken = 'Bearer ';
+      if (!token || token === '') {
         const apiToken = await getAccessToken(BASE_URL);
         headerToken += apiToken;
       } else {
         headerToken += token;
       }
       // Set the authorization header
-      headerToken !== "" &&
+      headerToken !== '' &&
         (client.defaults.headers.common.Authorization = headerToken);
       const response: AxiosResponse = await client(refetch);
       setData(response?.data);

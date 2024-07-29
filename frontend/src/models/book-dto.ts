@@ -1,5 +1,5 @@
-import { AuthorDTO } from "./AuthorDTO";
-import { PublisherDTO } from "./PublisherDTO";
+import { AuthorDTO } from './author-dto';
+import { PublisherDTO } from './publisher-dto';
 
 export interface BookDTO {
   id?: number;

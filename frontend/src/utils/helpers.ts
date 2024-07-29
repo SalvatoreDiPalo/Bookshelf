@@ -1,6 +1,6 @@
 import { Volume } from '@/models/google-volumes';
 import { BASE_URL, LOGTO_APPID } from './const';
-import { BookDTO } from '@/models/BookDTO';
+import { BookDTO } from '@/models/book-dto';
 
 export const reorder = <T>(
   list: T[],

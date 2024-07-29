@@ -1,4 +1,4 @@
-import { GoogleIdentifier } from "./enum/GoogleIdentifier";
+import { GoogleIdentifier } from './enum/google-identifier';
 
 export interface Volume {
   kind: string;
@@ -16,7 +16,7 @@ export interface Volume {
       {
         type: GoogleIdentifier;
         identifier: string;
-      }
+      },
     ];
     pageCount: number;
     dimensions: {

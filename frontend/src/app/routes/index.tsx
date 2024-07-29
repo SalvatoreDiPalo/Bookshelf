@@ -1,15 +1,14 @@
 import Landing from './landing';
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import Notfound from './not-found';
 import { createBrowserRouter } from 'react-router-dom';
 import { PrivateRoutes } from '@/lib/private-routes';
 import { AppRoot } from './app/root';
-import Books from './app/books/books';
 
-const Home = lazy(() => import('@/pages/home/index'));
-const Profile = lazy(() => import('@/pages/profile/index'));
-const Callback = lazy(() => import('@/pages/callback/index'));
-const Settings = lazy(() => import('@/pages/settings/index'));
+const Books = lazy(() => import('@/app/routes/app/books/books'));
+const Profile = lazy(() => import('@/app/routes/app/profile/profile'));
+const Callback = lazy(() => import('@/app/routes/callback'));
+const Settings = lazy(() => import('@/app/routes/app/settings/settings'));
 
 const routes = [
   {

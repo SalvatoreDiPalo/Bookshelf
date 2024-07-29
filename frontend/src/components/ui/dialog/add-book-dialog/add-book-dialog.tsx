@@ -13,9 +13,9 @@ import { GoogleList } from '@/models/google-list';
 import { Volume } from '@/models/google-volumes';
 import { GOOGLE_BOOKS_API, GOOGLE_BOOKS_ITEMS_PER_PAGE } from '@/utils/const';
 import axios from 'axios';
-import { GoogleIdentifier } from '@/models/enum/GoogleIdentifier';
 import { axiosInstance } from '@/utils/axios';
 import AddBookEntry from './add-book-entry';
+import { GoogleIdentifier } from '@/models/enum/google-identifier';
 
 interface AddBookDialogProps {
   open: boolean;

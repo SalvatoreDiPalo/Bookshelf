@@ -1,7 +1,7 @@
-import { AppBar, Button, Toolbar, Typography } from "@mui/material";
-import { useLogto } from "@logto/react";
-import { baseUrl, redirectUrl } from "@/utils/const";
-import { useNavigate } from "react-router-dom";
+import { AppBar, Button, Toolbar, Typography } from '@mui/material';
+import { useLogto } from '@logto/react';
+import { baseUrl, redirectUrl } from '@/utils/const';
+import { useNavigate } from 'react-router-dom';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function Landing() {
                 onClick={() => {
                   void signIn({
                     redirectUri: redirectUrl,
-                    interactionMode: "signUp",
+                    interactionMode: 'signUp',
                   });
                 }}
               >
@@ -40,7 +40,7 @@ export default function Landing() {
               <Button
                 color="inherit"
                 onClick={() => {
-                  navigate("/home");
+                  navigate('/home');
                 }}
               >
                 Profile

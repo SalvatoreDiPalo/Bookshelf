@@ -1,22 +1,26 @@
-import { Box, Paper, Typography, useTheme } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
-import StatsCard from "./StatsCard";
-import { axiosInstance } from "@/utils/axios";
-import { StatsDTO } from "@/models/StatsDTO";
-import { useEffect, useState } from "react";
+import { Box, Paper, Typography, useTheme } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+import StatsCard from './components/stats-card';
+import { useEffect, useState } from 'react';
+import { StatsDTO } from '@/models/stats-dto';
+import { axiosInstance } from '@/utils/axios';
+import { useAppContext } from '@/app/main-provider';
 
-export default function Profile() {
+export default function ProfileView() {
   const theme = useTheme();
   const [stats, setStats] = useState<StatsDTO>();
+  const { user } = useAppContext();
 
   const getStats = async () => {
-    const response = await axiosInstance<StatsDTO>("/library/stats");
+    const response = await axiosInstance<StatsDTO>('/library/stats');
     setStats(response.data);
   };
 
   useEffect(() => {
     getStats();
   }, []);
+
+  // TODO change username
 
   return (
     <Box>
@@ -26,7 +30,7 @@ export default function Profile() {
         sx={{ backgroundColor: theme.palette.primary.secondBackground }}
       >
         <Typography variant="h6" gutterBottom>
-          Salvatore Di Palo
+          {user?.username ?? 'Salvatore Di Palo'}
         </Typography>
       </Paper>
       {stats && (

@@ -1,10 +1,10 @@
-import { BookDTO } from '@/models/BookDTO';
 import { Volume } from '@/models/google-volumes';
 import { axiosInstance } from '@/utils/axios';
 import { volumeToBookDTO } from '@/utils/helpers';
 import { Box, BoxProps, styled, Typography } from '@mui/material';
 import { useState } from 'react';
 import AddConfirmDialog from './add-confirm-dialog';
+import { BookDTO } from '@/models/book-dto';
 interface BookItemProps {
   isInLibrary: boolean;
   data?: Volume;

@@ -1,4 +1,4 @@
-import { useAppContext } from '@/app/routes/AppProvider';
+import { useAppContext } from '@/app/main-provider';
 import { useHandleSignInCallback } from '@logto/react';
 import { useNavigate } from 'react-router-dom';
 

@@ -76,7 +76,7 @@ module.exports = {
         'check-file/filename-naming-convention': [
           'error',
           {
-            '**/*.{ts,tsx}': 'PASCAL_CASE',
+            '**/*.{ts,tsx}': 'KEBAB_CASE',
           },
           {
             ignoreMiddleExtensions: true,
@@ -91,7 +91,7 @@ module.exports = {
         'check-file/folder-naming-convention': [
           'error',
           {
-            '**/*': 'PASCAL_CASE',
+            '**/*': 'KEBAB_CASE',
           },
         ],
       },
