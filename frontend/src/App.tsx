@@ -36,7 +36,7 @@ export default function App() {
 
   return (
     <Fragment>
-      <Box sx={{ display: "flex", overflowX: "hidden" }}>
+      <Box className="flex overflow-x-hidden">
         <CssBaseline />
         <MenuAppBar open={open} handleDrawer={handleDrawer} />
         <MenuDrawer open={open} handleDrawer={handleDrawer} />
