@@ -1,17 +1,10 @@
 import { BookDTO } from "@/models/BookDTO";
-import {
-  Box,
-  IconButton,
-  Theme,
-  Tooltip,
-  Typography,
-  makeStyles,
-  styled,
-} from "@mui/material";
+import { Box, IconButton, Tooltip, Typography, styled } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
 import { StateDTO } from "@/models/StateDTO";
 import CustomMenu from "./BookMenu";
+import { shouldForwardProp } from "@/utils/helpers";
 
 export interface BookProps {
   item: BookDTO;
@@ -42,32 +35,29 @@ export default function BookItem({
   };
 
   return (
-    <StyledBox isSingleLine={isSingleLine ?? false}>
+    <BookBox isSingleLine={isSingleLine ?? false}>
       <Box className="relative max-h-[164px]">
         <Image
           srcSet={`https://loremflickr.com/240/280/book`}
           src={`https://loremflickr.com/240/280/book`}
-          alt={"Book"}
+          alt={`Book image of ${item.title}`}
           loading="lazy"
-          className="book-item-img"
           isSingleLine={isSingleLine ?? false}
         />
-        <IconButton
-          aria-controls={open ? "basic-menu" : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? "true" : undefined}
-          onClick={handleClick}
-          sx={{
-            position: "absolute",
-            top: 0,
-            right: 0,
-          }}
-        >
-          <MoreHorizIcon />
-        </IconButton>
+        {!isSingleLine && (
+          <IconButton
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+            className="absolute right-0 top-0"
+          >
+            <MoreHorizIcon />
+          </IconButton>
+        )}
       </Box>
 
-      <Box>
+      <TextBox isSingleLine={isSingleLine ?? false}>
         <Tooltip title={item.title}>
           <Typography variant="subtitle2" noWrap>
             {item.title}
@@ -78,7 +68,19 @@ export default function BookItem({
             By {authors && authors.length ? authors : "N/A"}
           </Typography>
         </Tooltip>
-      </Box>
+
+        {isSingleLine && (
+          <IconButton
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+            className="absolute right-0"
+          >
+            <MoreHorizIcon />
+          </IconButton>
+        )}
+      </TextBox>
 
       <CustomMenu
         item={item}
@@ -89,7 +91,7 @@ export default function BookItem({
         updateElement={updateElement}
         removeElement={removeElement}
       />
-    </StyledBox>
+    </BookBox>
   );
 }
 
@@ -97,33 +99,58 @@ export interface StyleProps {
   isSingleLine: boolean;
 }
 
-const StyledBox = styled(Box)<StyleProps>(({ theme, isSingleLine }) => ({
+const BookBox = styled(Box, {
+  shouldForwardProp,
+})<StyleProps>(({ theme, isSingleLine }) => ({
   maxHeight: 250,
   width: "100%",
   maxWidth: isSingleLine ? "none" : 164,
   cursor: "pointer",
-  ":hover": {
-    ".book-item-img": {
-      transform: "scale(1.02)",
-    },
-  },
   ...(isSingleLine && {
     display: "flex",
     flexFlow: "row",
-    marginRight: 2
+    marginRight: 2,
+
+    ":hover": {
+      backgroundColor: theme.palette.primary.secondBackground,
+      borderRadius: 8,
+    },
   }),
 }));
 
-const Image = styled("img")<StyleProps>(({ theme, isSingleLine }) => ({
-  ...(!isSingleLine
-    ? {
-        height: "100%",
-        width: "100%",
-      }
-    : {
-        maxHeight: 164,
-        maxWidth: 86,
-      }),
-  borderRadius: 8,
-  aspectRatio: "1 / 1",
-}));
+const TextBox = styled(Box, { shouldForwardProp })<StyleProps>(
+  ({ isSingleLine }) => ({
+    ...(isSingleLine && {
+      marginLeft: 8,
+      flex: 1,
+      alignContent: "center",
+      paddingBottom: 8,
+      overflowX: "hidden",
+      paddingRight: 42,
+    }),
+    position: "relative",
+    display: "flex",
+    flexFlow: "column",
+    alignSelf: "center",
+  }),
+);
+
+const Image = styled("img", { shouldForwardProp })<StyleProps>(
+  ({ theme, isSingleLine }) => ({
+    ...(!isSingleLine
+      ? {
+          height: "100%",
+          width: "100%",
+          boxShadow: theme.shadows[1],
+        }
+      : {
+          maxHeight: 164,
+          maxWidth: 86,
+          verticalAlign: "middle",
+          boxShadow: theme.shadows[5],
+        }),
+    ":hover": { transform: "scale(1.02)" },
+    borderRadius: 8,
+    aspectRatio: "1 / 1",
+  }),
+);

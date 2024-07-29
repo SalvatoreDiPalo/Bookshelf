@@ -79,9 +79,6 @@ export default function CustomMenu({
       anchorEl={anchorEl}
       open={open}
       onClose={handleClose}
-      MenuListProps={{
-        "aria-labelledby": "basic-button",
-      }}
       slotProps={{
         paper: {
           elevation: 0,
@@ -99,7 +96,7 @@ export default function CustomMenu({
               display: "block",
               position: "absolute",
               top: 0,
-              left: 14,
+              right: 14,
               width: 10,
               height: 10,
               bgcolor: "background.paper",
@@ -109,6 +106,8 @@ export default function CustomMenu({
           },
         },
       }}
+      transformOrigin={{ horizontal: "right", vertical: "top" }}
+      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
     >
       {Favorite}
       <Divider sx={{ my: 0.5 }} />

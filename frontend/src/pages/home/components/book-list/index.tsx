@@ -55,9 +55,8 @@ export default function BookList({
         <Skeleton
           key={index}
           variant="rectangular"
-          width={210}
-          height={280}
-          sx={{ margin: 2 }}
+          width={"100%"}
+          height={120}
         />
       </Grid>
     ));
