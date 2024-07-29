@@ -1,7 +1,7 @@
-import { AuthStatus, useAppContext } from "@/context/AppProvider";
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { AuthStatus, useAppContext } from '@/app/main-provider';
+import { Navigate, useLocation } from 'react-router-dom';
 
-export const PrivateRoutes = () => {
+export const PrivateRoutes = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const { authStatus, user } = useAppContext();
 
@@ -10,7 +10,7 @@ export const PrivateRoutes = () => {
   }
 
   return authStatus == AuthStatus.SignedIn ? (
-    <Outlet />
+    children
   ) : (
     <Navigate to="/" replace state={{ from: location }} />
   );

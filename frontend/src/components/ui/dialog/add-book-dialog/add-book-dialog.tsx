@@ -5,17 +5,17 @@ import {
   DialogProps,
   LinearProgress,
   styled,
-} from "@mui/material";
-import { useState } from "react";
-import BookItem from "./BookItem";
-import Paper from "@mui/material/Paper";
-import InputBase from "@mui/material/InputBase";
-import { GoogleList } from "@/models/google-list";
-import { Volume } from "@/models/google-volumes";
-import { GOOGLE_BOOKS_API, GOOGLE_BOOKS_ITEMS_PER_PAGE } from "@/utils/const";
-import axios from "axios";
-import { GoogleIdentifier } from "@/models/enum/GoogleIdentifier";
-import { axiosInstance } from "@/utils/axios";
+} from '@mui/material';
+import { useState } from 'react';
+import Paper from '@mui/material/Paper';
+import InputBase from '@mui/material/InputBase';
+import { GoogleList } from '@/models/google-list';
+import { Volume } from '@/models/google-volumes';
+import { GOOGLE_BOOKS_API, GOOGLE_BOOKS_ITEMS_PER_PAGE } from '@/utils/const';
+import axios from 'axios';
+import { GoogleIdentifier } from '@/models/enum/GoogleIdentifier';
+import { axiosInstance } from '@/utils/axios';
+import AddBookEntry from './add-book-entry';
 
 interface AddBookDialogProps {
   open: boolean;
@@ -23,12 +23,12 @@ interface AddBookDialogProps {
 }
 
 const TransparentDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
-  ".MuiDialog-container > .MuiPaper-root": {
-    backgroundColor: "transparent",
-    backgroundImage: "unset",
+  '.MuiDialog-container > .MuiPaper-root': {
+    backgroundColor: 'transparent',
+    backgroundImage: 'unset',
   },
-  ".MuiDialogContent-root": {
-    overflowY: "hidden",
+  '.MuiDialogContent-root': {
+    overflowY: 'hidden',
     padding: 0,
   },
 }));
@@ -37,7 +37,7 @@ export default function AddBookDialog({
   open,
   handleClose,
 }: AddBookDialogProps) {
-  const [text, setText] = useState<string>("");
+  const [text, setText] = useState<string>('');
   const [items, setItems] = useState<Volume[]>([]);
   const [booksAlreadyPresent, setBooksAlreadyPresent] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -57,7 +57,7 @@ export default function AddBookDialog({
             q: text,
             maxResults: GOOGLE_BOOKS_ITEMS_PER_PAGE,
             startIndex: 0,
-            printType: "books",
+            printType: 'books',
           },
         },
       );
@@ -76,7 +76,7 @@ export default function AddBookDialog({
       );
       setBooksAlreadyPresent(checkBooksResponse.data);
     } catch (err) {
-      console.error("Errore while loading data", err);
+      console.error('Errore while loading data', err);
     } finally {
       setLoading(false);
     }
@@ -98,16 +98,16 @@ export default function AddBookDialog({
             loadData();
           }}
           sx={{
-            p: "8px 16px",
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
+            p: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            width: '100%',
           }}
         >
           <InputBase
             sx={{ flex: 1 }}
             placeholder="Search books"
-            inputProps={{ "aria-label": "search books" }}
+            inputProps={{ 'aria-label': 'search books' }}
             fullWidth
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               setText(event.target.value)
@@ -123,19 +123,19 @@ export default function AddBookDialog({
         <Paper
           sx={{
             height: 500,
-            overflowY: "auto",
-            overflowX: "hidden",
+            overflowY: 'auto',
+            overflowX: 'hidden',
             marginTop: 1,
-            p: "16px",
-            flexFlow: "column nowrap",
+            p: '16px',
+            flexFlow: 'column nowrap',
             minHeight: 400,
-            width: "100%",
-            display: items.length ? "flex" : "none",
+            width: '100%',
+            display: items.length ? 'flex' : 'none',
           }}
         >
           {!loading &&
             items.map((book) => (
-              <BookItem
+              <AddBookEntry
                 key={book.id}
                 data={book}
                 isInLibrary={booksAlreadyPresent.includes(book.id)}

@@ -1,17 +1,20 @@
-import { UserDTO } from "@/models/UserDTO";
-import { AxiosInterceptor } from "@/utils/axios";
-import { BASE_URL } from "@/utils/const";
-import { useLogto } from "@logto/react";
+import { MainErrorFallback } from '@/components/errors/main';
+import { UserDTO } from '@/models/UserDTO';
+import { AxiosInterceptor } from '@/utils/axios';
+import { BASE_URL } from '@/utils/const';
+import { useLogto } from '@logto/react';
 import {
   Backdrop,
   CircularProgress,
   createTheme,
   PaletteMode,
   ThemeProvider,
-} from "@mui/material";
-import { indigo } from "@mui/material/colors";
-import axios from "axios";
-import { useContext, createContext, useState, useEffect, useMemo } from "react";
+} from '@mui/material';
+import { indigo } from '@mui/material/colors';
+import axios from 'axios';
+import { useContext, createContext, useState, useEffect, useMemo } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { HelmetProvider } from 'react-helmet-async';
 
 export enum AuthStatus {
   Loading,
@@ -47,16 +50,15 @@ const AppProvider = ({ children }: Props) => {
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
   const [user, setUser] = useState<UserDTO>();
   const [showLoading, setShowLoading] = useState(false);
-  const [shouldReloadComponent, setShouldReloadComponent] =
-    useState<string>();
+  const [shouldReloadComponent, setShouldReloadComponent] = useState<string>();
   const [theme, setTheme] = useState<PaletteMode>(() => {
-    let initialTheme = localStorage.getItem("theme");
-    initialTheme = initialTheme ? initialTheme : "light";
+    let initialTheme = localStorage.getItem('theme');
+    initialTheme = initialTheme ? initialTheme : 'light';
     return initialTheme as PaletteMode;
   });
 
   const themeObject = useMemo(() => {
-    const secondBackground = theme == "light" ? "#F4F5F9" : "#272727";
+    const secondBackground = theme == 'light' ? '#F4F5F9' : '#272727';
     return createTheme({
       palette: {
         mode: theme,
@@ -69,7 +71,7 @@ const AppProvider = ({ children }: Props) => {
         MuiAppBar: {
           styleOverrides: {
             root: {
-              backgroundColor: theme == "light" ? "#fff" : "#000",
+              backgroundColor: theme == 'light' ? '#fff' : '#000',
               color: indigo.A200,
             },
           },
@@ -97,7 +99,7 @@ const AppProvider = ({ children }: Props) => {
   }
 
   function getThemeFromLocalStorage() {
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem('theme');
     if (savedTheme) {
       setTheme(savedTheme as PaletteMode);
     }
@@ -105,8 +107,8 @@ const AppProvider = ({ children }: Props) => {
 
   function toggleTheme() {
     setTheme((prevTheme) => {
-      const newTheme = prevTheme === "light" ? "dark" : "light";
-      localStorage.setItem("theme", newTheme);
+      const newTheme = prevTheme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', newTheme);
       return newTheme;
     });
   }
@@ -127,7 +129,7 @@ const AppProvider = ({ children }: Props) => {
         setUser(response.data);
         setAuthStatus(AuthStatus.SignedIn);
       } catch (e) {
-        console.error("Error in auth provider", e);
+        console.error('Error in auth provider', e);
         setAuthStatus(AuthStatus.SignedOut);
       }
     };
@@ -149,7 +151,7 @@ const AppProvider = ({ children }: Props) => {
 
   function shouldReload() {
     const random = window.crypto.randomUUID();
-    console.log("Should reload called", random);
+    console.log('Should reload called', random);
     setShouldReloadComponent(random);
   }
 
@@ -169,19 +171,26 @@ const AppProvider = ({ children }: Props) => {
   }
 
   return (
-    <AuthContext.Provider value={state}>
-      <ThemeProvider theme={themeObject}>
-        <AxiosInterceptor>
-          <Backdrop
-            sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1000 }}
-            open={showLoading}
-          >
-            <CircularProgress color="inherit" />
-          </Backdrop>
-          {children}
-        </AxiosInterceptor>
-      </ThemeProvider>
-    </AuthContext.Provider>
+    <ErrorBoundary FallbackComponent={MainErrorFallback}>
+      <AuthContext.Provider value={state}>
+        <ThemeProvider theme={themeObject}>
+          <AxiosInterceptor>
+            <HelmetProvider>
+              <Backdrop
+                sx={{
+                  color: '#fff',
+                  zIndex: (theme) => theme.zIndex.drawer + 1000,
+                }}
+                open={showLoading}
+              >
+                <CircularProgress color="inherit" />
+              </Backdrop>
+              {children}
+            </HelmetProvider>
+          </AxiosInterceptor>
+        </ThemeProvider>
+      </AuthContext.Provider>
+    </ErrorBoundary>
   );
 };
 export default AppProvider;

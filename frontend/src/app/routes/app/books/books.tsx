@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Box, Divider, Pagination, Tab, Tabs, styled } from '@mui/material';
-import AlignmentButtons from './components/alignment-buttons';
-import SelectSort from './components/select-sort';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { BookDTO } from '@/models/BookDTO';
 import { ResultDTO } from '@/models/ResultDTO';
 import { StateDTO } from '@/models/StateDTO';
 import { ITEMS_PER_PAGE } from '@/utils/const';
 import { axiosInstance } from '@/utils/axios';
-import BookList from './components/book-list';
 import { useAppContext } from '@/app/main-provider';
+import BooksList from '@/features/books/books-list';
+import BooksAlignments from '@/features/books/books-alignments';
+import BooksSelectSort from '@/features/books/books-select-sort';
 
 const StyledTabs = styled(Tabs)(() => ({
   overflow: 'hidden',
@@ -32,7 +32,7 @@ const StyledTabs = styled(Tabs)(() => ({
   },
 }));
 
-export default function Home() {
+export default function Books() {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [alignment, setAlignment] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
@@ -141,12 +141,12 @@ export default function Home() {
           ))}
         </StyledTabs>
         <Box sx={{ display: 'flex', flexFlow: 'row nowrap' }}>
-          <SelectSort sortBy={sortBy} updateSort={handleSortChange} />
-          <AlignmentButtons alignment={alignment} setAlignment={setAlignment} />
+          <BooksSelectSort sortBy={sortBy} updateSort={handleSortChange} />
+          <BooksAlignments alignment={alignment} setAlignment={setAlignment} />
         </Box>
       </Box>
       <Grid container columns={alignment === 0 ? 12 : 1} spacing={2}>
-        <BookList
+        <BooksList
           data={data}
           states={states}
           setData={setData}

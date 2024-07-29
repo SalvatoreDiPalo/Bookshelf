@@ -1,26 +1,25 @@
-import { Volume } from "@/models/google-volumes";
-import { Box, BoxProps, styled, Typography } from "@mui/material";
-import { useState } from "react";
-import ConfirmDialog from "../ConfirmDialog";
-import { axiosInstance } from "@/utils/axios";
-import { BookDTO } from "@/models/BookDTO";
-import { volumeToBookDTO } from "@/utils/helpers";
-
+import { BookDTO } from '@/models/BookDTO';
+import { Volume } from '@/models/google-volumes';
+import { axiosInstance } from '@/utils/axios';
+import { volumeToBookDTO } from '@/utils/helpers';
+import { Box, BoxProps, styled, Typography } from '@mui/material';
+import { useState } from 'react';
+import AddConfirmDialog from './add-confirm-dialog';
 interface BookItemProps {
   isInLibrary: boolean;
   data?: Volume;
 }
 
 const BookBox = styled(Box)<BoxProps>(({ theme }) => ({
-  display: "flex",
-  flexFlow: "row nowrap",
-  "&:hover": {
-    backgroundColor: theme.palette.mode == "light" ? "#F4F5F9" : "#272727",
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  '&:hover': {
+    backgroundColor: theme.palette.mode == 'light' ? '#F4F5F9' : '#272727',
   },
   padding: 12,
 }));
 
-export default function BookItem({ isInLibrary, data }: BookItemProps) {
+export default function AddBookEntry({ isInLibrary, data }: BookItemProps) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -39,7 +38,7 @@ export default function BookItem({ isInLibrary, data }: BookItemProps) {
     );
     const book: BookDTO = response.data;
     await axiosInstance<BookDTO>(`/library/book/${book.id}`, {
-      method: "POST",
+      method: 'POST',
     });
     setOpen(false);
   };
@@ -63,7 +62,7 @@ export default function BookItem({ isInLibrary, data }: BookItemProps) {
               imageLinks?.small ??
               imageLinks?.thumbnail
             }
-            alt={"Book"}
+            alt={'Book'}
             loading="lazy"
             width={46}
             height={52}
@@ -73,29 +72,29 @@ export default function BookItem({ isInLibrary, data }: BookItemProps) {
         </Box>
         <Box
           sx={{
-            display: "flex",
-            flexFlow: "column nowrap",
-            overflow: "hidden",
+            display: 'flex',
+            flexFlow: 'column nowrap',
+            overflow: 'hidden',
           }}
         >
           <Typography
             variant="subtitle2"
             noWrap
             sx={{
-              textOverflow: "ellipsis",
+              textOverflow: 'ellipsis',
             }}
           >
             {data.volumeInfo.title}
           </Typography>
           {data.volumeInfo.authors && (
             <Typography variant="caption" noWrap>
-              {data.volumeInfo.authors.join(" - ")}
+              {data.volumeInfo.authors.join(' - ')}
             </Typography>
           )}
         </Box>
       </BookBox>
       {open && (
-        <ConfirmDialog
+        <AddConfirmDialog
           open={open}
           handleClose={handleClose}
           data={data}

@@ -1,13 +1,13 @@
+import { Volume } from '@/models/google-volumes';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-} from "@mui/material";
-import { Box, Typography } from "@mui/material";
-import Grid from "@mui/material/Unstable_Grid2";
-import { Volume } from "@/models/google-volumes";
+} from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
 
 interface BookInformationProps {
   data: Volume;
@@ -19,7 +19,7 @@ interface ConfirmDialogProps extends BookInformationProps {
   handleClose: (volume?: Volume) => void;
 }
 
-export default function ConfirmDialog({
+export default function AddConfirmDialog({
   isInLibrary,
   open,
   data,
@@ -69,7 +69,7 @@ const BookInformation = ({ data }: BookInformationProps) => {
           <img
             srcSet={`https://loremflickr.com/240/280/book`}
             src={`https://loremflickr.com/240/280/book`}
-            alt={"Book"}
+            alt={'Book'}
             loading="lazy"
             width={200}
             height={240}
@@ -86,7 +86,7 @@ const BookInformation = ({ data }: BookInformationProps) => {
           </Typography>
         )}
         <Typography variant="subtitle2" noWrap>
-          {data.volumeInfo.authors?.join(" - ")}
+          {data.volumeInfo.authors?.join(' - ')}
         </Typography>
         {data.volumeInfo.publisher && (
           <Typography variant="caption" noWrap gutterBottom>
@@ -97,9 +97,9 @@ const BookInformation = ({ data }: BookInformationProps) => {
           variant="body2"
           gutterBottom
           sx={{
-            display: "-webkit-box",
-            overflow: "hidden",
-            WebkitBoxOrient: "vertical",
+            display: '-webkit-box',
+            overflow: 'hidden',
+            WebkitBoxOrient: 'vertical',
             WebkitLineClamp: 9,
           }}
         >

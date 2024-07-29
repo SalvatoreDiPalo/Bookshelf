@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { useLogto } from "@logto/react";
 import { useCallback, useEffect, useState } from "react";
-import { useAppContext } from "@/context/AppProvider";
+import { useAppContext } from "@/app/routes/AppProvider";
 import { BASE_URL } from "@/utils/const";
 
 const client = axios.create({

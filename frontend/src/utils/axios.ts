@@ -3,12 +3,12 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
-} from "axios";
-import { BASE_URL, LOGTO_ENDPOINT } from "./const";
-import { useEffect, useState } from "react";
-import { useAppContext } from "@/context/AppProvider";
-import { useLogto } from "@logto/react";
-import { getToken } from "./helpers";
+} from 'axios';
+import { BASE_URL, LOGTO_ENDPOINT } from './const';
+import { useEffect, useState } from 'react';
+import { useLogto } from '@logto/react';
+import { getToken } from './helpers';
+import { useAppContext } from '@/app/main-provider';
 
 export const axiosInstance = axios.create({
   baseURL: `${BASE_URL}`,
@@ -53,7 +53,7 @@ export const AxiosInterceptor = ({ children }: Props) => {
 
   const addRequest = (config: RequestConfig) => {
     requestsIndex = requestsIndex + 1;
-    config["reqIdx"] = requestsIndex;
+    config['reqIdx'] = requestsIndex;
     requestsCount.push(config);
   };
 
@@ -107,7 +107,7 @@ export const AxiosInterceptor = ({ children }: Props) => {
       const retryOrigReq = new Promise<AxiosResponse>((resolve, reject) => {
         subscribeTokenRefresh((token) => {
           // replace the expired token and retry
-          originalRequest!.headers["Authorization"] = `Bearer ${token}`;
+          originalRequest!.headers['Authorization'] = `Bearer ${token}`;
           resolve(axios(originalRequest!));
         });
       });
