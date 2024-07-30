@@ -26,6 +26,7 @@ app.use(cors());
 app.use(helmet());
 app.use(express.json());
 app.use(rateLimiter);
+app.use(express.static(__dirname));
 
 // Request logging
 app.use(requestLogger);
