@@ -1,9 +1,11 @@
-import Landing from './landing';
 import { lazy } from 'react';
-import Notfound from './not-found';
 import { createBrowserRouter } from 'react-router-dom';
+
 import { PrivateRoutes } from '@/lib/private-routes';
+
 import { AppRoot } from './app/root';
+import Landing from './landing';
+import Notfound from './not-found';
 
 const Books = lazy(() => import('@/app/routes/app/books/books'));
 const Profile = lazy(() => import('@/app/routes/app/profile/profile'));

@@ -1,6 +1,7 @@
-import { ChildrenProps } from '@/types/props/children-props';
 import { Backdrop, CircularProgress } from '@mui/material';
 import { useContext, createContext, useState } from 'react';
+
+import { ChildrenProps } from '@/types/props/children-props';
 
 export interface LoadingProps {
   isLoading: boolean;

@@ -1,3 +1,5 @@
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import MenuIcon from '@mui/icons-material/Menu';
 import {
   FormControlLabel,
   IconButton,
@@ -7,9 +9,8 @@ import {
   Typography,
   useTheme,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
+
 import { useAuth } from '@/app/main-provider';
 import { useBookTheme } from '@/app/theme-provider';
 

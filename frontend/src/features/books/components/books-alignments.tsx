@@ -1,6 +1,6 @@
-import { ToggleButton, ToggleButtonGroup } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import GridViewIcon from '@mui/icons-material/GridView';
+import MenuIcon from '@mui/icons-material/Menu';
+import { ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 interface AlignmentButtonsProps {
   alignment: number;

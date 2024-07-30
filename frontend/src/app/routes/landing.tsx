@@ -1,7 +1,8 @@
-import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { useLogto } from '@logto/react';
-import { baseUrl, redirectUrl } from '@/utils/const';
+import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+
+import { baseUrl, redirectUrl } from '@/utils/const';
 
 export default function Landing() {
   const navigate = useNavigate();

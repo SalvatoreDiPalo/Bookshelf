@@ -1,5 +1,6 @@
-import { StatsCardProps } from '@/types/props/profile-props';
 import { Box, Divider, Paper, Typography, useTheme } from '@mui/material';
+
+import { StatsCardProps } from '@/types/props/profile-props';
 
 export default function StatsCard({ value, label }: StatsCardProps) {
   const theme = useTheme();

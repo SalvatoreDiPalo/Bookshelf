@@ -1,7 +1,8 @@
-import { ChildrenProps } from '@/types/props/children-props';
 import { createTheme, PaletteMode, ThemeProvider } from '@mui/material';
 import { indigo } from '@mui/material/colors';
 import { useContext, createContext, useState, useEffect, useMemo } from 'react';
+
+import { ChildrenProps } from '@/types/props/children-props';
 
 export interface IAuth {
   updateTheme: () => void;

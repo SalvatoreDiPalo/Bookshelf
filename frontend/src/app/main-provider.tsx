@@ -1,9 +1,10 @@
-import { UserDTO } from '@/models/user-dto';
-import { ChildrenProps } from '@/types/props/children-props';
-import { axiosInstance } from '@/utils/axios';
 import { useLogto } from '@logto/react';
 import { useContext, createContext, useState, useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
+
+import { UserDTO } from '@/models/user-dto';
+import { ChildrenProps } from '@/types/props/children-props';
+import { axiosInstance } from '@/utils/axios';
 
 export enum AuthStatus {
   Loading,
