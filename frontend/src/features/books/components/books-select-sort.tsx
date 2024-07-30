@@ -1,4 +1,3 @@
-import { BooksSelectSortProps } from '@/types/props/book-props';
 import {
   FormControl,
   InputLabel,
@@ -6,6 +5,8 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
+
+import { BooksSelectSortProps } from '@/types/props/book-props';
 
 export default function BooksSelectSort({
   sortBy,

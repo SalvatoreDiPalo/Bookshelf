@@ -6,23 +6,25 @@ import {
   LinearProgress,
   styled,
 } from '@mui/material';
-import { useState } from 'react';
-import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
+import Paper from '@mui/material/Paper';
+import axios from 'axios';
+import { useState } from 'react';
+
+import { GoogleIdentifier } from '@/models/enum/google-identifier';
 import { GoogleList } from '@/models/google-list';
 import { Volume } from '@/models/google-volumes';
-import axios from 'axios';
 import { axiosInstance } from '@/utils/axios';
-import AddBookEntry from './add-book-entry';
-import { GoogleIdentifier } from '@/models/enum/google-identifier';
 import { env } from '@/utils/env';
+
+import AddBookEntry from './add-book-entry';
 
 interface AddBookDialogProps {
   open: boolean;
   handleClose: () => void;
 }
 
-const TransparentDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
+const TransparentDialog = styled(Dialog)<DialogProps>(() => ({
   '.MuiDialog-container > .MuiPaper-root': {
     backgroundColor: 'transparent',
     backgroundImage: 'unset',
@@ -33,10 +35,7 @@ const TransparentDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
   },
 }));
 
-export default function AddBookDialog({
-  open,
-  handleClose,
-}: AddBookDialogProps) {
+export const AddBookDialog = ({ open, handleClose }: AddBookDialogProps) => {
   const [text, setText] = useState<string>('');
   const [items, setItems] = useState<Volume[]>([]);
   const [booksAlreadyPresent, setBooksAlreadyPresent] = useState<string[]>([]);
@@ -150,4 +149,4 @@ export default function AddBookDialog({
       </DialogContent>
     </TransparentDialog>
   );
-}
+};

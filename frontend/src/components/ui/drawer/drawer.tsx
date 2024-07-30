@@ -1,3 +1,8 @@
+import { useLogto } from '@logto/react';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AddIcon from '@mui/icons-material/Add';
+import BookIcon from '@mui/icons-material/Book';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Divider,
   List,
@@ -8,16 +13,13 @@ import {
   Drawer,
   useTheme,
 } from '@mui/material';
-import { useLogto } from '@logto/react';
-import { baseUrl } from '@/utils/const';
-import { useNavigate } from 'react-router-dom';
-import AddIcon from '@mui/icons-material/Add';
-import BookIcon from '@mui/icons-material/Book';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import { useAuth } from '@/app/main-provider';
-import AddBookDialog from '../dialog/add-book-dialog';
+import { baseUrl } from '@/utils/const';
+
+import { AddBookDialog } from '../dialog';
 
 const drawerWidth = 240;
 
@@ -50,7 +52,7 @@ const drawerRoutes: DrawerRoute[] = [
   },
 ];
 
-export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
+export const MenuDrawer = ({ open, handleDrawer }: MenuDrawerProps) => {
   const { signOut } = useLogto();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -138,4 +140,4 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
       )}
     </Drawer>
   );
-}
+};

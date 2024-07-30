@@ -1,1 +1,1 @@
-export { default } from './book-list-menu';
+export * from './book-list-menu';

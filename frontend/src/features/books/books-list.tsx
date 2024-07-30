@@ -1,15 +1,17 @@
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { Pagination, Skeleton, Typography } from '@mui/material';
-import { BookListProps } from '@/types/props/book-props';
-import BookListEntry from './components/books-list-entry';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/app/main-provider';
-import { axiosInstance } from '@/utils/axios';
-import { StateDTO } from '@/models/state-dto';
-import { ResultDTO } from '@/models/result-dto';
-import { BookDTO } from '@/models/book-dto';
-import { env } from '@/utils/env';
+
 import { useLoading } from '@/app/loading-provider';
+import { useAuth } from '@/app/main-provider';
+import { BookDTO } from '@/models/book-dto';
+import { ResultDTO } from '@/models/result-dto';
+import { StateDTO } from '@/models/state-dto';
+import { BookListProps } from '@/types/props/book-props';
+import { axiosInstance } from '@/utils/axios';
+import { env } from '@/utils/env';
+
+import BookListEntry from './components/books-list-entry';
 
 export default function BooksList({
   states,

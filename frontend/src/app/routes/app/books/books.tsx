@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
 import { Box, Divider, Tab, Tabs, styled } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-import { StateDTO } from '@/models/state-dto';
-import { axiosInstance } from '@/utils/axios';
+import { useEffect, useState } from 'react';
+
 import BooksList from '@/features/books/books-list';
 import BooksAlignments from '@/features/books/components/books-alignments';
 import BooksSelectSort from '@/features/books/components/books-select-sort';
+import { StateDTO } from '@/models/state-dto';
+import { axiosInstance } from '@/utils/axios';
 
 const StyledTabs = styled(Tabs)(() => ({
   overflow: 'hidden',

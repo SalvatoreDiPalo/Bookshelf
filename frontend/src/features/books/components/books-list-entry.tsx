@@ -1,9 +1,10 @@
-import { Box, IconButton, Tooltip, Typography, styled } from '@mui/material';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import { Box, IconButton, Tooltip, Typography, styled } from '@mui/material';
 import { useState } from 'react';
-import { shouldForwardProp } from '@/utils/helpers';
+
+import { BookListMenu } from '@/components/ui/menu';
 import { BookProps } from '@/types/props/book-props';
-import BookListMenu from '@/components/ui/menu/book-list-menu';
+import { shouldForwardProp } from '@/utils/helpers';
 
 export default function BookListEntry({
   item,

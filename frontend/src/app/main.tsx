@@ -1,17 +1,19 @@
+import { LogtoConfig, LogtoProvider } from '@logto/react';
+import { StyledEngineProvider } from '@mui/material/styles';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { ErrorBoundary } from 'react-error-boundary';
 import { RouterProvider } from 'react-router-dom';
 import '@/global';
-import { LogtoConfig, LogtoProvider } from '@logto/react';
-import AppProvider from './main-provider';
-import { StyledEngineProvider } from '@mui/material/styles';
-import { router } from './routes';
-import { ErrorBoundary } from 'react-error-boundary';
+
 import { MainErrorFallback } from '@/components/errors/main';
-import LoadingProvider from './loading-provider';
-import { InterceptorProvider } from './interceptor-provider';
-import BookThemeProvider from './theme-provider';
 import { env } from '@/utils/env';
+
+import { InterceptorProvider } from './interceptor-provider';
+import LoadingProvider from './loading-provider';
+import AppProvider from './main-provider';
+import { router } from './routes';
+import BookThemeProvider from './theme-provider';
 
 const container = document.getElementById('root') as HTMLElement;
 

@@ -1,10 +1,12 @@
+import { Box, BoxProps, styled, Typography } from '@mui/material';
+import { useState } from 'react';
+
+import { BookDTO } from '@/models/book-dto';
 import { Volume } from '@/models/google-volumes';
 import { axiosInstance } from '@/utils/axios';
 import { volumeToBookDTO } from '@/utils/helpers';
-import { Box, BoxProps, styled, Typography } from '@mui/material';
-import { useState } from 'react';
+
 import AddConfirmDialog from './add-confirm-dialog';
-import { BookDTO } from '@/models/book-dto';
 
 interface BookItemProps {
   isInLibrary: boolean;
@@ -73,7 +75,6 @@ export default function AddBookEntry({
             loading="lazy"
             width={46}
             height={52}
-            className="book-item-img"
             style={{ borderRadius: 8 }}
           />
         </Box>

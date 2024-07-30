@@ -1,13 +1,15 @@
-import { Volume } from '@/models/google-volumes';
 import {
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Box,
+  Typography,
 } from '@mui/material';
-import { Box, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
+
+import { Volume } from '@/models/google-volumes';
 
 interface BookInformationProps {
   data: Volume;
@@ -73,7 +75,6 @@ const BookInformation = ({ data }: BookInformationProps) => {
             loading="lazy"
             width={200}
             height={240}
-            className="book-item-img"
             style={{ borderRadius: 8 }}
           />
         </Box>

@@ -1,3 +1,4 @@
+import { useLogto } from '@logto/react';
 import axios, {
   AxiosError,
   AxiosRequestConfig,
@@ -5,12 +6,13 @@ import axios, {
   InternalAxiosRequestConfig,
 } from 'axios';
 import { useEffect, useState } from 'react';
-import { useLogto } from '@logto/react';
-import { useLoading } from './loading-provider';
-import { getToken } from '@/utils/helpers';
-import { axiosInstance } from '@/utils/axios';
+
 import { ChildrenProps } from '@/types/props/children-props';
+import { axiosInstance } from '@/utils/axios';
 import { env } from '@/utils/env';
+import { getToken } from '@/utils/helpers';
+
+import { useLoading } from './loading-provider';
 
 interface RequestConfig extends AxiosRequestConfig {
   reqIdx?: number;
@@ -22,7 +24,7 @@ export const InterceptorProvider = ({ children }: ChildrenProps) => {
   const { setShowLoaderHandler } = useLoading();
 
   let isRefreshing = false;
-  let refreshSubscribers: ((token: string) => void)[] = [];
+  const refreshSubscribers: ((token: string) => void)[] = [];
   let requestsCount: RequestConfig[] = [];
   let requestsIndex = 0;
 
@@ -106,7 +108,7 @@ export const InterceptorProvider = ({ children }: ChildrenProps) => {
             logout();
           });
       }
-      const retryOrigReq = new Promise<AxiosResponse>((resolve, reject) => {
+      const retryOrigReq = new Promise<AxiosResponse>((resolve, _) => {
         console.log('!retryOrigReq');
         subscribeTokenRefresh((token) => {
           console.log('subscribeTokenRefresh', token);

@@ -1,10 +1,11 @@
-import { axiosInstance } from '@/utils/axios';
-import { useMemo } from 'react';
 import { Divider, Menu, MenuItem } from '@mui/material';
-import { BookListMenuProps } from '@/types/props/book-props';
-import { BookDTO } from '@/models/book-dto';
+import { useMemo } from 'react';
 
-export default function BookListMenu({
+import { BookDTO } from '@/models/book-dto';
+import { BookListMenuProps } from '@/types/props/book-props';
+import { axiosInstance } from '@/utils/axios';
+
+export const BookListMenu = ({
   item,
   states,
   open,
@@ -12,7 +13,7 @@ export default function BookListMenu({
   handleClose,
   updateElement,
   removeElement,
-}: BookListMenuProps) {
+}: BookListMenuProps) => {
   const updateFavoriteFlag = async () => {
     const url = `/library/book/${item.id}/favorite`;
     const body = { isFavorite: !item.isFavorite };
@@ -54,13 +55,15 @@ export default function BookListMenu({
 
     if (item.stateId && stateName) {
       return (
-        <MenuItem onClick={removeBookState}>Remove from "{stateName}"</MenuItem>
+        <MenuItem onClick={removeBookState}>
+          Remove from &quot;{stateName}&quot;
+        </MenuItem>
       );
     } else {
       return states && states.length > 0
         ? states.map((state) => (
             <MenuItem key={state.id} onClick={() => updateBookState(state.id)}>
-              Add to "{state.name}"
+              Add to &quot;{state.name}&quot;
             </MenuItem>
           ))
         : null;
@@ -110,4 +113,4 @@ export default function BookListMenu({
       <MenuItem onClick={removeBook}>Delete</MenuItem>
     </Menu>
   );
-}
+};
