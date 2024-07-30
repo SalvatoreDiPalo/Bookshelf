@@ -75,7 +75,6 @@ export default function AddBookEntry({
             loading="lazy"
             width={46}
             height={52}
-            className="book-item-img"
             style={{ borderRadius: 8 }}
           />
         </Box>

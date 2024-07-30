@@ -9,8 +9,8 @@ import { Suspense, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom';
 
-import MenuAppBar from '@/components/ui/appbar/appbar';
-import MenuDrawer from '@/components/ui/drawer/drawer';
+import { MenuAppBar } from '@/components/ui/appbar/appbar';
+import { MenuDrawer } from '@/components/ui/drawer/drawer';
 
 const drawerWidth = 240;
 

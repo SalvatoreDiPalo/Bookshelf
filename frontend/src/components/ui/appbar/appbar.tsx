@@ -1,7 +1,6 @@
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
-  FormControlLabel,
   IconButton,
   styled,
   Switch,
@@ -11,7 +10,6 @@ import {
 } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 
-import { useAuth } from '@/app/main-provider';
 import { useBookTheme } from '@/app/theme-provider';
 
 interface AppBarProps extends MuiAppBarProps {
@@ -81,7 +79,7 @@ interface MenuAppBarProps {
   handleDrawer: () => void;
 }
 
-export default function MenuAppBar({ open, handleDrawer }: MenuAppBarProps) {
+export const MenuAppBar = ({ open, handleDrawer }: MenuAppBarProps) => {
   const theme = useTheme();
   const { updateTheme } = useBookTheme();
 
@@ -108,4 +106,4 @@ export default function MenuAppBar({ open, handleDrawer }: MenuAppBarProps) {
       </Toolbar>
     </AppBar>
   );
-}
+};

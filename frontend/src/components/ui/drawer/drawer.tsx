@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/app/main-provider';
 import { baseUrl } from '@/utils/const';
 
-import AddBookDialog from '../dialog/add-book-dialog';
+import { AddBookDialog } from '../dialog';
 
 const drawerWidth = 240;
 
@@ -52,7 +52,7 @@ const drawerRoutes: DrawerRoute[] = [
   },
 ];
 
-export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
+export const MenuDrawer = ({ open, handleDrawer }: MenuDrawerProps) => {
   const { signOut } = useLogto();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -140,4 +140,4 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
       )}
     </Drawer>
   );
-}
+};

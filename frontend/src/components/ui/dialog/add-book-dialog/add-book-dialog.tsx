@@ -24,7 +24,7 @@ interface AddBookDialogProps {
   handleClose: () => void;
 }
 
-const TransparentDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
+const TransparentDialog = styled(Dialog)<DialogProps>(() => ({
   '.MuiDialog-container > .MuiPaper-root': {
     backgroundColor: 'transparent',
     backgroundImage: 'unset',
@@ -35,10 +35,7 @@ const TransparentDialog = styled(Dialog)<DialogProps>(({ theme }) => ({
   },
 }));
 
-export default function AddBookDialog({
-  open,
-  handleClose,
-}: AddBookDialogProps) {
+export const AddBookDialog = ({ open, handleClose }: AddBookDialogProps) => {
   const [text, setText] = useState<string>('');
   const [items, setItems] = useState<Volume[]>([]);
   const [booksAlreadyPresent, setBooksAlreadyPresent] = useState<string[]>([]);
@@ -152,4 +149,4 @@ export default function AddBookDialog({
       </DialogContent>
     </TransparentDialog>
   );
-}
+};

@@ -75,7 +75,6 @@ const BookInformation = ({ data }: BookInformationProps) => {
             loading="lazy"
             width={200}
             height={240}
-            className="book-item-img"
             style={{ borderRadius: 8 }}
           />
         </Box>

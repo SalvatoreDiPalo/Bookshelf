@@ -2,7 +2,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { Box, IconButton, Tooltip, Typography, styled } from '@mui/material';
 import { useState } from 'react';
 
-import BookListMenu from '@/components/ui/menu/book-list-menu';
+import { BookListMenu } from '@/components/ui/menu';
 import { BookProps } from '@/types/props/book-props';
 import { shouldForwardProp } from '@/utils/helpers';
 

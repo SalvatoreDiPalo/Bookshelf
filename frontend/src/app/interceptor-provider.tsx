@@ -108,7 +108,7 @@ export const InterceptorProvider = ({ children }: ChildrenProps) => {
             logout();
           });
       }
-      const retryOrigReq = new Promise<AxiosResponse>((resolve, reject) => {
+      const retryOrigReq = new Promise<AxiosResponse>((resolve, _) => {
         console.log('!retryOrigReq');
         subscribeTokenRefresh((token) => {
           console.log('subscribeTokenRefresh', token);
