@@ -3,8 +3,8 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import StatsCard from './components/stats-card';
 import { useEffect, useState } from 'react';
 import { StatsDTO } from '@/models/stats-dto';
-import { axiosInstance } from '@/utils/axios';
 import { useAuth } from '@/app/main-provider';
+import { axiosInstance } from '@/utils/axios';
 
 export default function ProfileView() {
   const theme = useTheme();

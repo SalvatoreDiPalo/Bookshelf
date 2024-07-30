@@ -1,9 +1,11 @@
-import { StateDTO } from '@/models/state-dto';
-import { axiosInstance } from '@/utils/axios';
-import { reorder } from '@/utils/helpers';
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
 import { Box, Button, Checkbox, FormControlLabel, List } from '@mui/material';
 import { useEffect, useState } from 'react';
+
+import { StateDTO } from '@/models/state-dto';
+import { axiosInstance } from '@/utils/axios';
+import { reorder } from '@/utils/helpers';
+
 import StateListEntry from './components/state-list-entry';
 
 export default function StatesList() {
@@ -44,7 +46,7 @@ export default function StatesList() {
   };
 
   const removeFromArray = (index: number) => {
-    var array = [...items];
+    const array = [...items];
     array.splice(index, 1);
     setItems(array);
   };

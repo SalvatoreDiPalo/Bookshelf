@@ -1,8 +1,9 @@
-import { StateItemProps } from '@/types/props/state-props';
 import { Draggable } from '@hello-pangea/dnd';
-import { Box, IconButton, ListItem, TextField, Tooltip } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { Box, IconButton, ListItem, TextField, Tooltip } from '@mui/material';
+
+import { StateItemProps } from '@/types/props/state-props';
 
 export default function StateListEntry({
   item,
