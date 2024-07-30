@@ -16,7 +16,7 @@ import BookIcon from '@mui/icons-material/Book';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { useState } from 'react';
-import { useAppContext } from '@/app/main-provider';
+import { useAuth } from '@/app/main-provider';
 import AddBookDialog from '../dialog/add-book-dialog';
 
 const drawerWidth = 240;
@@ -54,7 +54,7 @@ export default function MenuDrawer({ open, handleDrawer }: MenuDrawerProps) {
   const { signOut } = useLogto();
   const navigate = useNavigate();
   const theme = useTheme();
-  const { shouldReload } = useAppContext();
+  const { shouldReload } = useAuth();
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [randomId, setRandomId] = useState<number>(Date.now());
 

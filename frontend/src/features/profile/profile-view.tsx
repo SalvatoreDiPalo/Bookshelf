@@ -4,12 +4,12 @@ import StatsCard from './components/stats-card';
 import { useEffect, useState } from 'react';
 import { StatsDTO } from '@/models/stats-dto';
 import { axiosInstance } from '@/utils/axios';
-import { useAppContext } from '@/app/main-provider';
+import { useAuth } from '@/app/main-provider';
 
 export default function ProfileView() {
   const theme = useTheme();
   const [stats, setStats] = useState<StatsDTO>();
-  const { user } = useAppContext();
+  const { user } = useAuth();
 
   const getStats = async () => {
     const response = await axiosInstance<StatsDTO>('/library/stats');

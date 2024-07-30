@@ -5,9 +5,11 @@ import { Box, BoxProps, styled, Typography } from '@mui/material';
 import { useState } from 'react';
 import AddConfirmDialog from './add-confirm-dialog';
 import { BookDTO } from '@/models/book-dto';
+
 interface BookItemProps {
   isInLibrary: boolean;
   data?: Volume;
+  addIdToBookAlreadyPresent: (id: string) => void;
 }
 
 const BookBox = styled(Box)<BoxProps>(({ theme }) => ({
@@ -19,7 +21,11 @@ const BookBox = styled(Box)<BoxProps>(({ theme }) => ({
   padding: 12,
 }));
 
-export default function AddBookEntry({ isInLibrary, data }: BookItemProps) {
+export default function AddBookEntry({
+  isInLibrary,
+  data,
+  addIdToBookAlreadyPresent,
+}: BookItemProps) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -40,6 +46,7 @@ export default function AddBookEntry({ isInLibrary, data }: BookItemProps) {
     await axiosInstance<BookDTO>(`/library/book/${book.id}`, {
       method: 'POST',
     });
+    addIdToBookAlreadyPresent(volume.id);
     setOpen(false);
   };
 

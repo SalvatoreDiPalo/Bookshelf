@@ -1,14 +1,15 @@
-import { ITEMS_PER_PAGE } from '@/utils/const';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { Pagination, Skeleton, Typography } from '@mui/material';
 import { BookListProps } from '@/types/props/book-props';
 import BookListEntry from './components/books-list-entry';
 import { useEffect, useState } from 'react';
-import { useAppContext } from '@/app/main-provider';
+import { useAuth } from '@/app/main-provider';
 import { axiosInstance } from '@/utils/axios';
 import { StateDTO } from '@/models/state-dto';
 import { ResultDTO } from '@/models/result-dto';
 import { BookDTO } from '@/models/book-dto';
+import { env } from '@/utils/env';
+import { useLoading } from '@/app/loading-provider';
 
 export default function BooksList({
   states,
@@ -18,7 +19,8 @@ export default function BooksList({
 }: BookListProps) {
   const [data, setData] = useState<ResultDTO<BookDTO>>();
   const [page, setPage] = useState<number>(1);
-  const { shouldReloadComponent, isLoading } = useAppContext();
+  const { shouldReloadComponent } = useAuth();
+  const { isLoading } = useLoading();
 
   const fetchBooks = async (
     page: number = 1,
@@ -28,7 +30,7 @@ export default function BooksList({
     const response = await axiosInstance<ResultDTO<BookDTO>>(`/library`, {
       params: {
         page: page,
-        pageSize: ITEMS_PER_PAGE,
+        pageSize: env.BOOKS_ITEMS_PER_PAGE,
         sortBy: sortBy,
         ...otherQueryOptions,
       },
@@ -43,6 +45,7 @@ export default function BooksList({
 
   // This will force the component to re-render
   useEffect(() => {
+    console.log('Should reload component', shouldReloadComponent);
     if (shouldReloadComponent) {
       const otherProps = getOtherProps(selectedTab, states);
       fetchBooks(page, sortBy, otherProps);
@@ -76,7 +79,7 @@ export default function BooksList({
   };
 
   if (isLoading) {
-    return Array.from({ length: ITEMS_PER_PAGE }).map((_, index) => (
+    return Array.from({ length: env.BOOKS_ITEMS_PER_PAGE }).map((_, index) => (
       <Grid
         key={index}
         xs={12}
@@ -137,7 +140,7 @@ export default function BooksList({
         <Pagination
           count={Math.ceil(
             (data?.totalItems && data?.totalItems > 1 ? data?.totalItems : 1) /
-              ITEMS_PER_PAGE,
+              env.BOOKS_ITEMS_PER_PAGE,
           )}
           color="primary"
           page={page}

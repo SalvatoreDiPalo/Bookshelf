@@ -11,11 +11,11 @@ import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import { GoogleList } from '@/models/google-list';
 import { Volume } from '@/models/google-volumes';
-import { GOOGLE_BOOKS_API, GOOGLE_BOOKS_ITEMS_PER_PAGE } from '@/utils/const';
 import axios from 'axios';
 import { axiosInstance } from '@/utils/axios';
 import AddBookEntry from './add-book-entry';
 import { GoogleIdentifier } from '@/models/enum/google-identifier';
+import { env } from '@/utils/env';
 
 interface AddBookDialogProps {
   open: boolean;
@@ -51,11 +51,11 @@ export default function AddBookDialog({
 
     try {
       const response = await axios.get<GoogleList<Volume>>(
-        `${GOOGLE_BOOKS_API}/volumes`,
+        `${env.GOOGLE_BOOKS_API}/volumes`,
         {
           params: {
             q: text,
-            maxResults: GOOGLE_BOOKS_ITEMS_PER_PAGE,
+            maxResults: env.GOOGLE_BOOKS_ITEMS_PER_PAGE,
             startIndex: 0,
             printType: 'books',
           },
@@ -80,6 +80,10 @@ export default function AddBookDialog({
     } finally {
       setLoading(false);
     }
+  };
+
+  const addIdToBookAlreadyPresent = (id: string) => {
+    setBooksAlreadyPresent([...booksAlreadyPresent, id]);
   };
 
   return (
@@ -139,6 +143,7 @@ export default function AddBookDialog({
                 key={book.id}
                 data={book}
                 isInLibrary={booksAlreadyPresent.includes(book.id)}
+                addIdToBookAlreadyPresent={addIdToBookAlreadyPresent}
               />
             ))}
         </Paper>

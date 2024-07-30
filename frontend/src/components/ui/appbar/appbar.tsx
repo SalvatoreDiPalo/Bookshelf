@@ -10,7 +10,8 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import { useAppContext } from '@/app/main-provider';
+import { useAuth } from '@/app/main-provider';
+import { useBookTheme } from '@/app/theme-provider';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -81,7 +82,7 @@ interface MenuAppBarProps {
 
 export default function MenuAppBar({ open, handleDrawer }: MenuAppBarProps) {
   const theme = useTheme();
-  const { updateTheme } = useAppContext();
+  const { updateTheme } = useBookTheme();
 
   return (
     <AppBar position="fixed" open={open} color="default">

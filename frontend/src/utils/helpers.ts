@@ -1,6 +1,6 @@
 import { Volume } from '@/models/google-volumes';
-import { BASE_URL, LOGTO_APPID } from './const';
 import { BookDTO } from '@/models/book-dto';
+import { env } from './env';
 
 export const reorder = <T>(
   list: T[],
@@ -15,9 +15,10 @@ export const reorder = <T>(
 
 export const getToken = () => {
   const accessTokenObject: any = JSON.parse(
-    localStorage.getItem(`logto:${LOGTO_APPID}:accessToken`) ?? '{}',
+    localStorage.getItem(`logto:${env.LOGTO_APPID}:accessToken`) ?? '{}',
   );
-  return accessTokenObject[`@${BASE_URL}`].token || '';
+  const accessToken = accessTokenObject[`@${env.API_URL}`];
+  return accessToken?.token || '';
 };
 
 export const volumeToBookDTO = (volume: Volume): BookDTO => {
