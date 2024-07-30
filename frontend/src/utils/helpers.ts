@@ -1,7 +1,7 @@
-import { Volume } from "@/models/google-volumes";
-import { BASE_URL, LOGTO_APPID } from "./const";
-import { BookDTO } from "@/models/BookDTO";
-import { GoogleIdentifier } from "@/models/enum/GoogleIdentifier";
+import { BookDTO } from '@/models/book-dto';
+import { Volume } from '@/models/google-volumes';
+
+import { env } from './env';
 
 export const reorder = <T>(
   list: T[],
@@ -16,17 +16,20 @@ export const reorder = <T>(
 
 export const getToken = () => {
   const accessTokenObject: any = JSON.parse(
-    localStorage.getItem(`logto:${LOGTO_APPID}:accessToken`) ?? "{}",
+    localStorage.getItem(`logto:${env.LOGTO_APPID}:accessToken`) ?? '{}',
   );
-  return accessTokenObject[`@${BASE_URL}`].token || "";
+  const accessToken = accessTokenObject[`@${env.API_URL}`];
+  return accessToken?.token || '';
 };
 
 export const volumeToBookDTO = (volume: Volume): BookDTO => {
   const volumeInfo = volume.volumeInfo;
-  const isbn13Identifier = volume.volumeInfo.industryIdentifiers.find(identifier => identifier.type === 'ISBN_13');
+  const isbn13Identifier = volume.volumeInfo.industryIdentifiers.find(
+    (identifier) => identifier.type === 'ISBN_13',
+  );
 
   return {
-    isbn: isbn13Identifier?.identifier??"",
+    isbn: isbn13Identifier?.identifier ?? '',
     title: volumeInfo.title,
     subTitle: volumeInfo.subtitle,
     publishedDate: volumeInfo.publishedDate,
@@ -49,3 +52,9 @@ export const volumeToBookDTO = (volume: Volume): BookDTO => {
     }),
   };
 };
+
+/**
+ * Remove "Invalid attribute name: " warning when using styled components with custom properties
+ * @param prop property
+ */
+export const shouldForwardProp = (prop: PropertyKey) => prop !== 'isSingleLine';

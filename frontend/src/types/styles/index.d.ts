@@ -1,6 +1,6 @@
-import "@mui/material";
+import '@mui/material';
 
-declare module "@mui/material/styles" {
+declare module '@mui/material/styles' {
   interface PaletteColor {
     secondBackground?: string;
   }
