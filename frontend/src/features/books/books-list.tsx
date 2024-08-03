@@ -2,7 +2,6 @@ import { Pagination, Skeleton, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
 
-import { useLoading } from '@/app/loading-provider';
 import { useAuth } from '@/app/main-provider';
 import { BookDTO } from '@/models/book-dto';
 import { ResultDTO } from '@/models/result-dto';
@@ -21,14 +20,15 @@ export default function BooksList({
 }: BookListProps) {
   const [data, setData] = useState<ResultDTO<BookDTO>>();
   const [page, setPage] = useState<number>(1);
+  const [areBooksLoading, setAreBooksLoading] = useState<boolean>(false);
   const { shouldReloadComponent } = useAuth();
-  const { isLoading } = useLoading();
 
   const fetchBooks = async (
     page: number = 1,
     sortBy: string = 'title',
     otherQueryOptions?: FetchBookProp,
   ) => {
+    setAreBooksLoading(true);
     const response = await axiosInstance<ResultDTO<BookDTO>>(`/library`, {
       params: {
         page: page,
@@ -36,7 +36,7 @@ export default function BooksList({
         sortBy: sortBy,
         ...otherQueryOptions,
       },
-    });
+    }).finally(() => setAreBooksLoading(false));
     setData(response.data);
   };
 
@@ -80,7 +80,7 @@ export default function BooksList({
     fetchBooks(value, sortBy);
   };
 
-  if (isLoading) {
+  if (areBooksLoading) {
     return Array.from({ length: env.BOOKS_ITEMS_PER_PAGE }).map((_, index) => (
       <Grid
         key={index}

@@ -1,8 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { User } from "@/modules/common/user/user.entity";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 import { BookWithRelations } from "@/modules/common/book/book.entity";
 import { bookRepositoryInstance } from "@/modules/common/book/book.repository";
@@ -14,17 +12,6 @@ class UpdateStateLibraryService {
     stateId: number | null
   ): Promise<ServiceResponse<BookWithRelations | null>> {
     try {
-      const user: User | undefined =
-        await userRepositoryInstance.findOneByUserId(userId);
-
-      if (!user) {
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.NOT_FOUND
-        );
-      }
-
       const book: BookWithRelations | undefined =
         await bookRepositoryInstance.findOneWithRelationsById(bookId);
 
@@ -37,7 +24,7 @@ class UpdateStateLibraryService {
         );
       }
 
-      await libraryRepositoryInstance.updateStateId(bookId, user.id, stateId);
+      await libraryRepositoryInstance.updateStateId(bookId, userId, stateId);
       book.stateId = stateId ?? undefined;
 
       return ServiceResponse.success<BookWithRelations>(book);

@@ -18,7 +18,7 @@ class BookRepository {
 
   async findOneWithRelationsById(
     id: number,
-    userId?: number
+    userId?: string
   ): Promise<BookWithRelations | undefined> {
     const result: QueryResult<BookDbWithRelations> = await query(
       `
@@ -49,7 +49,7 @@ class BookRepository {
         FROM "books" b 
         LEFT JOIN "publishers" pub ON pub."id"=b."publisherId"  
         LEFT JOIN "library" ubs ON ubs."bookId"=b."id"  
-        WHERE b."id" = $1 AND ($2::int IS NULL OR ubs."userId" = $2);
+        WHERE b."id" = $1 AND ($2::text IS NULL OR ubs."userId" = $2);
       `,
       [id, userId ?? null]
     );
@@ -63,7 +63,7 @@ class BookRepository {
 
   async findOneWithRelationsByIsbn(
     isbn: string,
-    userId?: number
+    userId?: string
   ): Promise<BookWithRelations | undefined> {
     const result: QueryResult<BookDbWithRelations> = await query(
       `
@@ -94,7 +94,7 @@ class BookRepository {
         FROM "books" b 
         LEFT JOIN "publishers" pub ON pub."id"=b."publisherId"  
         LEFT JOIN "library" ubs ON ubs."bookId"=b."id"  
-        WHERE b."isbn" = $1 AND ($2::int IS NULL OR ubs."userId" = $2);
+        WHERE b."isbn" = $1 AND ($2::text IS NULL OR ubs."userId" = $2);
       `,
       [isbn, userId ?? null]
     );

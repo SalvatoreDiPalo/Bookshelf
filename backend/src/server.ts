@@ -9,7 +9,6 @@ import errorHandler from "@/libs/middleware/errorHandler";
 import rateLimiter from "@/libs/middleware/rateLimiter";
 import requestLogger from "@/libs/middleware/requestLogger";
 import { env } from "@/libs/utils/envConfig";
-import { userRouter } from "./modules/user/user.registry";
 import { stateRouter } from "./modules/state/state.registry";
 import { bookRouter } from "./modules/book/book.registry";
 import { libraryRouter } from "./modules/library/library.registry";
@@ -25,7 +24,7 @@ app.set("trust proxy", true);
 app.use(cors());
 app.use(helmet());
 app.use(express.json());
-app.use(rateLimiter);
+//app.use(rateLimiter);
 app.use(express.static(__dirname));
 
 // Request logging
@@ -33,7 +32,6 @@ app.use(requestLogger);
 
 // Routes
 app.use("/health-check", healthCheckRouter);
-app.use("/users", userRouter);
 app.use("/states", stateRouter);
 app.use("/books", bookRouter);
 app.use("/library", libraryRouter);

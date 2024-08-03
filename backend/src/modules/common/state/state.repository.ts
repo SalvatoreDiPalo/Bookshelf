@@ -3,7 +3,7 @@ import { State } from "./state.entity";
 import { QueryResult } from "pg";
 
 class StateRepository {
-  async findAllByUser(idUser: number): Promise<State[]> {
+  async findAllByUser(idUser: string): Promise<State[]> {
     const result: QueryResult<State> = await query(
       `
         SELECT st.* FROM "states" st WHERE st."userId" = $1;
@@ -31,7 +31,7 @@ class StateRepository {
 
   async insert(
     name: string,
-    idUser: number,
+    idUser: string,
     order: number,
     editable: boolean = true
   ): Promise<State> {

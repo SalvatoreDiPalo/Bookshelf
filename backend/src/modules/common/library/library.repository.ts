@@ -8,7 +8,7 @@ import { BookDbWithRelations, bookMapperInstance } from "../book/book.mapper";
 
 class LibraryRepository {
   async findAll(
-    userId: number,
+    userId: string,
     searchLibrary: SearchLibrary
   ): Promise<BookWithRelations[]> {
     const offset = (searchLibrary.page - 1) * searchLibrary.pageSize;
@@ -59,7 +59,7 @@ class LibraryRepository {
   }
 
   async countAll(
-    userId: number,
+    userId: string,
     searchLibrary: SearchLibrary
   ): Promise<number> {
     const result = await query(
@@ -87,7 +87,7 @@ class LibraryRepository {
    * @returns ID of Google books in the library
    */
   async getBooksInLibraryByGoogleIds(
-    userId: number,
+    userId: string,
     googleBookIds: string[]
   ): Promise<string[]> {
     const result = await query(
@@ -104,7 +104,7 @@ class LibraryRepository {
 
   async findUserBookStateByBookIdAndUserId(
     bookId: number,
-    userId: number
+    userId: string
   ): Promise<Library | undefined> {
     const result = await query(
       `
@@ -119,7 +119,7 @@ class LibraryRepository {
 
   async existsByBookIdAndUserId(
     bookId: number,
-    userId: number
+    userId: string
   ): Promise<boolean> {
     const result = await query(
       `
@@ -144,7 +144,7 @@ class LibraryRepository {
 
   async updateFavorite(
     bookId: number,
-    userId: number,
+    userId: string,
     isFavorite: boolean
   ): Promise<void> {
     await query(
@@ -157,7 +157,7 @@ class LibraryRepository {
 
   async updateStateId(
     bookId: number,
-    userId: number,
+    userId: string,
     stateId: number | null
   ): Promise<void> {
     await query(
@@ -177,7 +177,7 @@ class LibraryRepository {
     );
   }
 
-  async delete(userId: number, bookId: number): Promise<boolean> {
+  async delete(userId: string, bookId: number): Promise<boolean> {
     const result = await query(
       `
         DELETE FROM public."library"
@@ -188,7 +188,7 @@ class LibraryRepository {
     return result.rowCount === 1;
   }
 
-  async getStats(userId: number, finishedName: string): Promise<Stats> {
+  async getStats(userId: string, finishedName: string): Promise<Stats> {
     const result: QueryResult<Stats> = await query(
       `
         SELECT COUNT(*) AS "booksAdded",

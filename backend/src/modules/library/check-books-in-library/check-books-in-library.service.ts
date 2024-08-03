@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { libraryRepositoryInstance } from "../../common/library/library.repository";
 import { CheckBooksInLibrary } from "./check-books-in-library.validation";
 
@@ -12,19 +11,9 @@ class CheckBooksInLibraryService {
   ): Promise<ServiceResponse<string[] | null>> {
     logger.debug("Params %o - searchLibrary: %o", userJwtId, googleBookIds);
     try {
-      let user = await userRepositoryInstance.findOneByUserId(userJwtId);
-      if (!user) {
-        logger.error("User not found");
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.UNAUTHORIZED
-        );
-      }
-
       const result =
         await libraryRepositoryInstance.getBooksInLibraryByGoogleIds(
-          user.id,
+          userJwtId,
           googleBookIds
         );
 

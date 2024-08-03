@@ -4,8 +4,6 @@ import { logger } from "@/server";
 import { CreateStates } from "../states.validation";
 import { State } from "@/modules/common/state/state.entity";
 import { stateRepositoryInstance } from "@/modules/common/state/state.repository";
-import { User } from "@/modules/common/user/user.entity";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { stateMapperInstance } from "../state.mapper";
 
 class GetStatesService {
@@ -14,19 +12,8 @@ class GetStatesService {
     userId: string
   ): Promise<ServiceResponse<CreateStates[] | null>> {
     try {
-      const user: User | undefined =
-        await userRepositoryInstance.findOneByUserId(userId);
-
-      if (!user) {
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.NOT_FOUND
-        );
-      }
-
       const states: State[] = await stateRepositoryInstance.findAllByUser(
-        user.id
+        userId
       );
 
       return ServiceResponse.success<CreateStates[]>(
