@@ -100,12 +100,9 @@ export default function StatesList() {
             </DragDropContext>
           ) : (
             <Typography
-              sx={{ flexGrow: 1 }}
               textAlign="center"
-              alignItems="center"
-              alignContent="center"
               display="flex"
-              justifyItems="center"
+              justifyContent="center"
             >
               Try adding a state
             </Typography>
