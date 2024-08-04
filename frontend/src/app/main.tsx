@@ -22,6 +22,7 @@ const root = createRoot(container);
 const config: LogtoConfig = {
   endpoint: env.LOGTO_ENDPOINT,
   appId: env.LOGTO_APPID,
+  resources: [env.API_URL],
 };
 
 root.render(
