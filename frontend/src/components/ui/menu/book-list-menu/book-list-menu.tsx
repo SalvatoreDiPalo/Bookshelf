@@ -109,7 +109,7 @@ export const BookListMenu = ({
       {Favorite}
       <Divider sx={{ my: 0.5 }} />
       {StatesTab}
-      <Divider sx={{ my: 0.5 }} />
+      {!!states.length && <Divider sx={{ my: 0.5 }} />}
       <MenuItem onClick={removeBook}>Delete</MenuItem>
     </Menu>
   );

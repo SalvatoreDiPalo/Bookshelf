@@ -1,5 +1,12 @@
 import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
-import { Box, Button, Checkbox, FormControlLabel, List } from '@mui/material';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  List,
+  Typography,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 
 import { StateDTO } from '@/models/state-dto';
@@ -68,10 +75,10 @@ export default function StatesList() {
     <>
       <Box className="flex flex-row flex-nowrap">
         <Box
-          className="w-1/2 border-2 border-solid"
+          className="w-1/2 content-center border-2 border-solid"
           sx={{ opacity: checked ? 1 : 0.5 }}
         >
-          {items && (
+          {items && items.length ? (
             <DragDropContext onDragEnd={onDragEnd}>
               <Droppable droppableId="droppable-list" isDropDisabled={!checked}>
                 {(provided) => (
@@ -91,6 +98,14 @@ export default function StatesList() {
                 )}
               </Droppable>
             </DragDropContext>
+          ) : (
+            <Typography
+              textAlign="center"
+              display="flex"
+              justifyContent="center"
+            >
+              Try adding a state
+            </Typography>
           )}
         </Box>
         <FormControlLabel
@@ -110,7 +125,12 @@ export default function StatesList() {
         >
           Add
         </Button>
-        <Button variant="outlined" className="mt-2" onClick={saveStates}>
+        <Button
+          variant="outlined"
+          className="mt-2"
+          onClick={saveStates}
+          disabled={!items.length}
+        >
           Save
         </Button>
       </Box>

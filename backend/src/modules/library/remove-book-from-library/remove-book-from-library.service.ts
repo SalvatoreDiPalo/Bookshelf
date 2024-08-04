@@ -1,8 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { User } from "@/modules/common/user/user.entity";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 import { BookWithRelations } from "@/modules/common/book/book.entity";
 import { bookRepositoryInstance } from "@/modules/common/book/book.repository";
@@ -14,17 +12,6 @@ class RemoveBookFromLibraryService {
     bookId: number
   ): Promise<ServiceResponse<BookWithRelations | null>> {
     try {
-      const user: User | undefined =
-        await userRepositoryInstance.findOneByUserId(userId);
-
-      if (!user) {
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.NOT_FOUND
-        );
-      }
-
       const book: BookWithRelations | undefined =
         await bookRepositoryInstance.findOneWithRelationsById(bookId);
 
@@ -40,7 +27,7 @@ class RemoveBookFromLibraryService {
       const alreadyExistsInLibrary =
         await libraryRepositoryInstance.existsByBookIdAndUserId(
           book.id!,
-          user.id
+          userId
         );
       if (!alreadyExistsInLibrary) {
         logger.error("Book does not exists in library", bookId);
@@ -54,10 +41,10 @@ class RemoveBookFromLibraryService {
       logger.debug(
         "Removing book %o from library of user %o",
         book.id,
-        user.id
+        userId
       );
       const isRemoved = await libraryRepositoryInstance.delete(
-        user.id,
+        userId,
         book.id!
       );
       if (!isRemoved) {

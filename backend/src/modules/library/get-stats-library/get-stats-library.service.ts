@@ -1,7 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { libraryRepositoryInstance } from "../../common/library/library.repository";
 import { Stats } from "./get-stats-library.validation";
 import { env } from "@/libs/utils/envConfig";
@@ -10,17 +9,8 @@ class GetStatsLibraryService {
   async getStats(userJwtId: string): Promise<ServiceResponse<Stats | null>> {
     logger.debug("User %o", userJwtId);
     try {
-      let user = await userRepositoryInstance.findOneByUserId(userJwtId);
-      if (!user) {
-        logger.error("User not found");
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.UNAUTHORIZED
-        );
-      }
       const result = await libraryRepositoryInstance.getStats(
-        user.id,
+        userJwtId,
         env.DEFAULT_FINISHED
       );
 

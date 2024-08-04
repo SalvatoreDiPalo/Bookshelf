@@ -3,8 +3,6 @@ import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
 import { State } from "@/modules/common/state/state.entity";
 import { stateRepositoryInstance } from "@/modules/common/state/state.repository";
-import { User } from "@/modules/common/user/user.entity";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { stateMapperInstance } from "../state.mapper";
 import { CreateStates } from "../states.validation";
 import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
@@ -16,19 +14,8 @@ class CreateStatesService {
     statesToAdd: CreateStates[]
   ): Promise<ServiceResponse<CreateStates[] | null>> {
     try {
-      const user: User | undefined =
-        await userRepositoryInstance.findOneByUserId(userId);
-
-      if (!user) {
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.NOT_FOUND
-        );
-      }
-
       const currentStates: State[] =
-        await stateRepositoryInstance.findAllByUser(user.id);
+        await stateRepositoryInstance.findAllByUser(userId);
       const finalStates: CreateStates[] = [];
       let order: number = 1;
       for (let state of statesToAdd) {
@@ -55,7 +42,7 @@ class CreateStatesService {
         } else {
           savedState = await stateRepositoryInstance.insert(
             state.name,
-            user.id,
+            userId,
             order,
             true
           );

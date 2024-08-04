@@ -1,10 +1,9 @@
-import { useLogto } from '@logto/react';
+import { AccessTokenClaims, useLogto } from '@logto/react';
 import { useContext, createContext, useState, useEffect } from 'react';
 import { HelmetProvider } from 'react-helmet-async';
 
-import { UserDTO } from '@/models/user-dto';
 import { ChildrenProps } from '@/types/props/children-props';
-import { axiosInstance } from '@/utils/axios';
+import { env } from '@/utils/env';
 
 export enum AuthStatus {
   Loading,
@@ -14,7 +13,7 @@ export enum AuthStatus {
 
 export interface IAuth {
   authStatus: AuthStatus;
-  user?: UserDTO;
+  user?: AccessTokenClaims;
   token?: string;
   shouldReloadComponent?: string;
   shouldReload?: () => void;
@@ -27,16 +26,16 @@ const defaultState: IAuth = {
 const AuthContext = createContext(defaultState);
 
 const AuthProvider = ({ children }: ChildrenProps) => {
-  const { isAuthenticated } = useLogto();
+  const { isAuthenticated, getAccessTokenClaims } = useLogto();
   const [authStatus, setAuthStatus] = useState(AuthStatus.Loading);
-  const [user, setUser] = useState<UserDTO>();
+  const [user, setUser] = useState<AccessTokenClaims>();
   const [shouldReloadComponent, setShouldReloadComponent] = useState<string>();
 
   useEffect(() => {
     const getWhoAmI = async () => {
       try {
-        const response = await axiosInstance<UserDTO>(`/users/profile`);
-        setUser(response.data);
+        const response = await getAccessTokenClaims(env.API_URL);
+        setUser(response);
         setAuthStatus(AuthStatus.SignedIn);
       } catch (e) {
         console.error('Error in auth provider', e);

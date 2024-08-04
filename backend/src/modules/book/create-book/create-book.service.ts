@@ -8,7 +8,6 @@ import { Publisher } from "@/modules/common/publisher/publisher.entity";
 import { publisherRepositoryInstance } from "@/modules/common/publisher/publisher.repository";
 import { bookRepositoryInstance } from "../../common/book/book.repository";
 import { CreateBook } from "./create-book.validation";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { getClient } from "@/libs/utils/database";
 import { bookAuthorsRepositoryInstance } from "@/modules/common/bookAuthors/bookAuthors.repository";
 
@@ -17,20 +16,9 @@ class CreateBookService {
   // Probabilmente la transaction non funziona!
   async createBook(
     bookToCreate: CreateBook,
-    userJwtId: string
   ): Promise<ServiceResponse<BookWithRelations | null>> {
     const client = await getClient();
     try {
-      let user = await userRepositoryInstance.findOneByUserId(userJwtId);
-      if (!user) {
-        logger.error("User not found");
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.UNAUTHORIZED
-        );
-      }
-
       let book = await bookRepositoryInstance.findOneWithRelationsByIsbn(
         bookToCreate.isbn
       );

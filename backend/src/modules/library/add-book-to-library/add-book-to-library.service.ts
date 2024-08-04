@@ -1,8 +1,6 @@
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse } from "@/libs/models/serviceResponse";
 import { logger } from "@/server";
-import { User } from "@/modules/common/user/user.entity";
-import { userRepositoryInstance } from "@/modules/common/user/user.repository";
 import { libraryRepositoryInstance } from "@/modules/common/library/library.repository";
 import { BookWithRelations } from "@/modules/common/book/book.entity";
 import { bookRepositoryInstance } from "@/modules/common/book/book.repository";
@@ -14,17 +12,6 @@ class AddBookToLibraryService {
     bookId: number
   ): Promise<ServiceResponse<BookWithRelations | null>> {
     try {
-      const user: User | undefined =
-        await userRepositoryInstance.findOneByUserId(userId);
-
-      if (!user) {
-        return ServiceResponse.failure(
-          "User not found",
-          null,
-          StatusCodes.NOT_FOUND
-        );
-      }
-
       const book: BookWithRelations | undefined =
         await bookRepositoryInstance.findOneWithRelationsById(bookId);
 
@@ -40,7 +27,7 @@ class AddBookToLibraryService {
       const alreadyExistsInLibrary =
         await libraryRepositoryInstance.existsByBookIdAndUserId(
           book.id!,
-          user.id
+          userId
         );
       if (alreadyExistsInLibrary) {
         logger.error("Book already exists in library", bookId);
@@ -51,9 +38,9 @@ class AddBookToLibraryService {
         );
       }
 
-      logger.debug("Adding book %o to library of user", book.id, user.id);
+      logger.debug("Adding book %o to library of user", book.id, userId);
       await libraryRepositoryInstance.insert({
-        userId: user.id,
+        userId: userId,
         stateId: null,
         bookId: book.id!,
         isFavorite: false,
