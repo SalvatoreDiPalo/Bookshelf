@@ -1,11 +1,13 @@
-import { useHandleSignInCallback } from '@logto/react';
+import { env } from '@/utils/env';
+import { useHandleSignInCallback, useLogto } from '@logto/react';
 import { useNavigate } from 'react-router-dom';
 
 const Callback = () => {
   const navigate = useNavigate();
+  const { getAccessToken } = useLogto();
 
   const { isLoading } = useHandleSignInCallback(() => {
-    navigate('/home');
+    getAccessToken(env.API_URL).then(() => navigate('/home'));
   });
   return isLoading ? <p>Redirecting...</p> : null;
 };
