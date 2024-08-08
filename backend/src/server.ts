@@ -37,7 +37,7 @@ app.use("/books", bookRouter);
 app.use("/library", libraryRouter);
 
 // Swagger UI
-app.use(openAPIRouter);
+//app.use(openAPIRouter);
 
 // Error handlers
 app.use(errorHandler());

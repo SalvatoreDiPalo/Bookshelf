@@ -1,23 +1,31 @@
-import { DragDropContext, Droppable, DropResult } from '@hello-pangea/dnd';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  List,
-  Typography,
-} from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 import { StateDTO } from '@/models/state-dto';
 import { axiosInstance } from '@/utils/axios';
-import { reorder } from '@/utils/helpers';
-
 import StateListEntry from './components/state-list-entry';
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from '@dnd-kit/modifiers';
 
 export default function StatesList() {
   const [items, setItems] = useState<StateDTO[]>([]);
-  const [checked, setChecked] = useState(false);
 
   const fetchData = async () => {
     const response = await axiosInstance<StateDTO[]>(`/states`);
@@ -27,19 +35,6 @@ export default function StatesList() {
   useEffect(() => {
     fetchData();
   }, []);
-
-  const onDragEnd = ({ destination, source }: DropResult) => {
-    // dropped outside the list
-    if (!destination) return;
-
-    const newItems = reorder(items!, source.index, destination.index);
-
-    setItems(newItems);
-  };
-
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
-  };
 
   const addEmptyState = () => {
     setItems((prevElem) => [
@@ -71,52 +66,61 @@ export default function StatesList() {
     });
     setItems(response.data);
   };
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+
+    if (!active || !over) return;
+
+    if (active.id !== over.id) {
+      setItems((items) => {
+        const oldIndex = items.findIndex((item) => item.id == active.id);
+        const newIndex = items.findIndex((item) => item.id == over.id);
+
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  }
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
   return (
     <>
-      <Box className="flex flex-row flex-nowrap">
-        <Box
-          className="w-1/2 content-center border-2 border-solid"
-          sx={{ opacity: checked ? 1 : 0.5 }}
-        >
-          {items && items.length ? (
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable droppableId="droppable-list" isDropDisabled={!checked}>
-                {(provided) => (
-                  <List ref={provided.innerRef} {...provided.droppableProps}>
-                    {items.map((item: StateDTO, index: number) => (
-                      <StateListEntry
-                        item={item}
-                        index={index}
-                        key={item.id}
-                        isDisabled={!checked}
-                        updateItemName={handleItemNameChange}
-                        removeItem={removeFromArray}
-                      />
-                    ))}
-                    {provided.placeholder}
-                  </List>
-                )}
-              </Droppable>
-            </DragDropContext>
-          ) : (
-            <Typography
-              textAlign="center"
-              display="flex"
-              justifyContent="center"
+      <Box className="w-full content-center overflow-hidden border-2 border-solid">
+        {items && items.length ? (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+          >
+            <SortableContext
+              items={items}
+              strategy={verticalListSortingStrategy}
             >
-              Try adding a state
-            </Typography>
-          )}
-        </Box>
-        <FormControlLabel
-          className="ml-2"
-          control={
-            <Checkbox checked={checked} onChange={handleCheckboxChange} />
-          }
-          label="Modify"
-        />
+              {items.map((item: StateDTO, index: number) => (
+                <StateListEntry
+                  item={item}
+                  index={index}
+                  key={item.id}
+                  updateItemName={handleItemNameChange}
+                  removeItem={removeFromArray}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        ) : (
+          <Typography textAlign="center" display="flex" justifyContent="center">
+            Try adding a state
+          </Typography>
+        )}
       </Box>
-      <Box sx={{ display: checked ? 'inline-flex' : 'none' }}>
+      <Box>
         <Button
           variant="outlined"
           className="mr-2 mt-2"
@@ -137,3 +141,30 @@ export default function StatesList() {
     </>
   );
 }
+
+/*
+
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable
+              droppableId="droppable-list"
+              direction="vertical"
+              mode="standard"
+            >
+              {(provided) => (
+                <List ref={provided.innerRef} {...provided.droppableProps}>
+                  {items.map((item: StateDTO, index: number) => (
+                    <StateListEntry
+                      item={item}
+                      index={index}
+                      key={item.id}
+                      updateItemName={handleItemNameChange}
+                      removeItem={removeFromArray}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </List>
+              )}
+            </Droppable>
+          </DragDropContext>
+
+*/
