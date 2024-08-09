@@ -23,6 +23,7 @@ import {
   restrictToVerticalAxis,
   restrictToWindowEdges,
 } from '@dnd-kit/modifiers';
+import { SortableList } from '@/components/ui/sortable-list';
 
 export default function StatesList() {
   const [items, setItems] = useState<StateDTO[]>([]);
@@ -70,6 +71,7 @@ export default function StatesList() {
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
 
+    console.log('HandleDragEnd', event);
     if (!active || !over) return;
 
     if (active.id !== over.id) {
@@ -93,17 +95,12 @@ export default function StatesList() {
     <>
       <Box className="w-full content-center overflow-hidden border-2 border-solid">
         {items && items.length ? (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-            modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
-          >
-            <SortableContext
-              items={items}
-              strategy={verticalListSortingStrategy}
-            >
-              {items.map((item: StateDTO, index: number) => (
+          <SortableList
+            items={items}
+            onChange={setItems}
+            renderItem={(item, index) => (
+              <SortableList.Item id={item.id}>
+                <SortableList.DragHandle />
                 <StateListEntry
                   item={item}
                   index={index}
@@ -111,9 +108,9 @@ export default function StatesList() {
                   updateItemName={handleItemNameChange}
                   removeItem={removeFromArray}
                 />
-              ))}
-            </SortableContext>
-          </DndContext>
+              </SortableList.Item>
+            )}
+          />
         ) : (
           <Typography textAlign="center" display="flex" justifyContent="center">
             Try adding a state
